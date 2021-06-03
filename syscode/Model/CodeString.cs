@@ -25,7 +25,7 @@ namespace Sys.CodeBuilder
 {
     public class CodeString
     {
-        private string code;
+        private readonly string code;
 
         public CodeString(string code)
         {

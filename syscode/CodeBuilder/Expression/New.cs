@@ -25,8 +25,8 @@ namespace Sys.CodeBuilder
 {
     public class New : Buildable
     {
-        private TypeInfo type;
-        private Arguments args;
+        private readonly TypeInfo type;
+        private readonly Arguments args;
         private List<Expression> expressions { get; } = new List<Expression>();
 
         public ValueOutputFormat Format { get; set; } = ValueOutputFormat.SingleLine;

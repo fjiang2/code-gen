@@ -25,7 +25,7 @@ namespace Sys.CodeBuilder
 {
     class UniqueNameMaker
     {
-        private Dictionary<string, int> names = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> names = new Dictionary<string, int>();
 
         public UniqueNameMaker(string className)
         {

@@ -24,9 +24,9 @@ namespace Sys.CodeBuilder
 {
     class UtilsMethod
     {
-        private string className;
-        private IEnumerable<PropertyInfo> variables;
-        private TypeInfo classType;
+        private readonly string className;
+        private readonly IEnumerable<PropertyInfo> variables;
+        private readonly TypeInfo classType;
 
         public UtilsMethod(string className, IEnumerable<PropertyInfo> variables)
         {

@@ -29,7 +29,7 @@ namespace Sys.CodeBuilder
         public TypeInfo Type { get; set; } = TypeInfo.Anonymous;
         public ValueOutputFormat Format { get; set; } = ValueOutputFormat.MultipleLine;
 
-        private object value;
+        private readonly object value;
 
         public Value(object value)
         {

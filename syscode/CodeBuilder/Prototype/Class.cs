@@ -31,7 +31,7 @@ namespace Sys.CodeBuilder
         public TypeInfo[] Inherits { get; set; }
         public bool Sorted { get; set; } = false;
 
-        private UniqueNameMaker uniqueNameMaker;
+        private readonly UniqueNameMaker uniqueNameMaker;
 
         public Class(string className)
             : this(className, new TypeInfo[] { })

@@ -23,7 +23,7 @@ namespace Sys.CodeBuilder
 {
     public class Field : Declare, IBuildable
     {
-        private Value value;
+        private readonly Value value;
 
         public string UserValue { get; set; }
 

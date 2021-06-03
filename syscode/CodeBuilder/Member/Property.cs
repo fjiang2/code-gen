@@ -24,7 +24,7 @@ namespace Sys.CodeBuilder
 {
     public class Property : Declare, IBuildable
     {
-        private object value;
+        private readonly object value;
 
         public Statement Gets { get; } = new Statement();
         public Statement Sets { get; } = new Statement();

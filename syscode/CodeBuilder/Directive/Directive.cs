@@ -24,7 +24,7 @@ namespace Sys.CodeBuilder
 {
     public class Directive : Buildable
     {
-        private CodeBlock code = new CodeBlock();
+        private readonly CodeBlock code = new CodeBlock();
 
         public Directive(string line)
         {
