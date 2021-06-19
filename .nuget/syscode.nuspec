@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>syscode</id>
+    <version>3.0.0.0</version>
+    <title>C# code generator</title>
+    <authors>datconn</authors>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/fjiang2/code-gen/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>
+      Generate C# code
+    </description>
+    <summary>C# code generator</summary>
+    <releaseNotes>
+	  6/19/2021 v3.0.0.0
+	    Bug Fixes:
+  	    1. It is splited from sqlcon project.
+    </releaseNotes>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\syscode\bin\Release\netstandard2.0\syscode.dll" target="lib\netstandard2.0\syscode.dll" />
+    <file src="..\syscode\bin\Release\netstandard2.0\syscode.deps.json" target="lib\netstandard2.0\syscode.deps.json" />
+  </files>
+</package>
