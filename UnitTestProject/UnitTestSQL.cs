@@ -69,7 +69,8 @@ namespace UnitTestProject
 		{
 			var ProductID = "ProductID".ColumnName();
 			string SQL = new SqlBuilder()
-				.SELECT().COLUMNS()
+				.SELECT()
+				.COLUMNS()
 				.FROM("Products")
 				.WHERE("ProductID".ColumnName().IN(1, 2, 3, 4).OR("ProductID".ColumnName().BETWEEN(1, 4)))
 				.ToString();
@@ -81,7 +82,7 @@ namespace UnitTestProject
 		public void Test_INSERT()
 		{
 			string SQL = new SqlBuilder()
-				.INSERT_INTO("Categories", "CategoryName", "Description", "Picture")
+				.INSERT_INTO("Categories", new string[] { "CategoryName", "Description", "Picture" })
 				.VALUES("Seafood", "Seaweed and fish", new byte[] { 0x15, 0xC2 })
 				.ToString();
 
@@ -94,8 +95,8 @@ namespace UnitTestProject
 			string SQL = new SqlBuilder()
 				.UPDATE("Categories")
 				.SET(
-					"CategoryName".Assign("Seafood"), 
-					"Description".Assign("Seaweed and fish"), 
+					"CategoryName".Assign("Seafood"),
+					"Description".Assign("Seaweed and fish"),
 					"Picture".Assign(new byte[] { 0x15, 0xC2 })
 					)
 				.WHERE("CategoryID".ColumnName() == 8)
@@ -118,18 +119,20 @@ namespace UnitTestProject
 		[TestMethod]
 		public void Test_IS_NOT_EXISTS()
 		{
+			string Categories = "Categories";
+
 			var select = new SqlBuilder()
 				.SELECT()
 				.COLUMNS()
-				.FROM("Categories")
+				.FROM(Categories)
 				.WHERE("CategoryID".ColumnName() == 8);
 
 			var insert = new SqlBuilder()
-				.INSERT_INTO("Categories", "CategoryName", "Description", "Picture")
+				.INSERT_INTO(Categories, new string[] { "CategoryName", "Description", "Picture" })
 				.VALUES("Seafood", "Seaweed and fish", new byte[] { 0x15, 0xC2 });
 
 			var update = new SqlBuilder()
-				.UPDATE("Categories")
+				.UPDATE(Categories)
 				.SET(
 					"CategoryName".Assign("Seafood"),
 					"Description".Assign("Seaweed and fish"),
@@ -149,6 +152,34 @@ namespace UnitTestProject
 
 			Debug.Assert(SQL == "IF EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
 
+		}
+
+		[TestMethod]
+		public void Test_GROUP_BY()
+		{
+			var SQL = new SqlBuilder()
+				.SELECT()
+				.COLUMNS("CategoryID".ColumnName(), SqlExpression.COUNT)
+				.FROM("Products")
+				.GROUP_BY("CategoryID")
+				.HAVING(SqlExpression.COUNT > 10)
+				.ToString();
+			
+			Debug.Assert(SQL == "SELECT [CategoryID], COUNT(*) FROM [Products] GROUP BY [CategoryID] HAVING COUNT(*) > 10");
+		}
+
+		[TestMethod]
+		public void Test_ORDER_BY()
+		{
+			var SQL = new SqlBuilder()
+				.SELECT()
+				.COLUMNS()
+				.FROM("Products")
+				.WHERE("UnitPrice".ColumnName() > 50.0)
+				.ORDER_BY("ProductName").DESC()
+				.ToString();
+
+			Debug.Assert(SQL == "SELECT * FROM [Products] WHERE [UnitPrice] > 50 ORDER BY [ProductName] DESC");
 		}
 	}
 }

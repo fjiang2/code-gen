@@ -193,6 +193,11 @@ namespace Sys.Data.Coding
             return new SqlExpression().AppendValue(value);
         }
 
+        public static implicit operator SqlExpression(double value)
+        {
+            return new SqlExpression().AppendValue(value);
+        }
+
         public static implicit operator SqlExpression(float value)
         {
             return new SqlExpression().AppendValue(value);

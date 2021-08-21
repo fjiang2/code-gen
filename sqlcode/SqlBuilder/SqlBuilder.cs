@@ -163,16 +163,22 @@ namespace Sys.Data.Coding
 			return INSERT_INTO(typeof(T).TableName(), columns);
 		}
 
-		public SqlBuilder INSERT_INTO(SqlTableName tableName, params string[] columns)
+		public SqlBuilder INSERT_INTO(SqlTableName tableName)
 		{
 			AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
-
-			if (columns.Length > 0)
-				AppendSpace($"({JoinColumns(columns)})");
 
 			return this;
 		}
 
+		public SqlBuilder INSERT_INTO(SqlTableName tableName, IEnumerable<string> columns)
+		{
+			AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
+
+			if (columns.Count() > 0)
+				AppendSpace($"({JoinColumns(columns)})");
+
+			return this;
+		}
 
 		public SqlBuilder VALUES(params object[] values)
 		{
@@ -241,8 +247,20 @@ namespace Sys.Data.Coding
 
 
 		#region GROUP BY / HAVING clause
+		public SqlBuilder GROUP_BY(params SqlExpression[] columns)
+		{
+			if (columns == null || columns.Length == 0)
+				return this;
+
+			string _columns = string.Join(",", columns.Select(x => $"{x}"));
+			return AppendSpace($"GROUP BY {_columns}");
+		}
+
 		public SqlBuilder GROUP_BY(params string[] columns)
 		{
+			if (columns == null || columns.Length == 0)
+				return this; 
+			
 			return AppendSpace($"GROUP BY {JoinColumns(columns)}");
 		}
 
@@ -255,17 +273,26 @@ namespace Sys.Data.Coding
 
 
 
+		public SqlBuilder ORDER_BY(params SqlExpression[] columns)
+		{
+			if (columns == null || columns.Length == 0)
+				return this;
+
+			string _columns = string.Join(",", columns.Select(x => $"{x}"));
+			return AppendSpace($"ORDER BY {_columns}");
+		}
+
 		public SqlBuilder ORDER_BY(params string[] columns)
 		{
 			if (columns == null || columns.Length == 0)
 				return this;
 
-			return AppendLine($"ORDER BY {JoinColumns(columns)} ");
+			return AppendSpace($"ORDER BY {JoinColumns(columns)}");
 		}
-
 
 		public SqlBuilder UNION() => AppendSpace("UNION");
 		public SqlBuilder DESC() => AppendSpace("DESC");
+		public SqlBuilder ASC() => AppendSpace("ASC");
 
 		private static string JoinColumns(IEnumerable<string> columns)
 		{
