@@ -47,17 +47,21 @@ namespace UnitTestProject
 		}
 
 		[TestMethod]
-		public void TestJoin2()
+		public void TestColumnAsName()
 		{
 			string SQL = new SqlBuilder()
-				.SELECT().COLUMNS("CategoryName".ColumnName("C"), "*".ColumnName("P"))
-				.FROM("Products", "P")
-				.INNER().JOIN("Categories", "C").ON("CategoryID".ColumnName("C") == "CategoryID".ColumnName("P"))
-				.WHERE("CategoryName".ColumnName("C") == "Dairy Products")
+				.SELECT().COLUMNS("ProductID".ColumnName().AS("Id"), "ProductName".ColumnName().AS("Name"))
+				.FROM("Products")
 				.ToString();
 
-			Debug.Assert(SQL == "SELECT C.[CategoryName], P.* FROM Products P INNER JOIN Categories C ON C.[CategoryID] = P.[CategoryID] WHERE C.[CategoryName] = N'Dairy Products'");
+			Debug.Assert(SQL == "SELECT [ProductID] AS Id, [ProductName] AS Name FROM Products");
 
+			SQL = new SqlBuilder()
+				.SELECT().COLUMNS("ProductID".AS("Id"), "ProductName".AS("Name"))
+				.FROM("Products")
+				.ToString();
+
+			Debug.Assert(SQL == "SELECT [ProductID] AS Id, [ProductName] AS Name FROM Products");
 		}
 	}
 }

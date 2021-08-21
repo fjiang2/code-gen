@@ -130,6 +130,11 @@ namespace Sys.Data.Coding
 
         #region implicit section
 
+        public static implicit operator SqlExpression(VariableName value)
+        {
+            return new SqlExpression().Append(value);    // s= 'string'
+        }
+
         public static implicit operator SqlExpression(string value)
         {
             return new SqlExpression().AppendValue(value);    // s= 'string'
@@ -220,9 +225,9 @@ namespace Sys.Data.Coding
             return expr.ToString();
         }
 
-        public SqlExpression AS(SqlExpression alias)
+        public SqlExpression AS(VariableName name)
         {
-            this.WrapSpace("AS").Append(alias);
+            this.WrapSpace("AS").Append(name);
             return this;
         }
 

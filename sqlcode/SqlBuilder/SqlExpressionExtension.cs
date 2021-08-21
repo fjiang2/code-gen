@@ -37,6 +37,12 @@ namespace Sys.Data.Coding
             return SqlExpression.Equal(name, value);
         }
 
+
+        public static SqlExpression AS(this string columnName, string name)
+		{
+            return columnName.ColumnName().AS(name);
+        }
+
         /// <summary>
         /// "name" -> "[name]"
         /// </summary>
