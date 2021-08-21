@@ -14,7 +14,7 @@ namespace UnitTestProject
 	public class UnitTestSQL
 	{
 		[TestMethod]
-		public void TestSelect()
+		public void Test_SELECT()
 		{
 
 			var CategoryID = "CategoryID".ColumnName();
@@ -33,7 +33,7 @@ namespace UnitTestProject
 		}
 
 		[TestMethod]
-		public void TestJoin()
+		public void Test_JOIN()
 		{
 			string SQL = new SqlBuilder()
 				.SELECT().COLUMNS("CategoryName".ColumnName("C"), "*".ColumnName("P"))
@@ -47,7 +47,7 @@ namespace UnitTestProject
 		}
 
 		[TestMethod]
-		public void TestColumnAsName()
+		public void Test_Column_AS_Name()
 		{
 			string SQL = new SqlBuilder()
 				.SELECT().COLUMNS("ProductID".ColumnName().AS("Id"), "ProductName".ColumnName().AS("Name"))
@@ -65,7 +65,7 @@ namespace UnitTestProject
 		}
 
 		[TestMethod]
-		public void TestBetweenAndIn()
+		public void Test_BETWEEN_IN()
 		{
 			var ProductID = "ProductID".ColumnName();
 			string SQL = new SqlBuilder()
@@ -75,6 +75,80 @@ namespace UnitTestProject
 				.ToString();
 
 			Debug.Assert(SQL == "SELECT * FROM [Products] WHERE [ProductID] IN (1, 2, 3, 4) OR [ProductID] BETWEEN 1 AND 4");
+		}
+
+		[TestMethod]
+		public void Test_INSERT()
+		{
+			string SQL = new SqlBuilder()
+				.INSERT_INTO("Categories", "CategoryName", "Description", "Picture")
+				.VALUES("Seafood", "Seaweed and fish", new byte[] { 0x15, 0xC2 })
+				.ToString();
+
+			Debug.Assert(SQL == "INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2)");
+		}
+
+		[TestMethod]
+		public void Test_UPDATE()
+		{
+			string SQL = new SqlBuilder()
+				.UPDATE("Categories")
+				.SET(
+					"CategoryName".Assign("Seafood"), 
+					"Description".Assign("Seaweed and fish"), 
+					"Picture".Assign(new byte[] { 0x15, 0xC2 })
+					)
+				.WHERE("CategoryID".ColumnName() == 8)
+				.ToString();
+
+			Debug.Assert(SQL == "UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
+		}
+
+		[TestMethod]
+		public void Test_DELETE()
+		{
+			string SQL = new SqlBuilder()
+				.DELETE("Categories")
+				.WHERE("CategoryID".ColumnName() == 8)
+				.ToString();
+
+			Debug.Assert(SQL == "DELETE FROM [Categories] WHERE [CategoryID] = 8");
+		}
+
+		[TestMethod]
+		public void Test_IS_NOT_EXISTS()
+		{
+			var select = new SqlBuilder()
+				.SELECT()
+				.COLUMNS()
+				.FROM("Categories")
+				.WHERE("CategoryID".ColumnName() == 8);
+
+			var insert = new SqlBuilder()
+				.INSERT_INTO("Categories", "CategoryName", "Description", "Picture")
+				.VALUES("Seafood", "Seaweed and fish", new byte[] { 0x15, 0xC2 });
+
+			var update = new SqlBuilder()
+				.UPDATE("Categories")
+				.SET(
+					"CategoryName".Assign("Seafood"),
+					"Description".Assign("Seaweed and fish"),
+					"Picture".Assign(new byte[] { 0x15, 0xC2 })
+					)
+				.WHERE("CategoryID".ColumnName() == 8);
+
+			string SQL = new SqlBuilder()
+				.IF(select.EXISTS().NOT(), insert, update)
+				.ToString();
+
+			Debug.Assert(SQL == "IF NOT EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
+
+			SQL = new SqlBuilder()
+				.IF(select.EXISTS(), insert, update)
+				.ToString();
+
+			Debug.Assert(SQL == "IF EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
+
 		}
 	}
 }

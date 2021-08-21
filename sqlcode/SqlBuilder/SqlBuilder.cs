@@ -272,6 +272,18 @@ namespace Sys.Data.Coding
 			return string.Join(",", columns.Select(x => $"[{x}]"));
 		}
 
+		public SqlBuilder IF(SqlExpression condition, SqlBuilder then)
+		{
+			Append($"IF {condition} {then}");
+			return this;
+		}
+
+		public SqlBuilder IF(SqlExpression condition, SqlBuilder then, SqlBuilder _else)
+		{
+			Append($"IF {condition} {then} ELSE {_else}");
+			return this;
+		}
+
 		/// <summary>
 		/// concatenate 2 clauses in TWO lines
 		/// </summary>

@@ -28,7 +28,7 @@ namespace Sys.Data.Coding
 
         private readonly StringBuilder script = new StringBuilder();
 
-        private SqlExpression()
+        internal SqlExpression()
         {
         }
 
@@ -252,11 +252,12 @@ namespace Sys.Data.Coding
 
         public SqlExpression BETWEEN(SqlExpression exp1, SqlExpression exp2) => this.AffixSpace($"BETWEEN {exp1} AND {exp2}");
 
-        public SqlExpression IS() => this.WrapSpace("IS");
-        public SqlExpression IS_NULL() => this.WrapSpace("IS NULL");
-        public SqlExpression IS_NOT_NULL() => this.WrapSpace("IS NOT NULL");
-        public SqlExpression NOT() => this.WrapSpace("NOT");
-        public SqlExpression NULL() => this.WrapSpace("NULL");
+        public SqlExpression IS() => this.Append("IS");
+        public SqlExpression IS_NULL() => this.Append("IS NULL");
+        public SqlExpression IS_NOT_NULL() => this.Append("IS NOT NULL");
+        public SqlExpression NOT(SqlExpression exp) => this.Append($"NOT {exp}");
+        public SqlExpression EXISTS(SqlBuilder condition) => this.Append($"EXISTS ({condition})");
+        public SqlExpression NULL() => this.Append("NULL");
 
 
         #region +-*/, compare, logical operation
