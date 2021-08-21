@@ -24,10 +24,9 @@ namespace Sys.Data.Coding
 	/// <summary>
 	/// SQL clauses builder
 	/// </summary>
-	public class SqlBuilder : IQueryScript
+	public sealed class SqlBuilder : IQueryScript
 	{
 		private readonly List<string> script = new List<string>();
-		protected bool compound = false;
 
 		public SqlBuilder()
 		{
@@ -45,24 +44,24 @@ namespace Sys.Data.Coding
 			}
 		}
 
-		protected SqlBuilder Append(string text)
+		private SqlBuilder Append(string text)
 		{
 			script.Add(text);
 			return this;
 		}
 
-		protected SqlBuilder AppendSpace(string text)
+		private SqlBuilder AppendSpace(string text)
 		{
 			script.Add(text + " ");
 			return this;
 		}
 
-		protected SqlBuilder AppendLine(string value)
+		private SqlBuilder AppendLine(string value)
 		{
 			return Append(value).AppendLine();
 		}
 
-		protected SqlBuilder AppendLine()
+		private SqlBuilder AppendLine()
 		{
 			return Append(Environment.NewLine);
 		}
@@ -103,7 +102,7 @@ namespace Sys.Data.Coding
 			return this;
 		}
 
-		protected SqlBuilder COLUMNS(string columns)
+		private SqlBuilder COLUMNS(string columns)
 		{
 			return AppendSpace(columns);
 		}
@@ -306,7 +305,6 @@ namespace Sys.Data.Coding
 				.AppendLine(clause1.Query)
 				.AppendLine(clause2.Query);
 
-			builder.compound = true;
 			return builder;
 		}
 

@@ -22,7 +22,7 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-	public class Expression : IQueryScript
+	public sealed class Expression : IQueryScript
 	{
 		public static readonly Expression COUNT = new Expression().Append("COUNT(*)");
 		public static readonly Expression STAR = new Expression().Append("*");
@@ -295,7 +295,7 @@ namespace Sys.Data.Coding
 				expr.Append(when).AppendSpace();
 			}
 
-			if ((object)_else != null)
+			if (_else is object)
 				expr.AppendSpace("ELSE").Append(_else).AppendSpace();
 
 			expr.Append("END");
@@ -389,7 +389,7 @@ namespace Sys.Data.Coding
 
 		public static Expression operator ==(Expression exp1, Expression exp2)
 		{
-			if ((object)exp2 == null || exp2.ToString() == "NULL")
+			if (exp2 is null || exp2.ToString() == "NULL")
 			{
 				Expression exp = new Expression().Append(exp1).Append(" IS NULL");
 				return exp;
@@ -401,7 +401,7 @@ namespace Sys.Data.Coding
 
 		public static Expression operator !=(Expression exp1, Expression exp2)
 		{
-			if ((object)exp2 == null || exp2.ToString() == "NULL")
+			if (exp2 is null || exp2.ToString() == "NULL")
 			{
 				Expression exp = new Expression().Append(exp1).Append(" IS NOT NULL");
 				return exp;
