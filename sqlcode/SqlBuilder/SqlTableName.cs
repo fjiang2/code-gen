@@ -18,29 +18,118 @@ using System;
 
 namespace Sys.Data.Coding
 {
-    public class SqlTableName
-    {
-        private readonly string tableName;
-        
-        public SqlTableName(string tableName)
-        {
-            this.tableName = tableName;
-        }
+	public class SqlTableName
+	{
+		public const string dbo = "dbo";
+		public const string empty = "";
 
-        public static implicit operator SqlTableName(string tableName)
-        {
-            return new SqlTableName(tableName);
-        }
+		private readonly string databaseName;
+		private readonly string schemaName = dbo;
+		private readonly string tableName;
 
-        public static implicit operator SqlTableName(Type dpoType)
-        {
-            return new SqlTableName(dpoType.TableName());
-        }
+		public SqlTableName(string fullTableName)
+		{
+			//tableName may have format like [db.dbo.tableName], [db..tableName], or [tableName]
+			string[] t = fullTableName.Split(new char[] { '.' });
 
-        public override string ToString()
-        {
-            return tableName;
-        }
+			databaseName = "";
+			this.tableName = "";
+			if (t.Length > 2)
+			{
+				databaseName = t[0];
+				this.schemaName = t[1];
+				this.tableName = t[2];
+			}
+			else if (t.Length > 1)
+			{
+				this.schemaName = t[0];
+				this.tableName = t[1];
+			}
+			else
+				this.tableName = fullTableName;
 
-    }
+			databaseName = databaseName.Replace("[", "").Replace("]", "");
+			this.schemaName = this.schemaName.Replace("[", "").Replace("]", "");
+			this.tableName = this.tableName.Replace("[", "").Replace("]", "");
+		}
+
+		public SqlTableName(string databaseName, string schemaName, string tableName)
+		{
+			this.databaseName = databaseName;
+			this.schemaName = schemaName;
+			this.tableName = tableName;
+		}
+
+		public SqlTableName(string schemaName, string tableName)
+		{
+			this.schemaName = schemaName;
+			this.tableName = tableName;
+		}
+
+		public string SchemaName => this.schemaName;
+
+		public string DatabaseName => this.databaseName;
+
+		public string FormalName
+		{
+			get
+			{
+				if (this.schemaName != dbo && this.schemaName != empty)
+					return string.Format("[{0}].[{1}]", this.schemaName, this.tableName);
+				else
+					return string.Format("[{0}]", this.tableName);
+			}
+		}
+
+		public string ShortName
+		{
+			get
+			{
+				if (this.schemaName != dbo && this.schemaName != empty)
+				{
+					return string.Format("{0}.{1}", this.schemaName, this.tableName);
+				}
+				else
+					return this.tableName;
+			}
+		}
+
+		public string FullName
+		{
+			get
+			{
+				string _schema = this.schemaName;
+				if (_schema != dbo && this.schemaName != empty)
+				{
+					_schema = $"[{schemaName}]";
+				}
+
+				if (this.databaseName != "")
+					return $"[{databaseName}].{_schema}.[{tableName}]";
+				else if (schemaName != dbo && schemaName != empty)
+					return $"{schemaName}.[{tableName}]";
+				else
+					return this.tableName;
+			}
+		}
+
+
+
+
+		public static implicit operator SqlTableName(string tableName)
+		{
+			return new SqlTableName(tableName);
+		}
+
+		public static implicit operator SqlTableName(Type dpoType)
+		{
+			return new SqlTableName(dpoType.TableName());
+		}
+
+		public override string ToString()
+		{
+			return FormalName;
+		}
+
+	}
 }

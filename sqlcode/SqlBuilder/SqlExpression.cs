@@ -52,6 +52,7 @@ namespace Sys.Data.Coding
 
         private SqlExpression AppendSpace(string x) => Append(x).AppendSpace();
         private SqlExpression WrapSpace(string x) => AppendSpace().Append(x).AppendSpace();
+        private SqlExpression AffixSpace(string x) => AppendSpace().Append(x);
         private SqlExpression AppendSpace() => Append(" ");
 
 
@@ -75,7 +76,7 @@ namespace Sys.Data.Coding
                 exp.Append(dbo)
                     .Append(".");
 
-            if (name == "*")
+            if (name == "*" || string.IsNullOrEmpty(name))
             {
                 exp.Append("*");
             }
@@ -244,12 +245,12 @@ namespace Sys.Data.Coding
         public SqlExpression IN(params SqlExpression[] collection)
         {
             string values = string.Join(", ", collection.Select(x => x.ToString()));
-            return this.WrapSpace($"IN ({values})");
+            return this.AffixSpace($"IN ({values})");
         }
 
-        public SqlExpression IN<T>(IEnumerable<T> collection) => this.WrapSpace($"IN ({string.Join<T>(", ", collection)})");
+        public SqlExpression IN<T>(IEnumerable<T> collection) => this.AffixSpace($"IN ({string.Join<T>(", ", collection)})");
 
-        public SqlExpression BETWEEN(SqlExpression exp1, SqlExpression exp2) => this.WrapSpace($"BETWEEN {exp1} AND {exp2}");
+        public SqlExpression BETWEEN(SqlExpression exp1, SqlExpression exp2) => this.AffixSpace($"BETWEEN {exp1} AND {exp2}");
 
         public SqlExpression IS() => this.WrapSpace("IS");
         public SqlExpression IS_NULL() => this.WrapSpace("IS NULL");
