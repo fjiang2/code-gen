@@ -109,7 +109,7 @@ namespace UnitTestProject
 		public void Test_DELETE()
 		{
 			string SQL = new SqlBuilder()
-				.DELETE("Categories")
+				.DELETE_FROM("Categories")
 				.WHERE("CategoryID".ColumnName() == 8)
 				.ToString();
 
@@ -164,7 +164,7 @@ namespace UnitTestProject
 				.GROUP_BY("CategoryID")
 				.HAVING(Expression.COUNT > 10)
 				.ToString();
-			
+
 			Debug.Assert(SQL == "SELECT [CategoryID], COUNT(*) FROM [Products] GROUP BY [CategoryID] HAVING COUNT(*) > 10");
 		}
 
@@ -180,6 +180,30 @@ namespace UnitTestProject
 				.ToString();
 
 			Debug.Assert(SQL == "SELECT * FROM [Products] WHERE [UnitPrice] > 50 ORDER BY [ProductName] DESC");
+		}
+
+		[TestMethod]
+		public void Test_CASE_WHEN()
+		{
+			var case_when = Expression.CASE(
+				"CategoryID".ColumnName(),
+				new Expression[] 
+				{
+					Expression.WHEN(1, "Road"),
+					Expression.WHEN(2, "Mountain"),
+					Expression.WHEN(3, "Touring"),
+					Expression.WHEN(4, "Other sale items"),
+				},
+				"Not for sale");
+
+			var SQL = new SqlBuilder()
+				.SELECT().TOP(10)
+				.COLUMNS("ProductID".ColumnName(), "Category".Assign(case_when), "ProductName".ColumnName())
+				.FROM("Products")
+				.ORDER_BY("ProductID")
+				.ToString();
+
+			Debug.Assert(SQL == "SELECT TOP 10 [ProductID], [Category] = CASE [CategoryID] WHEN 1 THEN N'Road' WHEN 2 THEN N'Mountain' WHEN 3 THEN N'Touring' WHEN 4 THEN N'Other sale items' ELSE N'Not for sale' END, [ProductName] FROM [Products] ORDER BY [ProductID]");
 		}
 	}
 }

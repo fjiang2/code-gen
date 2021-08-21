@@ -66,7 +66,7 @@ namespace Sys.Data.Coding
 
 		public static Expression Func(this string name, params Expression[] args)
 		{
-			return Expression.Func(name, args);
+			return Expression.Function(name, args);
 		}
 
 
@@ -145,38 +145,38 @@ namespace Sys.Data.Coding
 
 		public static Expression LEN(this Expression expr)
 		{
-			return Expression.Func("LEN", expr);
+			return Expression.Function("LEN", expr);
 		}
 
 		public static Expression SUBSTRING(this Expression expr, Expression start, Expression length)
 		{
-			return Expression.Func("SUBSTRING", expr, start, length);
+			return Expression.Function("SUBSTRING", expr, start, length);
 		}
 
 
 		public static Expression SUM(this Expression expr)
 		{
-			return Expression.Func("SUM", expr);
+			return Expression.Function("SUM", expr);
 		}
 
 		public static Expression MAX(this Expression expr)
 		{
-			return Expression.Func("MAX", expr);
+			return Expression.Function("MAX", expr);
 		}
 
 		public static Expression MIN(this Expression expr)
 		{
-			return Expression.Func("MIN", expr);
+			return Expression.Function("MIN", expr);
 		}
 
 		public static Expression COUNT(this Expression expr)
 		{
-			return Expression.Func("COUNT", expr);
+			return Expression.Function("COUNT", expr);
 		}
 
 		public static Expression GETDATE()
 		{
-			return Expression.Func("GETDATE");
+			return Expression.Function("GETDATE");
 		}
 
 		public static Expression NOT(this Expression expr)
@@ -187,6 +187,11 @@ namespace Sys.Data.Coding
 		public static Expression EXISTS(this SqlBuilder sql)
 		{
 			return new Expression().EXISTS(sql);
+		}
+
+		public static Expression WHEN(this Expression condition, Expression then)
+		{
+			return Expression.WHEN(condition, then);
 		}
 	}
 }

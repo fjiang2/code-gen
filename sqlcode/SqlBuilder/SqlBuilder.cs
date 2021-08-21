@@ -186,12 +186,12 @@ namespace Sys.Data.Coding
 			return string.Join(",", values.Select(x => new SqlValue(x).ToString()));
 		}
 
-		public SqlBuilder DELETE<T>()
+		public SqlBuilder DELETE_FROM<T>()
 		{
-			return DELETE(typeof(T).TableName());
+			return DELETE_FROM(typeof(T).TableName());
 		}
 
-		public SqlBuilder DELETE(TableName tableName)
+		public SqlBuilder DELETE_FROM(TableName tableName)
 		{
 			return AppendSpace($"DELETE FROM").TABLE_NAME(tableName, null);
 		}
