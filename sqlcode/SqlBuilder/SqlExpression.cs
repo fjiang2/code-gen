@@ -75,7 +75,14 @@ namespace Sys.Data.Coding
                 exp.Append(dbo)
                     .Append(".");
 
-            exp.Append("[" + name + "]");
+            if (name == "*")
+            {
+                exp.Append("*");
+            }
+            else
+            {
+                exp.Append("[" + name + "]");
+            }
 
             return exp;
         }

@@ -41,7 +41,7 @@ namespace Sys.Data.Coding
                 foreach (string item in script)
                     builder.Append(item);
 
-                return builder.ToString();
+                return builder.ToString().Trim();
             }
         }
 
