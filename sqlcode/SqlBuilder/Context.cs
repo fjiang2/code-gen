@@ -21,32 +21,33 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-    public abstract class SqlBuilderInfo
-    {
-        //<parameter, column>
-        private readonly Dictionary<string, string> parameters = new Dictionary<string,string>();
+	public class Context
+	{
+		//<parameter, column>
+		private readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
 
-        public SqlBuilderInfo()
-        { 
-        }
+		public Context()
+		{
+		}
 
-        internal Dictionary<string, string> Parameters
-        {
-            get { return this.parameters; }
-        }
+		public Dictionary<string, string> Parameters => this.parameters;
 
-        protected void AddParam(string parameterName, string columnName)
-        {
-            if (!this.parameters.ContainsKey(parameterName))
-                this.parameters.Add(parameterName, columnName);
-        }
+		public ParameterName CreateParameter(string parameterName, string columnName)
+		{
+			if (!parameters.ContainsKey(parameterName))
+				parameters.Add(parameterName, columnName);
 
-        internal SqlBuilderInfo Merge(SqlBuilderInfo info)
-        {
-            foreach (KeyValuePair<string, string> kvp in info.parameters)
-                this.AddParam(kvp.Key, kvp.Value);
+			return new ParameterName(parameterName);
+		}
 
-            return this;
-        }
-    }
+		public ParameterName CreateParameter(string parameterName)
+		{
+			return CreateParameter(parameterName, null);
+		}
+
+		public override string ToString()
+		{
+			return parameters.ToString();
+		}
+	}
 }

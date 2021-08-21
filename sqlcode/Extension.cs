@@ -11,9 +11,6 @@ namespace Sys.Data.Coding
 			return type.Name;
 		}
 
-		public static string SqlParameterName(this string name)
-		{
-			return "@" + name.Replace(" ", "").Replace("#", "");
-		}
+		
 	}
 }

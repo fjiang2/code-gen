@@ -9,10 +9,10 @@ using Sys.CodeBuilder;
 namespace UnitTestProject
 {
     [TestClass]
-    public class UnitTestCodeBuilder
+    public class UnitTest_CodeBuilder
     {
         [TestMethod]
-        public void TestClassTypeInfo()
+        public void Test_ClassTypeInfo()
         {
             TypeInfo dict = TypeInfo.Generic<int, string>(new TypeInfo("Dictionary"));
             string code = dict.ToString();
@@ -24,7 +24,7 @@ namespace UnitTestProject
         }
 
         [TestMethod]
-        public void TestNewInstance()
+        public void Test_NewInstance()
         {
             Statement sent = new Statement();
             sent.Assign("x", new New(typeof(string[]), new Expression[] { new Value("a"), new Value("b"), new Value("c") }));
@@ -73,7 +73,7 @@ namespace UnitTestProject
         }
 
         [TestMethod]
-        public void TestImplictOperator()
+        public void Test_ImplictOperator()
         {
             var _implict = Operator.Implicit(new TypeInfo(typeof(Expression)), new Parameter(new TypeInfo(typeof(int)), "value"));
             _implict.Body.Return("new Expression(value)");
@@ -85,7 +85,7 @@ namespace UnitTestProject
         }
 
         [TestMethod]
-        public void TestExplictOperator()
+        public void Test_ExplictOperator()
         {
             var _explict = Operator.Explicit(new TypeInfo(typeof(string)), new Parameter(new TypeInfo(typeof(Expression)), "expr"));
             _explict.Body.Return("expr.ToString()");
@@ -98,7 +98,7 @@ namespace UnitTestProject
 
 
         [TestMethod]
-        public void TestOperator()
+        public void Test_Operator()
         {
             var _operator = new Operator(
                 new TypeInfo(typeof(Expression)),

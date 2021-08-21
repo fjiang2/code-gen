@@ -22,23 +22,23 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-	public static class SqlExpressionExtension
+	public static class FluentExpression
 	{
 		#region SqlExpr/SqlClause: ColumName/ParameterName/AddParameter
 
 
-		public static SqlExpression Assign(this string name, object value)
+		public static Expression Assign(this string name, object value)
 		{
-			return SqlExpression.Assign(name, value);
+			return Expression.Assign(name, value);
 		}
 
-		public static SqlExpression Equal(this string name, object value)
+		public static Expression Equal(this string name, object value)
 		{
-			return SqlExpression.Equal(name, value);
+			return Expression.Equal(name, value);
 		}
 
 
-		public static SqlExpression AS(this string columnName, string name)
+		public static Expression AS(this string columnName, string name)
 		{
 			return columnName.ColumnName().AS(name);
 		}
@@ -48,25 +48,25 @@ namespace Sys.Data.Coding
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public static SqlExpression ColumnName(this string name)
+		public static Expression ColumnName(this string name)
 		{
-			return SqlExpression.ColumnName(name, null);
+			return Expression.ColumnName(name, null);
 		}
 
-		public static SqlExpression ColumnName(this string name, string dbo)
+		public static Expression ColumnName(this string name, string dbo)
 		{
-			return SqlExpression.ColumnName(name, dbo);
+			return Expression.ColumnName(name, dbo);
 		}
 
-		public static SqlExpression ColumnName(this string[] names)
+		public static Expression ColumnName(this string[] names)
 		{
 			var L = names.Select(column => column.ColumnName()).ToArray();
-			return SqlExpression.Join(L);
+			return Expression.Join(L);
 		}
 
-		public static SqlExpression Func(this string name, params SqlExpression[] args)
+		public static Expression Func(this string name, params Expression[] args)
 		{
-			return SqlExpression.Func(name, args);
+			return Expression.Func(name, args);
 		}
 
 
@@ -75,117 +75,118 @@ namespace Sys.Data.Coding
 		/// </summary>
 		/// <param name="any"></param>
 		/// <returns></returns>
-		public static SqlExpression Inject(this string any)
+		public static Expression Inject(this string any)
 		{
-			return SqlExpression.Write(any);
+			return Expression.Write(any);
 		}
+
+
 		/// <summary>
 		/// "name" -> "@name"
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public static SqlExpression ParameterName(this string name)
+		public static Expression ParameterName(this Context context, string name)
 		{
-			return SqlExpression.ParameterName(name);
+			return Expression.ParameterName(context, name);
 		}
-
 
 		/// <summary>
 		/// "name" -> "[name]=@name"
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public static SqlExpression AddParameter(this string columnName)
+		public static Expression AddParameter(this Context context, string columnName)
 		{
-			return SqlExpression.AddParameter(columnName, columnName);
+			return Expression.AddParameter(context, columnName, columnName);
 		}
 
 		/// <summary>
 		/// Add SQL parameter
-		/// e.g. NodeDpo._ID.AddParameter(TaskDpo._ParentID) -> "[ID]=@ParentID"
+		/// e.g. context.AddParameter(NodeDpo._ID, TaskDpo._ParentID) -> "[ID]=@ParentID"
 		/// </summary>
 		/// <param name="columnName"></param>
 		/// <param name="parameterName"></param>
 		/// <returns></returns>
-		public static SqlExpression AddParameter(this string columnName, string parameterName)
+		public static Expression AddParameter(this Context context, string columnName, string parameterName)
 		{
-			return SqlExpression.AddParameter(columnName, parameterName);
+			return Expression.AddParameter(context, columnName, parameterName);
 		}
 
 		#endregion
 
-		public static SqlExpression AND(this SqlExpression exp1, SqlExpression exp2)
+		public static Expression AND(this Expression exp1, Expression exp2)
 		{
-			return SqlExpression.OPR(exp1, "AND", exp2);
+			return Expression.OPR(exp1, "AND", exp2);
 		}
 
-		public static SqlExpression AND(this IEnumerable<SqlExpression> expl)
+		public static Expression AND(this IEnumerable<Expression> expl)
 		{
 			if (expl.Count() > 1)
-				return SqlExpression.OPR(expl.First(), "AND", expl.Skip(1).ToArray());
+				return Expression.OPR(expl.First(), "AND", expl.Skip(1).ToArray());
 			else
 				return expl.First();
 		}
 
 
-		public static SqlExpression OR(this SqlExpression exp1, SqlExpression exp2)
+		public static Expression OR(this Expression exp1, Expression exp2)
 		{
-			return SqlExpression.OPR(exp1, "OR", exp2);
+			return Expression.OPR(exp1, "OR", exp2);
 		}
 
-		public static SqlExpression OR(this IEnumerable<SqlExpression> expl)
+		public static Expression OR(this IEnumerable<Expression> expl)
 		{
 			if (expl.Count() > 1)
-				return SqlExpression.OPR(expl.First(), "OR", expl.Skip(1).ToArray());
+				return Expression.OPR(expl.First(), "OR", expl.Skip(1).ToArray());
 			else
 				return expl.First();
 		}
 
 
-		public static SqlExpression LEN(this SqlExpression expr)
+		public static Expression LEN(this Expression expr)
 		{
-			return SqlExpression.Func("LEN", expr);
+			return Expression.Func("LEN", expr);
 		}
 
-		public static SqlExpression SUBSTRING(this SqlExpression expr, SqlExpression start, SqlExpression length)
+		public static Expression SUBSTRING(this Expression expr, Expression start, Expression length)
 		{
-			return SqlExpression.Func("SUBSTRING", expr, start, length);
+			return Expression.Func("SUBSTRING", expr, start, length);
 		}
 
 
-		public static SqlExpression SUM(this SqlExpression expr)
+		public static Expression SUM(this Expression expr)
 		{
-			return SqlExpression.Func("SUM", expr);
+			return Expression.Func("SUM", expr);
 		}
 
-		public static SqlExpression MAX(this SqlExpression expr)
+		public static Expression MAX(this Expression expr)
 		{
-			return SqlExpression.Func("MAX", expr);
+			return Expression.Func("MAX", expr);
 		}
 
-		public static SqlExpression MIN(this SqlExpression expr)
+		public static Expression MIN(this Expression expr)
 		{
-			return SqlExpression.Func("MIN", expr);
+			return Expression.Func("MIN", expr);
 		}
 
-		public static SqlExpression COUNT(this SqlExpression expr)
+		public static Expression COUNT(this Expression expr)
 		{
-			return SqlExpression.Func("COUNT", expr);
+			return Expression.Func("COUNT", expr);
 		}
 
-		public static SqlExpression GETDATE()
+		public static Expression GETDATE()
 		{
-			return SqlExpression.Func("GETDATE");
+			return Expression.Func("GETDATE");
 		}
 
-		public static SqlExpression NOT(this SqlExpression expr)
+		public static Expression NOT(this Expression expr)
 		{
-			return new SqlExpression().NOT(expr);
+			return new Expression().NOT(expr);
 		}
 
-		public static SqlExpression EXISTS(this SqlBuilder sql)
+		public static Expression EXISTS(this SqlBuilder sql)
 		{
-			return new SqlExpression().EXISTS(sql);
+			return new Expression().EXISTS(sql);
 		}
 	}
 }

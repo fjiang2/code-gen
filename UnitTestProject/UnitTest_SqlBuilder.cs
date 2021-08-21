@@ -11,7 +11,7 @@ using Sys.Data.Coding;
 namespace UnitTestProject
 {
 	[TestClass]
-	public class UnitTestSQL
+	public class UnitTest_SqlBuilder
 	{
 		[TestMethod]
 		public void Test_SELECT()
@@ -140,13 +140,13 @@ namespace UnitTestProject
 					)
 				.WHERE("CategoryID".ColumnName() == 8);
 
-			string SQL = new SqlBuilder()
+			string SQL = new Statement()
 				.IF(select.EXISTS().NOT(), insert, update)
 				.ToString();
 
 			Debug.Assert(SQL == "IF NOT EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
 
-			SQL = new SqlBuilder()
+			SQL = new Statement()
 				.IF(select.EXISTS(), insert, update)
 				.ToString();
 
@@ -159,10 +159,10 @@ namespace UnitTestProject
 		{
 			var SQL = new SqlBuilder()
 				.SELECT()
-				.COLUMNS("CategoryID".ColumnName(), SqlExpression.COUNT)
+				.COLUMNS("CategoryID".ColumnName(), Expression.COUNT)
 				.FROM("Products")
 				.GROUP_BY("CategoryID")
-				.HAVING(SqlExpression.COUNT > 10)
+				.HAVING(Expression.COUNT > 10)
 				.ToString();
 			
 			Debug.Assert(SQL == "SELECT [CategoryID], COUNT(*) FROM [Products] GROUP BY [CategoryID] HAVING COUNT(*) > 10");

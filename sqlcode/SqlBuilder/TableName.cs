@@ -18,7 +18,7 @@ using System;
 
 namespace Sys.Data.Coding
 {
-	public class SqlTableName
+	public class TableName
 	{
 		public const string dbo = "dbo";
 		public const string empty = "";
@@ -27,7 +27,7 @@ namespace Sys.Data.Coding
 		private readonly string schemaName = dbo;
 		private readonly string tableName;
 
-		public SqlTableName(string fullTableName)
+		public TableName(string fullTableName)
 		{
 			//tableName may have format like [db.dbo.tableName], [db..tableName], or [tableName]
 			string[] t = fullTableName.Split(new char[] { '.' });
@@ -53,14 +53,14 @@ namespace Sys.Data.Coding
 			this.tableName = this.tableName.Replace("[", "").Replace("]", "");
 		}
 
-		public SqlTableName(string databaseName, string schemaName, string tableName)
+		public TableName(string databaseName, string schemaName, string tableName)
 		{
 			this.databaseName = databaseName;
 			this.schemaName = schemaName;
 			this.tableName = tableName;
 		}
 
-		public SqlTableName(string schemaName, string tableName)
+		public TableName(string schemaName, string tableName)
 		{
 			this.schemaName = schemaName;
 			this.tableName = tableName;
@@ -116,14 +116,14 @@ namespace Sys.Data.Coding
 
 
 
-		public static implicit operator SqlTableName(string tableName)
+		public static implicit operator TableName(string tableName)
 		{
-			return new SqlTableName(tableName);
+			return new TableName(tableName);
 		}
 
-		public static implicit operator SqlTableName(Type dpoType)
+		public static implicit operator TableName(Type dpoType)
 		{
-			return new SqlTableName(dpoType.TableName());
+			return new TableName(dpoType.TableName());
 		}
 
 		public override string ToString()

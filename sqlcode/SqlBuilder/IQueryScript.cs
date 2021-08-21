@@ -16,51 +16,13 @@
 //--------------------------------------------------------------------------------------------------//
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using System.Text;
-using System.Reflection;
 
 namespace Sys.Data.Coding
 {
-    public class SqlColumn
+    public interface IQueryScript
     {
-        private readonly string fieldName;
-        private bool saved = true;
-        private bool identity = false;
-
-        public Type DataType { get; }
-        public bool Primary { get; set; }
-        public string Caption { get; set; }
-
-        public SqlColumn(string columnName, Type dbType)
-        {
-            this.fieldName = columnName;
-            this.Caption = columnName;
-            this.DataType = dbType;
-        }
-
-        public string Name => this.fieldName;
-
-        public bool Saved
-        {
-            get { return this.saved; }
-            set { this.saved = value; }
-        }
-
-        public bool Identity
-        {
-            get { return this.identity; }
-            set
-            {
-                this.identity = value;
-                if (this.identity)
-                    saved = false;
-            }
-        }
-
-        public override string ToString()
-        {
-            return fieldName;
-        }
+        string Query { get; }
     }
 }
