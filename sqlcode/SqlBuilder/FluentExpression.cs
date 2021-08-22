@@ -24,13 +24,17 @@ namespace Sys.Data.Coding
 {
     public static class FluentExpression
     {
-
-        public static Expression Assign(this string name, object value)
+        public static Expression VariableName(this string name)
         {
-            return Expression.OPR(new Expression(new ColumnName(name)), "=", new Expression(new SqlValue(value)));
+            return new Expression(new VariableName(name));
         }
 
-        public static Expression AS(this string columnName, string name)
+        public static Expression ColumnAssigned(this string columnName, object value)
+        {
+            return columnName.ColumnName().Assign(value);
+        }
+
+        public static Expression ColumnAs(this string columnName, string name)
         {
             return columnName.ColumnName().AS(name);
         }
@@ -50,17 +54,10 @@ namespace Sys.Data.Coding
             return new Expression(new ColumnName(dbo, name));
         }
 
-        public static Expression ColumnName(this string[] names)
-        {
-            var L = names.Select(column => column.ColumnName()).ToArray();
-            return Expression.Join(", ", L);
-        }
-
-        public static Expression Func(this string name, params Expression[] args)
+        public static Expression Function(this string name, params Expression[] args)
         {
             return Expression.Function(name, args);
         }
-
 
         /// <summary>
         /// "name" -> "@name"
@@ -75,24 +72,19 @@ namespace Sys.Data.Coding
 
         public static Expression AND(this IEnumerable<Expression> expList)
         {
-            return Expression.OPR("AND", expList);
+            return Expression.AND(expList.ToArray());
         }
 
 
         public static Expression OR(this IEnumerable<Expression> expList)
         {
-            return Expression.OPR("OR", expList);
+            return Expression.OR(expList.ToArray());
         }
 
-
-        public static Expression NOT(this Expression expr)
-        {
-            return new Expression().NOT(expr);
-        }
 
         public static Expression EXISTS(this SqlBuilder sql)
         {
-            return new Expression().EXISTS(sql);
+            return Expression.EXISTS(sql);
         }
     }
 }

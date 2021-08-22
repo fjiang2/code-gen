@@ -34,19 +34,20 @@ namespace Sys.Data.Coding
         /// Compound expression
         /// </summary>
         private bool compound = false;
-
-        internal Expression()
+        
+        internal Expression(VariableName name)
         {
+            script.Append(name);
         }
 
-        internal Expression(ColumnName columnName)
+        internal Expression(ColumnName name)
         {
-            script.Append(columnName);
+            script.Append(name);
         }
 
-        internal Expression(ParameterName parameterName)
+        internal Expression(ParameterName name)
         {
-            script.Append(parameterName);
+            script.Append(name);
         }
 
         internal Expression(SqlValue value)
@@ -133,8 +134,9 @@ namespace Sys.Data.Coding
             return new Expression(string.Format("{0} {1}", opr, Expr2Str(exp1)));
         }
 
-      
-        public Expression Assign(object value) => OPR(this, "=", new Expression(new SqlValue(value)));
+
+        public static Expression Assign(Expression name, object value) => OPR(name, "=", new Expression(new SqlValue(value)));
+        public Expression Assign(object value) => Assign(this, value);
         public Expression Assign() => new Expression(this).WrapSpace("=");
 
         public Expression AS(VariableName name) => new Expression(this).WrapSpace("AS").Append(name);
@@ -143,14 +145,15 @@ namespace Sys.Data.Coding
         public Expression IN(params Expression[] collection) => new Expression(this).AffixSpace($"IN ({Join(", ", collection)})");
         public Expression IN<T>(IEnumerable<T> collection) => this.AffixSpace($"IN ({string.Join<T>(", ", collection)})");
 
-        public Expression IS() => new Expression(this).Append("IS");
-        public Expression IS_NULL() => new Expression(this).Append("IS NULL");
-        public Expression IS_NOT_NULL() => new Expression(this).Append("IS NOT NULL");
-        public Expression NULL() => new Expression(this).Append("NULL");
+        public Expression IS() => new Expression(this).AffixSpace("IS");
+        public Expression IS_NULL() => new Expression(this).AffixSpace("IS NULL");
+        public Expression IS_NOT_NULL() => new Expression(this).AffixSpace("IS NOT NULL");
+        public Expression NULL() => new Expression(this).AffixSpace("NULL");
 
-        public Expression NOT(Expression exp) => OPR("NOT", exp);
-        public Expression BETWEEN(Expression exp1, Expression exp2) => new Expression(this).WrapSpace($"BETWEEN").Append(OPR(exp1, "AND", exp2));
-        public Expression EXISTS(SqlBuilder condition) => new Expression(this).Append($"EXISTS ({condition})");
+        public static Expression BETWEEN(Expression expr, Expression expr1, Expression expr2) => new Expression(expr).WrapSpace($"BETWEEN").Append(OPR(expr1, "AND", expr2));
+        public Expression BETWEEN(Expression expr1, Expression expr2) => BETWEEN(this, expr1, expr2);
+
+        public static Expression EXISTS(SqlBuilder condition) => new Expression($"EXISTS ({condition})");
 
         public Expression CASE(Expression _case)
         {
@@ -463,15 +466,17 @@ namespace Sys.Data.Coding
             return Function("COUNT", this);
         }
 
-        public Expression AND(Expression expr)
-        {
-            return OPR(this, "AND", expr);
-        }
+        public static Expression AND(params Expression[] expList) => OPR("AND", expList);
+        public static Expression AND(Expression expr1, Expression expr2) => OPR(expr1, "AND", expr2);
+        public Expression AND(Expression expr) => AND(this, expr);
 
-        public Expression OR(Expression expr)
-        {
-            return OPR(this, "OR", expr);
-        }
+        public static Expression OR(params Expression[] expList) => OPR("OR", expList);
+        public static Expression OR(Expression expr1, Expression expr2) => OPR(expr1, "OR", expr2);
+        public Expression OR(Expression expr) => OR(this, expr);
+
+        public static Expression NOT(Expression expr) => OPR("NOT", expr);
+        public Expression NOT() => NOT(this);
+
 
         public override bool Equals(object obj)
         {
@@ -487,5 +492,7 @@ namespace Sys.Data.Coding
         {
             return script.ToString();
         }
+
+
     }
 }

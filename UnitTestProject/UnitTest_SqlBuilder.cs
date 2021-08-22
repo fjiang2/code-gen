@@ -66,7 +66,7 @@ namespace UnitTestProject
             Debug.Assert(SQL == "SELECT [ProductID] AS Id, [ProductName] AS Name FROM [Products]");
 
             SQL = new SqlBuilder()
-                .SELECT().COLUMNS("ProductID".AS("Id"), "ProductName".AS("Name"))
+                .SELECT().COLUMNS("ProductID".ColumnAs("Id"), "ProductName".ColumnAs("Name"))
                 .FROM("Products")
                 .ToString();
 
@@ -104,9 +104,21 @@ namespace UnitTestProject
             string SQL = new SqlBuilder()
                 .UPDATE("Categories")
                 .SET(
-                    "CategoryName".Assign("Seafood"),
-                    "Description".Assign("Seaweed and fish"),
-                    "Picture".Assign(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".ColumnAssigned("Seafood"),
+                    "Description".ColumnAssigned("Seaweed and fish"),
+                    "Picture".ColumnAssigned(new byte[] { 0x15, 0xC2 })
+                    )
+                .WHERE("CategoryID".ColumnName() == 8)
+                .ToString();
+
+            Debug.Assert(SQL == "UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
+
+            SQL = new SqlBuilder()
+                .UPDATE("Categories")
+                .SET(
+                    "CategoryName".ColumnName().Assign("Seafood"),
+                    "Description".ColumnName().Assign("Seaweed and fish"),
+                    "Picture".ColumnName().Assign(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".ColumnName() == 8)
                 .ToString();
@@ -143,9 +155,9 @@ namespace UnitTestProject
             var update = new SqlBuilder()
                 .UPDATE(Categories)
                 .SET(
-                    "CategoryName".Assign("Seafood"),
-                    "Description".Assign("Seaweed and fish"),
-                    "Picture".Assign(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".ColumnAssigned("Seafood"),
+                    "Description".ColumnAssigned("Seaweed and fish"),
+                    "Picture".ColumnAssigned(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".ColumnName() == 8);
 
@@ -207,7 +219,7 @@ namespace UnitTestProject
 
             var SQL = new SqlBuilder()
                 .SELECT().TOP(10)
-                .COLUMNS("ProductID".ColumnName(), "Category".Assign(case_when), "ProductName".ColumnName())
+                .COLUMNS("ProductID".ColumnName(), "Category".ColumnAssigned(case_when), "ProductName".ColumnName())
                 .FROM("Products")
                 .ORDER_BY("ProductID")
                 .ToString();
@@ -259,6 +271,114 @@ namespace UnitTestProject
             var dt2 = new SqlCmd(conn, SQL, context.Parameters).FillDataTable();
             Debug.Assert(dt2.Rows.Count >= 5);
 #endif
+
+        }
+
+        [TestMethod]
+        public void Test_AND_OR()
+        {
+            var where1 = new Expression[]
+            {
+                "OrderDate".ColumnName() <= Expression.GETDATE,
+                "ShipCity".ColumnName() == "London",
+                "EmployeeID".ColumnName() ==  7
+            }.AND();
+
+            var where2 = Expression.AND(
+                "OrderDate".ColumnName() <= Expression.GETDATE,
+                "ShipCity".ColumnName() == "London",
+                "EmployeeID".ColumnName() == 7);
+ 
+            Debug.Assert(where1.ToString() == where2.ToString());
+
+            var SQL = new SqlBuilder()
+            .SELECT()
+            .COLUMNS()
+            .FROM("Orders")
+            .WHERE(new Expression[]
+            {
+                "OrderDate".ColumnName() <= Expression.GETDATE,
+                "ShipCity".ColumnName() == "London",
+                "EmployeeID".ColumnName() ==  7
+            }.AND())
+            .ToString();
+
+            Debug.Assert(SQL == "SELECT * FROM [Orders] WHERE [OrderDate] <= GETDATE() AND [ShipCity] = N'London' AND [EmployeeID] = 7");
+
+            var _and = ("OrderDate".ColumnName() <= Expression.GETDATE).AND("EmployeeID".ColumnName() == 7);
+            Debug.Assert(_and.ToString() == "([OrderDate] <= GETDATE()) AND ([EmployeeID] = 7)");
+
+            var _or = ("OrderDate".ColumnName() <= Expression.GETDATE).OR("EmployeeID".ColumnName() == 7);
+            Debug.Assert(_or.ToString() == "([OrderDate] <= GETDATE()) OR ([EmployeeID] = 7)");
+        }
+
+        [TestMethod]
+        public void Test_Function()
+        {
+            var min_price = "MIN".Function("UnitPrice".ColumnName());
+            var where = ("CategoryId".ColumnName() == 5).AND("UnitsInStock".ColumnName() > 100);
+
+            var SQL = new SqlBuilder()
+                .SELECT()
+                .COLUMNS(min_price)
+                .FROM("Products")
+                .WHERE(where).
+                ToString();
+
+            Debug.Assert(SQL == "SELECT MIN([UnitPrice]) FROM [Products] WHERE ([CategoryId] = 5) AND ([UnitsInStock] > 100)");
+
+            SQL = new SqlBuilder()
+                .SELECT()
+                .COLUMNS("UnitPrice".ColumnName().MIN())
+                .FROM("Products")
+                .WHERE(where).
+                ToString();
+
+            Debug.Assert(SQL == "SELECT MIN([UnitPrice]) FROM [Products] WHERE ([CategoryId] = 5) AND ([UnitsInStock] > 100)");
+
+        }
+
+        [TestMethod]
+        public void Test_IN_SELECT()
+        {
+            var ProductId = "ProductId".ColumnName();
+            var CategoryId = "CategoryId".ColumnName();
+
+            var select = new SqlBuilder()
+                .SELECT()
+                .COLUMNS(ProductId)
+                .FROM("Products")
+                .WHERE(CategoryId == 7);
+
+
+            var SQL = new SqlBuilder()
+                .SELECT()
+                .COLUMNS()
+                .FROM("Order Details")
+                .WHERE(ProductId.IN(select)).
+                ToString();
+
+            Debug.Assert(SQL == "SELECT * FROM [Order Details] WHERE [ProductId] IN (SELECT [ProductId] FROM [Products] WHERE [CategoryId] = 7)");
+
+        }
+
+        [TestMethod]
+        public void Test_IS_NOT_NULL()
+        {
+            var ProductId = "ProductId".ColumnName();
+            var CategoryId = "CategoryId".ColumnName();
+
+            var SQL = new SqlBuilder()
+                .SELECT()
+                .COLUMNS()
+                .FROM("Categories")
+                .WHERE(CategoryId.IS_NOT_NULL()
+                    & "CategoryName".ColumnName().IS_NULL()
+                    & "Description".ColumnName().IS().NULL()
+                    )
+                .ToString();
+
+            Debug.Assert(SQL == "SELECT * FROM [Categories] WHERE ([CategoryId] IS NOT NULL AND [CategoryName] IS NULL) AND [Description] IS NULL");
 
         }
     }
