@@ -96,24 +96,24 @@ namespace Sys.Data.Coding
         /// <summary>
         /// Expression to string
         /// </summary>
-        /// <param name="exp"></param>
+        /// <param name="expr"></param>
         /// <returns></returns>
-        private static string Expr2Str(Expression exp)
+        private static string Expr2Str(Expression expr)
         {
-            if (exp.compound)
-                return string.Format("({0})", exp);
+            if (expr.compound)
+                return string.Format("({0})", expr);
             else
-                return exp.ToString();
+                return expr.ToString();
         }
 
-        private static Expression Join(string separator, IEnumerable<Expression> expList)
+        private static Expression Join(string separator, IEnumerable<Expression> exprList)
         {
-            return new Expression(string.Join(separator, expList));
+            return new Expression(string.Join(separator, exprList));
         }
 
-        private static Expression OPR(Expression exp1, string opr, Expression exp2)
+        private static Expression OPR(Expression expr1, string opr, Expression expr2)
         {
-            Expression exp = new Expression(string.Format("{0} {1} {2}", Expr2Str(exp1), opr, Expr2Str(exp2)))
+            Expression exp = new Expression(string.Format("{0} {1} {2}", Expr2Str(expr1), opr, Expr2Str(expr2)))
             {
                 compound = true
             };
@@ -122,16 +122,16 @@ namespace Sys.Data.Coding
         }
 
         // AND(A==1, B!=3, C>4) => "(A=1 AND B<>3 AND C>4)"
-        private static Expression OPR(string opr, IEnumerable<Expression> expList)
+        private static Expression OPR(string opr, IEnumerable<Expression> exprList)
         {
-            Expression exp = Join($" {opr} ", expList);
+            Expression exp = Join($" {opr} ", exprList);
             exp.compound = true;
             return exp;
         }
 
-        private static Expression OPR(string opr, Expression exp1)
+        private static Expression OPR(string opr, Expression expr)
         {
-            return new Expression(string.Format("{0} {1}", opr, Expr2Str(exp1)));
+            return new Expression(string.Format("{0} {1}", opr, Expr2Str(expr)));
         }
 
 
@@ -158,11 +158,11 @@ namespace Sys.Data.Coding
         public static Expression LIKE(Expression expr, Expression pattern) => OPR(expr, "LIKE", pattern); 
         public Expression LIKE(Expression pattern) => LIKE(this, pattern);
 
-        public static Expression AND(params Expression[] expList) => OPR("AND", expList);
+        public static Expression AND(params Expression[] exprList) => OPR("AND", exprList);
         public static Expression AND(Expression expr1, Expression expr2) => OPR(expr1, "AND", expr2);
         public Expression AND(Expression expr) => AND(this, expr);
 
-        public static Expression OR(params Expression[] expList) => OPR("OR", expList);
+        public static Expression OR(params Expression[] exprList) => OPR("OR", exprList);
         public static Expression OR(Expression expr1, Expression expr2) => OPR(expr1, "OR", expr2);
         public Expression OR(Expression expr) => OR(this, expr);
 

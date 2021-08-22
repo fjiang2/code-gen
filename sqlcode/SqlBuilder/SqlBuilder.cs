@@ -113,7 +113,7 @@ namespace Sys.Data.Coding
 				return COLUMNS("*");
 			else
 			{
-				var L = columns.Select(column => column.ColumnName());
+				var L = columns.Select(column => column.AsColumn());
 				return COLUMNS(string.Join(",", L));
 			}
 		}

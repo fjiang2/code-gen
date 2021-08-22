@@ -24,67 +24,102 @@ namespace Sys.Data.Coding
 {
     public static class FluentExpression
     {
-        public static Expression VariableName(this string name)
+        /// <summary>
+        /// Create variable 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Expression AsVariable(this string name)
         {
             return new Expression(new VariableName(name));
         }
 
-        public static Expression ColumnAssigned(this string columnName, object value)
-        {
-            return columnName.ColumnName().Assign(value);
-        }
-
-        public static Expression ColumnAs(this string columnName, string name)
-        {
-            return columnName.ColumnName().AS(name);
-        }
-
         /// <summary>
-        /// "name" -> "[name]"
+        /// Create parameter: @parameterName with value
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="context"></param>
+        /// <param name="parameterName">name of parameter</param>
+        /// <param name="value">the value of parameter</param>
         /// <returns></returns>
-        public static Expression ColumnName(this string name)
-        {
-            return new Expression(new ColumnName(name));
-        }
-
-        public static Expression ColumnName(this string name, string dbo)
-        {
-            return new Expression(new ColumnName(dbo, name));
-        }
-
-        public static Expression Function(this string name, params Expression[] args)
-        {
-            return Expression.Function(name, args);
-        }
-
-        /// <summary>
-        /// "name" -> "@name"
-        /// </summary>
-        /// <param name="parameterName"></param>
-        /// <returns></returns>
-        public static Expression ParameterName(this Context context, string parameterName, object value = null)
+        public static Expression AsParameter(this Context context, string parameterName, object value = null)
         {
             return new Expression(context.CreateParameter(parameterName, value));
         }
 
-
-        public static Expression AND(this IEnumerable<Expression> expList)
+        /// <summary>
+        /// Create column name: "name" -> [name]
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Expression AsColumn(this string name)
         {
-            return Expression.AND(expList.ToArray());
+            return new Expression(new ColumnName(name));
+        }
+
+        /// <summary>
+        /// Create column name:  [Categories].[CategoryID], C.[CategoryID]
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+
+        public static Expression AsColumn(this string name, string owner)
+        {
+            return new Expression(new ColumnName(owner, name));
+        }
+
+        /// <summary>
+        /// Assing value to column: [column-Name] = value
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Expression AsColumnAssign(this string columnName, object value)
+        {
+            return columnName.AsColumn().Assign(value);
+        }
+
+        /// <summary>
+        /// Create AND operation chain
+        /// </summary>
+        /// <param name="exprList"></param>
+        /// <returns></returns>
+        public static Expression AND(this IEnumerable<Expression> exprList)
+        {
+            return Expression.AND(exprList.ToArray());
+        }
+
+        /// <summary>
+        /// Create OR operation chain
+        /// </summary>
+        /// <param name="exprList"></param>
+        /// <returns></returns>
+        public static Expression OR(this IEnumerable<Expression> exprList)
+        {
+            return Expression.OR(exprList.ToArray());
         }
 
 
-        public static Expression OR(this IEnumerable<Expression> expList)
+        /// <summary>
+        /// Create SQL: EXISTS(SELECT * FROM Products)
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public static Expression EXISTS(this SqlBuilder select)
         {
-            return Expression.OR(expList.ToArray());
+            return Expression.EXISTS(select);
         }
 
-
-        public static Expression EXISTS(this SqlBuilder sql)
+        /// <summary>
+        /// Create function call
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static Expression Function(this string func, params Expression[] args)
         {
-            return Expression.EXISTS(sql);
+            return Expression.Function(func, args);
         }
+
     }
 }

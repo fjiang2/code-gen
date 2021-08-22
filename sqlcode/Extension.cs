@@ -13,12 +13,12 @@ namespace Sys.Data.Coding
 
         public static Expression SqlType(this Type type)
         {
-            return type.ToSqlType().VariableName();
+            return type.ToSqlType().AsVariable();
         }
         
         public static Expression DateIntervalType(this DateInterval interval)
         {
-            return interval.ToString().VariableName();
+            return interval.ToString().AsVariable();
         }
 
         private static string ToSqlType(this Type type)

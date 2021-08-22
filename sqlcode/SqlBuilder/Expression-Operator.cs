@@ -32,6 +32,11 @@ namespace Sys.Data.Coding
             return new Expression(new SqlValue(value));     // ch= 'c'
         }
 
+        public static implicit operator Expression(byte[] value)
+        {
+            return new Expression(new SqlValue(value));
+        }
+
         public static implicit operator Expression(byte value)
         {
             return new Expression(new SqlValue(value));
