@@ -32,7 +32,7 @@ namespace Sys.Data.Coding
         {
         }
 
-        public string Query
+        public string Script
         {
             get
             {
@@ -197,23 +197,18 @@ namespace Sys.Data.Coding
         }
 
 
-        #region WHERE clause
-
-        public SqlBuilder WHERE(Expression exp)
+        public SqlBuilder WHERE(Expression expr)
         {
-            AppendSpace($"WHERE {exp}");
+            return WHERE(expr.Script);
+        }
+
+        private SqlBuilder WHERE(string condition)
+        {
+            if (!string.IsNullOrEmpty(condition))
+                AppendSpace($"WHERE {condition}");
+
             return this;
         }
-
-        public SqlBuilder WHERE(string exp)
-        {
-            if (string.IsNullOrEmpty(exp))
-                return this;
-
-            return AppendSpace($"WHERE {exp}");
-        }
-
-        #endregion
 
 
         #region INNER/OUT JOIN clause
@@ -231,9 +226,9 @@ namespace Sys.Data.Coding
 
         public SqlBuilder JOIN(TableName tableName, string alias = null) => AppendSpace("JOIN").TABLE_NAME(tableName, alias);
 
-        public SqlBuilder ON(Expression exp)
+        public SqlBuilder ON(Expression expr)
         {
-            AppendSpace($"ON {exp}");
+            AppendSpace($"ON {expr}");
             return this;
         }
 
@@ -292,8 +287,6 @@ namespace Sys.Data.Coding
         public SqlBuilder ALTER() => AppendSpace("ALTER");
         public SqlBuilder CREATE() => AppendSpace("CREATE");
         public SqlBuilder DROP() => AppendSpace("DROP");
-        public SqlBuilder AS() => AppendSpace("AS");
-        public SqlBuilder PROCEDURE(string procedureName) => AppendSpace("PROCEDURE").AppendSpace(procedureName);
 
         private static string JoinColumns(IEnumerable<Expression> columns)
         {
@@ -306,41 +299,12 @@ namespace Sys.Data.Coding
         }
 
 
-        /// <summary>
-        /// concatenate 2 clauses in TWO lines
-        /// </summary>
-        /// <param name="clause1"></param>
-        /// <param name="clause2"></param>
-        /// <returns></returns>
-        public static SqlBuilder operator +(SqlBuilder clause1, SqlBuilder clause2)
-        {
-            var builder = new SqlBuilder()
-                .AppendLine(clause1.Query)
-                .AppendLine(clause2.Query);
-
-            return builder;
-        }
-
-        /// <summary>
-        /// concatenate 2 clauses in one line
-        /// </summary>
-        /// <param name="clause1"></param>
-        /// <param name="clause2"></param>
-        /// <returns></returns>
-        public static SqlBuilder operator -(SqlBuilder clause1, SqlBuilder clause2)
-        {
-            return new SqlBuilder()
-                .Append(clause1.Query)
-                .Append(" ")
-                .Append(clause2.Query);
-        }
-
         public static explicit operator string(SqlBuilder sql)
         {
-            return sql.Query;
+            return sql.Script;
         }
 
 
-        public override string ToString() => Query;
+        public override string ToString() => Script;
     }
 }

@@ -21,7 +21,7 @@ namespace Sys.Data.Coding
             return interval.ToString().AsVariable();
         }
 
-        private static string ToSqlType(this Type type)
+        public static string ToSqlType(this Type type)
         {
             if (type == typeof(bool))
                 return "BIT";

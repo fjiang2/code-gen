@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace Sys.Data.Coding
 {
-	public class ParameterName
+    public class ParameterName
 	{
 		private readonly string name;
 

@@ -67,8 +67,8 @@ namespace Sys.Data.Coding
         }
 
 
-        public string Query => script.ToString();
-        public Expression this[Expression exp] => this.Append("[").Append(exp).Append("]");
+        public string Script => script.ToString();
+        public Expression this[Expression expr] => this.Append("[").Append(expr).Append("]");
 
         private Expression Append(Expression expr)
         {
@@ -113,20 +113,20 @@ namespace Sys.Data.Coding
 
         private static Expression OPR(Expression expr1, string opr, Expression expr2)
         {
-            Expression exp = new Expression(string.Format("{0} {1} {2}", Expr2Str(expr1), opr, Expr2Str(expr2)))
+            Expression expr = new Expression(string.Format("{0} {1} {2}", Expr2Str(expr1), opr, Expr2Str(expr2)))
             {
                 compound = true
             };
 
-            return exp;
+            return expr;
         }
 
         // AND(A==1, B!=3, C>4) => "(A=1 AND B<>3 AND C>4)"
         private static Expression OPR(string opr, IEnumerable<Expression> exprList)
         {
-            Expression exp = Join($" {opr} ", exprList);
-            exp.compound = true;
-            return exp;
+            Expression expr = Join($" {opr} ", exprList);
+            expr.compound = true;
+            return expr;
         }
 
         private static Expression OPR(string opr, Expression expr)
@@ -134,20 +134,24 @@ namespace Sys.Data.Coding
             return new Expression(string.Format("{0} {1}", opr, Expr2Str(expr)));
         }
 
-
+        /// <summary>
+        /// Assignment: name = value
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static Expression LET(Expression name, object value) => OPR(name, "=", new Expression(new SqlValue(value)));
         public Expression LET(object value) => LET(this, value);
         public Expression LET() => new Expression(this).WrapSpace("=");
 
         public Expression AS(VariableName name) => new Expression(this).WrapSpace("AS").Append(name);
 
-        public Expression IN(SqlBuilder select) => new Expression(this).WrapSpace($"IN ({select.Query})");
+        public Expression IN(SqlBuilder select) => new Expression(this).WrapSpace($"IN ({select.Script})");
         public Expression IN(params Expression[] collection) => new Expression(this).AffixSpace($"IN ({Join(", ", collection)})");
 
         public static Expression BETWEEN(Expression expr, Expression expr1, Expression expr2) => new Expression(expr).WrapSpace($"BETWEEN").Append(OPR(expr1, "AND", expr2));
         public Expression BETWEEN(Expression expr1, Expression expr2) => BETWEEN(this, expr1, expr2);
 
-        public Expression IS() => new Expression(this).AffixSpace("IS");
         public Expression IS_NULL() => new Expression(this).AffixSpace("IS NULL");
         public Expression IS_NOT_NULL() => new Expression(this).AffixSpace("IS NOT NULL");
 

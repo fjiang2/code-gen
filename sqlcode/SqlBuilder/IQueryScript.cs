@@ -23,6 +23,6 @@ namespace Sys.Data.Coding
 {
     public interface IQueryScript
     {
-        string Query { get; }
+        string Script { get; }
     }
 }

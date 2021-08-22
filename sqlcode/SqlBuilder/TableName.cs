@@ -90,7 +90,9 @@ namespace Sys.Data.Coding
 					return string.Format("{0}.{1}", this.schemaName, this.tableName);
 				}
 				else
+				{
 					return this.tableName;
+				}
 			}
 		}
 
@@ -109,7 +111,7 @@ namespace Sys.Data.Coding
 				else if (schemaName != dbo && schemaName != empty)
 					return $"{schemaName}.[{tableName}]";
 				else
-					return this.tableName;
+					return $"[{this.tableName}]";
 			}
 		}
 
@@ -128,7 +130,7 @@ namespace Sys.Data.Coding
 
 		public override string ToString()
 		{
-			return FormalName;
+			return FullName;
 		}
 
 	}

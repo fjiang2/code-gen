@@ -123,99 +123,97 @@ namespace Sys.Data.Coding
 
         #region operator + - * / %, and, or, not
 
-        public static Expression operator -(Expression exp1)
+        public static Expression operator -(Expression expr)
         {
-            return OPR("-", exp1);
+            return OPR("-", expr);
         }
 
-        public static Expression operator +(Expression exp1)
+        public static Expression operator +(Expression expr)
         {
-            return OPR("+", exp1);
+            return OPR("+", expr);
         }
 
-        public static Expression operator +(Expression exp1, Expression exp2)
+        public static Expression operator +(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "+", exp2);
+            return OPR(expr1, "+", expr2);
         }
 
-        public static Expression operator -(Expression exp1, Expression exp2)
+        public static Expression operator -(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "-", exp2);
+            return OPR(expr1, "-", expr2);
         }
 
-        public static Expression operator *(Expression exp1, Expression exp2)
+        public static Expression operator *(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "*", exp2);
+            return OPR(expr1, "*", expr2);
         }
 
-        public static Expression operator /(Expression exp1, Expression exp2)
+        public static Expression operator /(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "/", exp2);
+            return OPR(expr1, "/", expr2);
         }
 
-        public static Expression operator %(Expression exp1, Expression exp2)
+        public static Expression operator %(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "%", exp2);
+            return OPR(expr1, "%", expr2);
         }
 
 
-        public static Expression operator ==(Expression exp1, Expression exp2)
+        public static Expression operator ==(Expression expr1, Expression expr2)
         {
-            if (exp2 is null || exp2.ToString() == "NULL")
+            if (expr2 is null || expr2.ToString() == "NULL")
             {
-                Expression exp = new Expression(exp1).Append(" IS NULL");
-                return exp;
+                return new Expression(expr1).Append(" IS NULL");
             }
 
-            return OPR(exp1, "=", exp2);
+            return OPR(expr1, "=", expr2);
         }
 
 
-        public static Expression operator !=(Expression exp1, Expression exp2)
+        public static Expression operator !=(Expression expr1, Expression expr2)
         {
-            if (exp2 is null || exp2.ToString() == "NULL")
+            if (expr2 is null || expr2.ToString() == "NULL")
             {
-                Expression exp = new Expression(exp1).Append(" IS NOT NULL");
-                return exp;
+                return new Expression(expr1).Append(" IS NOT NULL");
             }
 
-            return OPR(exp1, "<>", exp2);
+            return OPR(expr1, "<>", expr2);
         }
 
-        public static Expression operator >(Expression exp1, Expression exp2)
+        public static Expression operator >(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, ">", exp2);
+            return OPR(expr1, ">", expr2);
         }
 
-        public static Expression operator <(Expression exp1, Expression exp2)
+        public static Expression operator <(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "<", exp2);
+            return OPR(expr1, "<", expr2);
         }
 
-        public static Expression operator >=(Expression exp1, Expression exp2)
+        public static Expression operator >=(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, ">=", exp2);
+            return OPR(expr1, ">=", expr2);
         }
 
-        public static Expression operator <=(Expression exp1, Expression exp2)
+        public static Expression operator <=(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "<=", exp2);
+            return OPR(expr1, "<=", expr2);
         }
 
 
-        public static Expression operator &(Expression exp1, Expression exp2)
+        public static Expression operator &(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "AND", exp2);
+            return OPR(expr1, "AND", expr2);
         }
 
-        public static Expression operator |(Expression exp1, Expression exp2)
+        public static Expression operator |(Expression expr1, Expression expr2)
         {
-            return OPR(exp1, "OR", exp2);
+            return OPR(expr1, "OR", expr2);
         }
 
-        public static Expression operator ~(Expression exp)
+        public static Expression operator ~(Expression expr)
         {
-            return OPR("NOT", exp);
+            return OPR("NOT", expr);
         }
         
         #endregion

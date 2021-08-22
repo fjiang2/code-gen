@@ -15,12 +15,12 @@ namespace Sys.Data.Coding
 
         public static Expression Function(string func, params Expression[] expressions)
         {
-            Expression exp = new Expression(func)
+            Expression expr = new Expression(func)
                 .Append("(")
                 .Append(string.Join<Expression>(",", expressions))
                 .Append(")");
 
-            return exp;
+            return expr;
         }
 
 

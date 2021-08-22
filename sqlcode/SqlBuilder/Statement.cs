@@ -4,79 +4,99 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-	public class Statement 
-	{
-		private readonly List<string> lines = new List<string>();
-		protected bool compound = false;
+    public class Statement
+    {
+        private readonly List<string> lines = new List<string>();
+        protected bool compound = false;
 
-		public Statement()
-		{
-		}
+        public static readonly Statement BREAK = new Statement().AppendLine("BREAK");
+        public static readonly Statement CONTINUE = new Statement().AppendLine("CONTINUE");
+        public static readonly Statement RETURN = new Statement().AppendLine("RETURN");
 
-		private Statement AppendLine(string line)
-		{
-			lines.Add(line);
-			return this;
-		}
+        public Statement()
+        {
+        }
 
-		public Statement Compound(params Statement[] statements)
-		{
-			AppendLine("BEGIN");
+        private Statement AppendLine(string line)
+        {
+            lines.Add(line);
+            return this;
+        }
 
-			foreach (var statement in statements)
-			{
-				AppendLine(new string(' ', 2) + statement.ToString());
-			}
+        public Statement Compound(params Statement[] statements)
+        {
+            AppendLine("BEGIN");
 
-			AppendLine("END");
+            foreach (var statement in statements)
+            {
+                AppendLine(new string(' ', 2) + statement.ToString());
+            }
 
-			compound = true;
+            AppendLine("END");
 
-			return this;
-		}
+            compound = true;
 
-		public Statement IF(Expression condition, Statement then)
-		{
-			AppendLine($"IF {condition} {then}");
-			return this;
-		}
+            return this;
+        }
 
-		public Statement IF(Expression condition, Statement then, Statement _else)
-		{
-			AppendLine($"IF {condition} {then} ELSE {_else}");
-			return this;
-		}
+        public Statement IF(Expression condition, Statement then)
+        {
+            AppendLine($"IF {condition} {then}");
+            return this;
+        }
 
-		public Statement WHILE(Expression condition, Statement loop)
-		{
-			AppendLine($"WHILE {condition} {loop}");
-			return this;
-		}
+        public Statement IF(Expression condition, Statement then, Statement _else)
+        {
+            AppendLine($"IF {condition} {then} ELSE {_else}");
+            return this;
+        }
 
-		public Statement DECLARE(VariableName name, Type type)
-		{
-			AppendLine($"DECLARE @{name} AS {type.SqlType()}");
-			return this;
-		}
+        public Statement WHILE(Expression condition, Statement loop)
+        {
+            AppendLine($"WHILE {condition} {loop}");
+            return this;
+        }
 
-		public Statement SET(VariableName name, Expression value)
-		{
-			AppendLine($"SET @{name} = {value}");
-			return this;
-		}
+        public Statement DECLARE(VariableName name, Type type)
+        {
+            AppendLine($"DECLARE @{name} AS {type.SqlType()}");
+            return this;
+        }
 
-		public static implicit operator Statement(SqlBuilder sql)
-		{
-			return new Statement().AppendLine(sql.Query);
-		}
+        public Statement SET(VariableName name, Expression value)
+        {
+            AppendLine($"SET @{name} = {value}");
+            return this;
+        }
 
-		public override string ToString()
-		{
-			StringBuilder builder = new StringBuilder();
-			foreach (string line in lines)
-				builder.Append(line);
+        public Statement CREATE_FUNCTION(string functionName, Parameter result, params Parameter[] args)
+        {
+            string _args = string.Join<Parameter>(", ", args);
+            AppendLine($"CREATE FUNCTION {functionName}({_args})");
+            AppendLine($"RETURN {result}");
+            return this;
+        }
 
-			return builder.ToString().Trim();
-		}
-	}
+        public Statement CREATE_PROCEDURE(string procedureName, params Parameter[] args)
+        {
+            string _args = string.Join<Parameter>(", ", args);
+            AppendLine($"CREATE PROCEDURE {procedureName}({_args})");
+            AppendLine("AS");
+            return this;
+        }
+
+        public static implicit operator Statement(SqlBuilder sql)
+        {
+            return new Statement().AppendLine(sql.Script);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            foreach (string line in lines)
+                builder.Append(line);
+
+            return builder.ToString().Trim();
+        }
+    }
 }
