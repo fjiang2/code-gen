@@ -1,6 +1,4 @@
-﻿//                                                                                                  //
-//--------------------------------------------------------------------------------------------------//
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +8,7 @@ namespace Sys.Data.Coding
 {
     public sealed partial class Expression
     {
+        public static readonly Expression COUNT_STAR = new Expression("COUNT(*)");
         public static readonly Expression GETDATE = Function("GETDATE");
         public static readonly Expression GETUTCDATE = Function("GETUTCDATE");
         public static readonly Expression SYSDATETIME = Function("SYSDATETIME");
@@ -69,6 +68,7 @@ namespace Sys.Data.Coding
         public Expression SUM() => Function("SUM", this);
         public Expression MAX() => Function("MAX", this);
         public Expression MIN() => Function("MIN", this);
+        public Expression AVG() => Function("AVG", this);
         public Expression COUNT() => Function("COUNT", this);
     }
 }

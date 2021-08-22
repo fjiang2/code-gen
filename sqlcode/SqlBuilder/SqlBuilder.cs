@@ -224,6 +224,7 @@ namespace Sys.Data.Coding
 		public SqlBuilder INNER() => AppendSpace("INNER");
 
 		public SqlBuilder OUTTER() => AppendSpace("OUTTER");
+		public SqlBuilder FULL() => AppendSpace("FULL");
 
 		public SqlBuilder JOIN<T>(string alias = null) => JOIN(typeof(T).TableName(), alias);
 

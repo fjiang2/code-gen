@@ -374,7 +374,7 @@ namespace UnitTestProject
                 .FROM("Categories")
                 .WHERE(CategoryId.IS_NOT_NULL()
                     & "CategoryName".ColumnName().IS_NULL()
-                    & "Description".ColumnName().IS().NULL()
+                    & "Description".ColumnName().IS_NULL()
                     )
                 .ToString();
 

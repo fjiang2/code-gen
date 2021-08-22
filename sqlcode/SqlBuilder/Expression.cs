@@ -24,8 +24,8 @@ namespace Sys.Data.Coding
 {
     public sealed partial class Expression : IQueryScript
     {
+        public static readonly Expression NULL = new Expression("NULL");
         public static readonly Expression STAR = new Expression("*");
-        public static readonly Expression COUNT_STAR = new Expression("COUNT(*)");
         
 
         private readonly StringBuilder script = new StringBuilder();
@@ -106,12 +106,12 @@ namespace Sys.Data.Coding
                 return exp.ToString();
         }
 
-        internal static Expression Join(string separator, IEnumerable<Expression> expList)
+        private static Expression Join(string separator, IEnumerable<Expression> expList)
         {
             return new Expression(string.Join(separator, expList));
         }
 
-        internal static Expression OPR(Expression exp1, string opr, Expression exp2)
+        private static Expression OPR(Expression exp1, string opr, Expression exp2)
         {
             Expression exp = new Expression(string.Format("{0} {1} {2}", Expr2Str(exp1), opr, Expr2Str(exp2)))
             {
@@ -122,7 +122,7 @@ namespace Sys.Data.Coding
         }
 
         // AND(A==1, B!=3, C>4) => "(A=1 AND B<>3 AND C>4)"
-        internal static Expression OPR(string opr, IEnumerable<Expression> expList)
+        private static Expression OPR(string opr, IEnumerable<Expression> expList)
         {
             Expression exp = Join($" {opr} ", expList);
             exp.compound = true;
@@ -143,289 +143,20 @@ namespace Sys.Data.Coding
 
         public Expression IN(SqlBuilder select) => new Expression(this).WrapSpace($"IN ({select.Query})");
         public Expression IN(params Expression[] collection) => new Expression(this).AffixSpace($"IN ({Join(", ", collection)})");
-        public Expression IN<T>(IEnumerable<T> collection) => this.AffixSpace($"IN ({string.Join<T>(", ", collection)})");
-
-        public Expression IS() => new Expression(this).AffixSpace("IS");
-        public Expression IS_NULL() => new Expression(this).AffixSpace("IS NULL");
-        public Expression IS_NOT_NULL() => new Expression(this).AffixSpace("IS NOT NULL");
-        public Expression NULL() => new Expression(this).AffixSpace("NULL");
 
         public static Expression BETWEEN(Expression expr, Expression expr1, Expression expr2) => new Expression(expr).WrapSpace($"BETWEEN").Append(OPR(expr1, "AND", expr2));
         public Expression BETWEEN(Expression expr1, Expression expr2) => BETWEEN(this, expr1, expr2);
 
+        public Expression IS() => new Expression(this).AffixSpace("IS");
+        public Expression IS_NULL() => new Expression(this).AffixSpace("IS NULL");
+        public Expression IS_NOT_NULL() => new Expression(this).AffixSpace("IS NOT NULL");
+
+
         public static Expression EXISTS(SqlBuilder condition) => new Expression($"EXISTS ({condition})");
 
-        public Expression CASE(Expression _case)
-        {
-            var expr = new Expression(this)
-                .AppendSpace("CASE")
-                .Append(_case);
 
-            return expr;
-        }
-
-
-        public Expression WHEN(Expression condition)
-        {
-            return new Expression(this).WrapSpace("WHEN").Append(condition);
-        }
-
-        public Expression THEN(Expression then)
-        {
-            return new Expression(this).WrapSpace("THEN").Append(then);
-        }
-
-        public Expression ELSE(Expression _else)
-        {
-            return new Expression(this).WrapSpace("ELSE").Append(_else).AppendSpace();
-        }
-
-        public Expression END()
-        {
-            return new Expression(this).Append("END");
-        }
-
-        public static Expression WHEN(Expression condition, Expression then)
-        {
-            return new Expression("WHEN").AppendSpace().Append(condition).WrapSpace("THEN").Append(then);
-        }
-
-        public static Expression CASE(Expression _case, Expression[] whens, Expression _else)
-        {
-            var expr = new Expression("CASE")
-                .AppendSpace()
-                .Append(_case)
-                .AppendSpace();
-
-            foreach (var when in whens)
-            {
-                expr.Append(when).AppendSpace();
-            }
-
-            if (_else is object)
-                expr.AppendSpace("ELSE").Append(_else).AppendSpace();
-
-            expr.Append("END");
-
-            return expr;
-        }
-
-        #region implicit section
-
-        public static implicit operator Expression(VariableName value)
-        {
-            return new Expression(value);    // s= 'string'
-        }
-
-        public static implicit operator Expression(string value)
-        {
-            return new Expression(new SqlValue(value));    // s= 'string'
-        }
-
-        public static implicit operator Expression(bool value)
-        {
-            return new Expression(new SqlValue(value));    // b=1 or b=0
-        }
-
-
-        public static implicit operator Expression(char value)
-        {
-            return new Expression(new SqlValue(value));     // ch= 'c'
-        }
-
-        public static implicit operator Expression(byte value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(sbyte value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-
-        public static implicit operator Expression(int value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(short value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(ushort value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(uint value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(long value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(ulong value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(double value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(float value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(decimal value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(Guid value)
-        {
-            return new Expression(new SqlValue(value));
-        }
-
-        public static implicit operator Expression(DateTime value)
-        {
-            return new Expression(new SqlValue(value));   //dt = '10/20/2012'
-        }
-
-        public static implicit operator Expression(DBNull value)
-        {
-            return new Expression(new SqlValue(value));   // NULL
-        }
-
-        public static implicit operator Expression(Enum value)
-        {
-            return new Expression(new SqlValue(Convert.ToInt32(value)));
-        }
-
-        #endregion
-
-
-        /// <summary>
-        /// string s = (string)expr;
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <returns></returns>
-        public static explicit operator string(Expression expr)
-        {
-            return expr.ToString();
-        }
-
-
-
-        #region +-*/, compare, logical operation
-
-
-        public static Expression operator -(Expression exp1)
-        {
-            return OPR("-", exp1);
-        }
-
-        public static Expression operator +(Expression exp1)
-        {
-            return OPR("+", exp1);
-        }
-
-        public static Expression operator +(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "+", exp2);
-        }
-
-        public static Expression operator -(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "-", exp2);
-        }
-
-        public static Expression operator *(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "*", exp2);
-        }
-
-        public static Expression operator /(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "/", exp2);
-        }
-
-        public static Expression operator %(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "%", exp2);
-        }
-
-
-        public static Expression operator ==(Expression exp1, Expression exp2)
-        {
-            if (exp2 is null || exp2.ToString() == "NULL")
-            {
-                Expression exp = new Expression(exp1).Append(" IS NULL");
-                return exp;
-            }
-
-            return OPR(exp1, "=", exp2);
-        }
-
-
-        public static Expression operator !=(Expression exp1, Expression exp2)
-        {
-            if (exp2 is null || exp2.ToString() == "NULL")
-            {
-                Expression exp = new Expression(exp1).Append(" IS NOT NULL");
-                return exp;
-            }
-
-            return OPR(exp1, "<>", exp2);
-        }
-
-        public static Expression operator >(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, ">", exp2);
-        }
-
-        public static Expression operator <(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "<", exp2);
-        }
-
-        public static Expression operator >=(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, ">=", exp2);
-        }
-
-        public static Expression operator <=(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "<=", exp2);
-        }
-
-
-        public static Expression operator &(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "AND", exp2);
-        }
-
-        public static Expression operator |(Expression exp1, Expression exp2)
-        {
-            return OPR(exp1, "OR", exp2);
-        }
-
-        public static Expression operator ~(Expression exp)
-        {
-            return OPR("NOT", exp);
-        }
-
-        #endregion
-
-      
-       
+        public static Expression LIKE(Expression expr, Expression pattern) => OPR(expr, "LIKE", pattern); 
+        public Expression LIKE(Expression pattern) => LIKE(this, pattern);
 
         public static Expression AND(params Expression[] expList) => OPR("AND", expList);
         public static Expression AND(Expression expr1, Expression expr2) => OPR(expr1, "AND", expr2);
@@ -453,7 +184,5 @@ namespace Sys.Data.Coding
         {
             return script.ToString();
         }
-
-
     }
 }
