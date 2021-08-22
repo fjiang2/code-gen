@@ -11,11 +11,6 @@ namespace Sys.Data.Coding
 
         #region implicit section
 
-        public static implicit operator Expression(VariableName value)
-        {
-            return new Expression(value);    // s= 'string'
-        }
-
         public static implicit operator Expression(string value)
         {
             return new Expression(new SqlValue(value));    // s= 'string'

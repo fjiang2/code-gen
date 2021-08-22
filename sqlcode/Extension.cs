@@ -4,18 +4,18 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-	static class Extension
-	{
-		public static string TableName(this Type type)
-		{
-			return type.Name;
-		}
+    static class Extension
+    {
+        public static string TableName(this Type type)
+        {
+            return type.Name;
+        }
 
         public static Expression SqlType(this Type type)
         {
             return type.ToSqlType().AsVariable();
         }
-        
+
         public static Expression DateIntervalType(this DateInterval interval)
         {
             return interval.ToString().AsVariable();
@@ -74,6 +74,19 @@ namespace Sys.Data.Coding
                 return "INT";
 
             throw new Exception($"Type {type} cannot be converted into SqlDbType");
-        } 
+        }
+
+        public static StringType GetStringType(string text)
+        {
+            if (text.StartsWith("@"))
+                return StringType.Parameter;
+
+            string[] L1 = text.Split(new char[] { '.' });
+            if (L1.Length == 0)
+                return StringType.String;
+
+
+            return StringType.String;
+        }
     }
 }

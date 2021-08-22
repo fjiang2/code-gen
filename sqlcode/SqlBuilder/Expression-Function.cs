@@ -56,13 +56,7 @@ namespace Sys.Data.Coding
         public Expression RTRIM() => Function("RTRIM", this);
         public Expression STR() => Function("STR", this);
         public Expression REPLACE(Expression old_string, Expression new_string) => Function("REPLACE", this, old_string, new_string);
-        public Expression CONCAT(params Expression[] args)
-        {
-            var list = new List<Expression>();
-            list.Add(this);
-            list.AddRange(args);
-            return Function("CONCAT", list.ToArray());
-        }
+        public Expression CONCAT(params Expression[] args) => Function("CONCAT", Concat(this, args));
 
 
         public Expression SUM() => Function("SUM", this);
@@ -70,5 +64,23 @@ namespace Sys.Data.Coding
         public Expression MIN() => Function("MIN", this);
         public Expression AVG() => Function("AVG", this);
         public Expression COUNT() => Function("COUNT", this);
+
+        public Expression IFNULL(Expression defaultValue) => Function("IFNULL", this, defaultValue);
+        public Expression ISNULL(Expression defaultValue) => Function("ISNULL", this, defaultValue);
+
+        /// <summary>
+        /// Return the first non-null value in a list
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Expression COALESCE(params Expression[] args) => Function("COALESCE", Concat(this, args));
+
+        private static Expression[] Concat(Expression head, Expression[] tail)
+        {
+            var list = new List<Expression>();
+            list.Add(head);
+            list.AddRange(tail);
+            return list.ToArray();
+        }
     }
 }

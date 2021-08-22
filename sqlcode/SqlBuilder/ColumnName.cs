@@ -6,25 +6,25 @@ namespace Sys.Data.Coding
 {
     public class ColumnName
     {
-        private readonly string parent;
+        private readonly string tableName;
         private readonly string name;
 
-        public ColumnName(string name)
+        public ColumnName(string columnName)
         {
-            this.name = name;
+            this.name = columnName;
         }
 
-        public ColumnName(string parent, string name)
+        public ColumnName(string tableName, string columnName)
         {
-            this.parent = parent;
-            this.name = name;
+            this.tableName = tableName;
+            this.name = columnName;
         }
 
         public override string ToString()
         {
             StringBuilder text = new StringBuilder();
-            if (parent != null)
-                text.Append(parent).Append(".");
+            if (tableName != null)
+                text.Append(tableName).Append(".");
 
             if (name == "*" || string.IsNullOrEmpty(name))
                 text.Append("*");
@@ -33,5 +33,11 @@ namespace Sys.Data.Coding
 
             return text.ToString();
         }
+
+        public static explicit operator Expression(ColumnName columnName)
+        {
+            return new Expression(columnName);
+        }
+
     }
 }

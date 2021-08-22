@@ -62,6 +62,11 @@ namespace Sys.Data.Coding
 		{
 			return this.id.CompareTo(other);
 		}
+
+		public static explicit operator Expression(VariableName variableName)
+		{
+			return new Expression(variableName);
+		}
 	}
 }
 

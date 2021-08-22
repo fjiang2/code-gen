@@ -27,22 +27,22 @@ namespace Sys.Data.Coding
         /// <summary>
         /// Create variable 
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="variableName"></param>
         /// <returns></returns>
-        public static Expression AsVariable(this string name)
+        public static Expression AsVariable(this string variableName)
         {
-            return new Expression(new VariableName(name));
+            return new Expression(new VariableName(variableName));
         }
 
         /// <summary>
         /// Assing value to variable: variable = value
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="variableName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Expression LetVaribleBe(this string name, object value)
+        public static Expression LetVaribleBe(this string variableName, object value)
         {
-            return name.AsVariable().LET(value);
+            return variableName.AsVariable().LET(value);
         }
 
         /// <summary>
@@ -60,23 +60,23 @@ namespace Sys.Data.Coding
         /// <summary>
         /// Create column name: "name" -> [name]
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="columnName"></param>
         /// <returns></returns>
-        public static Expression AsColumn(this string name)
+        public static Expression AsColumn(this string columnName)
         {
-            return new Expression(new ColumnName(name));
+            return new Expression(new ColumnName(columnName));
         }
 
         /// <summary>
         /// Create column name:  [Categories].[CategoryID], C.[CategoryID]
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="owner"></param>
+        /// <param name="columnName"></param>
+        /// <param name="tableName"></param>
         /// <returns></returns>
 
-        public static Expression AsColumn(this string name, string owner)
+        public static Expression AsColumn(this string columnName, string tableName)
         {
-            return new Expression(new ColumnName(owner, name));
+            return new Expression(new ColumnName(tableName, columnName));
         }
 
         /// <summary>
