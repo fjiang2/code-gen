@@ -35,6 +35,17 @@ namespace Sys.Data.Coding
         }
 
         /// <summary>
+        /// Assing value to variable: variable = value
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Expression LetVaribleBe(this string name, object value)
+        {
+            return name.AsVariable().LET(value);
+        }
+
+        /// <summary>
         /// Create parameter: @parameterName with value
         /// </summary>
         /// <param name="context"></param>
@@ -69,15 +80,16 @@ namespace Sys.Data.Coding
         }
 
         /// <summary>
-        /// Assing value to column: [column-Name] = value
+        /// Assing value to column: [column-name] = value
         /// </summary>
         /// <param name="columnName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Expression AsColumnAssign(this string columnName, object value)
+        public static Expression LetColumnBe(this string columnName, object value)
         {
-            return columnName.AsColumn().Assign(value);
+            return columnName.AsColumn().LET(value);
         }
+
 
         /// <summary>
         /// Create AND operation chain

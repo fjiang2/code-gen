@@ -104,9 +104,9 @@ namespace UnitTestProject
             string SQL = new SqlBuilder()
                 .UPDATE("Categories")
                 .SET(
-                    "CategoryName".AsColumnAssign("Seafood"),
-                    "Description".AsColumnAssign("Seaweed and fish"),
-                    "Picture".AsColumnAssign(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".LetColumnBe("Seafood"),
+                    "Description".LetColumnBe("Seaweed and fish"),
+                    "Picture".LetColumnBe(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".AsColumn() == 8)
                 .ToString();
@@ -116,9 +116,9 @@ namespace UnitTestProject
             SQL = new SqlBuilder()
                 .UPDATE("Categories")
                 .SET(
-                    "CategoryName".AsColumn().Assign("Seafood"),
-                    "Description".AsColumn().Assign("Seaweed and fish"),
-                    "Picture".AsColumn().Assign(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".AsColumn().LET("Seafood"),
+                    "Description".AsColumn().LET("Seaweed and fish"),
+                    Expression.LET("Picture".AsColumn(), new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".AsColumn() == 8)
                 .ToString();
@@ -155,9 +155,9 @@ namespace UnitTestProject
             var update = new SqlBuilder()
                 .UPDATE(Categories)
                 .SET(
-                    "CategoryName".AsColumnAssign("Seafood"),
-                    "Description".AsColumnAssign("Seaweed and fish"),
-                    "Picture".AsColumnAssign(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".LetColumnBe("Seafood"),
+                    "Description".LetColumnBe("Seaweed and fish"),
+                    "Picture".LetColumnBe(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".AsColumn() == 8);
 
@@ -219,7 +219,7 @@ namespace UnitTestProject
 
             var SQL = new SqlBuilder()
                 .SELECT().TOP(10)
-                .COLUMNS("ProductID".AsColumn(), "Category".AsColumnAssign(case_when), "ProductName".AsColumn())
+                .COLUMNS("ProductID".AsColumn(), "Category".LetColumnBe(case_when), "ProductName".AsColumn())
                 .FROM("Products")
                 .ORDER_BY("ProductID")
                 .ToString();
@@ -230,7 +230,7 @@ namespace UnitTestProject
                 .SELECT().TOP(10)
                 .COLUMNS("ProductID".AsColumn(),
                     "Category".AsColumn()
-                        .Assign()
+                        .LET()
                         .CASE("CategoryID".AsColumn())
                         .WHEN(1).THEN("Road")
                         .WHEN(2).THEN("Mountain")
@@ -288,7 +288,7 @@ namespace UnitTestProject
                 "OrderDate".AsColumn() <= Expression.GETDATE,
                 "ShipCity".AsColumn() == "London",
                 "EmployeeID".AsColumn() == 7);
- 
+
             Debug.Assert(where1.ToString() == where2.ToString());
 
             var SQL = new SqlBuilder()
@@ -388,7 +388,7 @@ namespace UnitTestProject
             var SQL = new SqlBuilder()
                 .SELECT()
                 .COLUMNS(
-                    "OrderDate".AsColumn().DATEDIFF(DateInterval.day, "ShippedDate".AsColumn()).AS("Day"), 
+                    "OrderDate".AsColumn().DATEDIFF(DateInterval.day, "ShippedDate".AsColumn()).AS("Day"),
                     "Freight".AsColumn().CONVERT<int>().AS("Freight"),
                     Expression.STAR)
                 .FROM("Orders")

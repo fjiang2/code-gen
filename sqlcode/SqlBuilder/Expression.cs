@@ -135,9 +135,9 @@ namespace Sys.Data.Coding
         }
 
 
-        public static Expression Assign(Expression name, object value) => OPR(name, "=", new Expression(new SqlValue(value)));
-        public Expression Assign(object value) => Assign(this, value);
-        public Expression Assign() => new Expression(this).WrapSpace("=");
+        public static Expression LET(Expression name, object value) => OPR(name, "=", new Expression(new SqlValue(value)));
+        public Expression LET(object value) => LET(this, value);
+        public Expression LET() => new Expression(this).WrapSpace("=");
 
         public Expression AS(VariableName name) => new Expression(this).WrapSpace("AS").Append(name);
 
