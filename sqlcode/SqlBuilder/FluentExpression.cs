@@ -22,155 +22,77 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-	public static class FluentExpression
-	{
-		#region SqlExpr/SqlClause: ColumName/ParameterName/AddParameter
+    public static class FluentExpression
+    {
+
+        public static Expression Assign(this string name, object value)
+        {
+            return Expression.OPR(new Expression(new ColumnName(name)), "=", new Expression(new SqlValue(value)));
+        }
+
+        public static Expression AS(this string columnName, string name)
+        {
+            return columnName.ColumnName().AS(name);
+        }
+
+        /// <summary>
+        /// "name" -> "[name]"
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Expression ColumnName(this string name)
+        {
+            return new Expression(new ColumnName(name));
+        }
+
+        public static Expression ColumnName(this string name, string dbo)
+        {
+            return new Expression(new ColumnName(dbo, name));
+        }
+
+        public static Expression ColumnName(this string[] names)
+        {
+            var L = names.Select(column => column.ColumnName()).ToArray();
+            return Expression.Join(", ", L);
+        }
+
+        public static Expression Func(this string name, params Expression[] args)
+        {
+            return Expression.Function(name, args);
+        }
 
 
-		public static Expression Assign(this string name, object value)
-		{
-			return Expression.Assign(name, value);
-		}
-
-		public static Expression AS(this string columnName, string name)
-		{
-			return columnName.ColumnName().AS(name);
-		}
-
-		/// <summary>
-		/// "name" -> "[name]"
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public static Expression ColumnName(this string name)
-		{
-			return Expression.ColumnName(name, null);
-		}
-
-		public static Expression ColumnName(this string name, string dbo)
-		{
-			return Expression.ColumnName(name, dbo);
-		}
-
-		public static Expression ColumnName(this string[] names)
-		{
-			var L = names.Select(column => column.ColumnName()).ToArray();
-			return Expression.Join(L);
-		}
-
-		public static Expression Func(this string name, params Expression[] args)
-		{
-			return Expression.Function(name, args);
-		}
+        /// <summary>
+        /// "name" -> "@name"
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <returns></returns>
+        public static Expression ParameterName(this Context context, string parameterName, string columnName = null)
+        {
+            return new Expression(context.CreateParameter(parameterName, columnName));
+        }
 
 
-	
-		/// <summary>
-		/// "name" -> "@name"
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public static Expression ParameterName(this Context context, string name)
-		{
-			return Expression.ParameterName(context, name);
-		}
-
-		/// <summary>
-		/// "name" -> "[name]=@name"
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public static Expression AddParameter(this Context context, string columnName)
-		{
-			return Expression.AddParameter(context, columnName, columnName);
-		}
-
-		/// <summary>
-		/// Add SQL parameter
-		/// e.g. context.AddParameter(NodeDpo._ID, TaskDpo._ParentID) -> "[ID]=@ParentID"
-		/// </summary>
-		/// <param name="columnName"></param>
-		/// <param name="parameterName"></param>
-		/// <returns></returns>
-		public static Expression AddParameter(this Context context, string columnName, string parameterName)
-		{
-			return Expression.AddParameter(context, columnName, parameterName);
-		}
-
-		#endregion
-
-		public static Expression AND(this Expression exp1, Expression exp2)
-		{
-			return Expression.OPR(exp1, "AND", exp2);
-		}
-
-		public static Expression AND(this IEnumerable<Expression> expl)
-		{
-			if (expl.Count() > 1)
-				return Expression.OPR(expl.First(), "AND", expl.Skip(1).ToArray());
-			else
-				return expl.First();
-		}
+        public static Expression AND(this IEnumerable<Expression> expList)
+        {
+            return Expression.OPR("AND", expList);
+        }
 
 
-		public static Expression OR(this Expression exp1, Expression exp2)
-		{
-			return Expression.OPR(exp1, "OR", exp2);
-		}
-
-		public static Expression OR(this IEnumerable<Expression> expl)
-		{
-			if (expl.Count() > 1)
-				return Expression.OPR(expl.First(), "OR", expl.Skip(1).ToArray());
-			else
-				return expl.First();
-		}
+        public static Expression OR(this IEnumerable<Expression> expList)
+        {
+            return Expression.OPR("OR", expList);
+        }
 
 
-		public static Expression LEN(this Expression expr)
-		{
-			return Expression.Function("LEN", expr);
-		}
+        public static Expression NOT(this Expression expr)
+        {
+            return new Expression().NOT(expr);
+        }
 
-		public static Expression SUBSTRING(this Expression expr, Expression start, Expression length)
-		{
-			return Expression.Function("SUBSTRING", expr, start, length);
-		}
-
-
-		public static Expression SUM(this Expression expr)
-		{
-			return Expression.Function("SUM", expr);
-		}
-
-		public static Expression MAX(this Expression expr)
-		{
-			return Expression.Function("MAX", expr);
-		}
-
-		public static Expression MIN(this Expression expr)
-		{
-			return Expression.Function("MIN", expr);
-		}
-
-		public static Expression COUNT(this Expression expr)
-		{
-			return Expression.Function("COUNT", expr);
-		}
-
-		public static Expression GETDATE()
-		{
-			return Expression.Function("GETDATE");
-		}
-
-		public static Expression NOT(this Expression expr)
-		{
-			return new Expression().NOT(expr);
-		}
-
-		public static Expression EXISTS(this SqlBuilder sql)
-		{
-			return new Expression().EXISTS(sql);
-		}
-	}
+        public static Expression EXISTS(this SqlBuilder sql)
+        {
+            return new Expression().EXISTS(sql);
+        }
+    }
 }

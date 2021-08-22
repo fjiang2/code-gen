@@ -24,8 +24,9 @@ namespace Sys.Data.Coding
 {
     public sealed class Expression : IQueryScript
     {
-        public static readonly Expression COUNT = new Expression("COUNT(*)");
         public static readonly Expression STAR = new Expression("*");
+        public static readonly Expression COUNT_STAR = new Expression("COUNT(*)");
+        public static readonly Expression GETDATE = Function("GETDATE");
 
         private readonly StringBuilder script = new StringBuilder();
 
@@ -36,6 +37,21 @@ namespace Sys.Data.Coding
 
         internal Expression()
         {
+        }
+
+        internal Expression(ColumnName columnName)
+        {
+            script.Append(columnName);
+        }
+
+        internal Expression(ParameterName parameterName)
+        {
+            script.Append(parameterName);
+        }
+
+        internal Expression(SqlValue value)
+        {
+            script.Append(value);
         }
 
         private Expression(Expression expr)
@@ -49,23 +65,9 @@ namespace Sys.Data.Coding
             script.Append(text);
         }
 
-        private Expression(object obj)
-        {
-            script.Append(obj);
-        }
-
-        private Expression(SqlValue value)
-        {
-            script.Append(value);
-        }
 
         public string Query => script.ToString();
-
-        private Expression Append(object obj)
-        {
-            script.Append(obj);
-            return this;
-        }
+        public Expression this[Expression exp] => this.Append("[").Append(exp).Append("]");
 
         private Expression Append(Expression expr)
         {
@@ -76,12 +78,6 @@ namespace Sys.Data.Coding
         private Expression Append(VariableName name)
         {
             script.Append(name);
-            return this;
-        }
-
-        private Expression Append(ParameterName parameterName)
-        {
-            script.Append(parameterName);
             return this;
         }
 
@@ -109,93 +105,106 @@ namespace Sys.Data.Coding
                 return exp.ToString();
         }
 
+        internal static Expression Join(string separator, IEnumerable<Expression> expList)
+        {
+            return new Expression(string.Join(separator, expList));
+        }
+
         internal static Expression OPR(Expression exp1, string opr, Expression exp2)
         {
-            Expression exp = new Expression(string.Format("{0} {1} {2}", Expr2Str(exp1), opr, Expr2Str(exp2)));
-            exp.compound = true;
+            Expression exp = new Expression(string.Format("{0} {1} {2}", Expr2Str(exp1), opr, Expr2Str(exp2)))
+            {
+                compound = true
+            };
+
             return exp;
         }
 
         // AND(A==1, B!=3, C>4) => "(A=1 AND B<>3 AND C>4)"
-        internal static Expression OPR(Expression exp1, string opr, Expression[] exps)
+        internal static Expression OPR(string opr, IEnumerable<Expression> expList)
         {
-            StringBuilder exp = new StringBuilder();
-            exp.Append("(")
-               .Append(string.Format("{0}", Expr2Str(exp1)));
-
-            foreach (Expression exp2 in exps)
-            {
-                exp.Append(string.Format(" {0} {1}", opr, Expr2Str(exp2)));
-            }
-            exp.Append(")");
-
-            return new Expression(exp.ToString()) { compound = true };
+            Expression exp = Join($" {opr} ", expList);
+            exp.compound = true;
+            return exp;
         }
 
         private static Expression OPR(string opr, Expression exp1)
         {
-            Expression exp = new Expression(string.Format("{0} {1}", opr, Expr2Str(exp1)));
-
-            return exp;
+            return new Expression(string.Format("{0} {1}", opr, Expr2Str(exp1)));
         }
 
-        private static Expression OPR(Expression exp1, string opr)
-        {
-            Expression exp = new Expression(string.Format("{0} {1}", Expr2Str(exp1), opr));
+      
+        public Expression Assign(object value) => OPR(this, "=", new Expression(new SqlValue(value)));
+        public Expression Assign() => new Expression(this).WrapSpace("=");
 
-            return exp;
+        public Expression AS(VariableName name) => new Expression(this).WrapSpace("AS").Append(name);
+
+        public Expression IN(SqlBuilder select) => new Expression(this).WrapSpace($"IN ({select.Query})");
+        public Expression IN(params Expression[] collection) => new Expression(this).AffixSpace($"IN ({Join(", ", collection)})");
+        public Expression IN<T>(IEnumerable<T> collection) => this.AffixSpace($"IN ({string.Join<T>(", ", collection)})");
+
+        public Expression IS() => new Expression(this).Append("IS");
+        public Expression IS_NULL() => new Expression(this).Append("IS NULL");
+        public Expression IS_NOT_NULL() => new Expression(this).Append("IS NOT NULL");
+        public Expression NULL() => new Expression(this).Append("NULL");
+
+        public Expression NOT(Expression exp) => OPR("NOT", exp);
+        public Expression BETWEEN(Expression exp1, Expression exp2) => new Expression(this).WrapSpace($"BETWEEN").Append(OPR(exp1, "AND", exp2));
+        public Expression EXISTS(SqlBuilder condition) => new Expression(this).Append($"EXISTS ({condition})");
+
+        public Expression CASE(Expression _case)
+        {
+            var expr = new Expression(this)
+                .AppendSpace("CASE")
+                .Append(_case);
+
+            return expr;
         }
 
 
-        public Expression Assign(object value)
+        public Expression WHEN(Expression condition)
         {
-            return OPR(this, "=", new Expression(new SqlValue(value)));
+            return new Expression(this).WrapSpace("WHEN").Append(condition);
         }
 
-        public Expression Assign()
+        public Expression THEN(Expression then)
         {
-            return new Expression(this).WrapSpace("=");
+            return new Expression(this).WrapSpace("THEN").Append(then);
         }
 
-        internal static Expression Assign(string name, object value)
+        public Expression ELSE(Expression _else)
         {
-            return OPR(ColumnName(name, null), "=", new Expression(new SqlValue(value)));
+            return new Expression(this).WrapSpace("ELSE").Append(_else).AppendSpace();
         }
 
-
-        internal static Expression ColumnName(string name, string dbo)
+        public Expression END()
         {
-            StringBuilder exp = new StringBuilder();
-            if (dbo != null)
-                exp.Append(dbo).Append(".");
-
-            if (name == "*" || string.IsNullOrEmpty(name))
-                exp.Append("*");
-            else
-                exp.Append(new ColumnName(name));
-
-            return new Expression(exp.ToString());
+            return new Expression(this).Append("END");
         }
 
-        public static Expression ParameterName(Context context, string name)
+        public static Expression WHEN(Expression condition, Expression then)
         {
-            Expression exp = new Expression(context.CreateParameter(name));
-            return exp;
+            return new Expression("WHEN").AppendSpace().Append(condition).WrapSpace("THEN").Append(then);
         }
 
-        public static Expression AddParameter(Context context, string columnName, string parameterName)
+        public static Expression CASE(Expression _case, Expression[] whens, Expression _else)
         {
-            Expression exp = new Expression(new ColumnName(columnName))
-                .Append(" = ")
-                .Append(context.CreateParameter(parameterName, columnName));
+            var expr = new Expression("CASE")
+                .AppendSpace()
+                .Append(_case)
+                .AppendSpace();
 
-            return exp;
-        }
+            foreach (var when in whens)
+            {
+                expr.Append(when).AppendSpace();
+            }
 
-        internal static Expression Join(Expression[] expl)
-        {
-            Expression exp = new Expression(string.Join<Expression>(",", expl));
-            return exp;
+            if (_else is object)
+                expr.AppendSpace("ELSE").Append(_else).AppendSpace();
+
+            expr.Append("END");
+
+            return expr;
         }
 
         #region implicit section
@@ -310,90 +319,7 @@ namespace Sys.Data.Coding
             return expr.ToString();
         }
 
-        public Expression AS(VariableName name)
-        {
-            return new Expression(this).WrapSpace("AS").Append(name);
-        }
 
-
-        public Expression this[Expression exp] => this.Append("[").Append(exp).Append("]");
-
-        public Expression IN(SqlBuilder select)
-        {
-            return new Expression(this).WrapSpace($"IN ({select.Query})");
-        }
-
-        public Expression IN(params Expression[] collection)
-        {
-            string values = string.Join(", ", collection.Select(x => x.ToString()));
-            return new Expression(this).AffixSpace($"IN ({values})");
-        }
-
-        public Expression IN<T>(IEnumerable<T> collection) => this.AffixSpace($"IN ({string.Join<T>(", ", collection)})");
-
-        public Expression IS() => new Expression(this).Append("IS");
-        public Expression IS_NULL() => new Expression(this).Append("IS NULL");
-        public Expression IS_NOT_NULL() => new Expression(this).Append("IS NOT NULL");
-        public Expression NULL() => new Expression(this).Append("NULL");
-
-        public Expression NOT(Expression exp) => OPR("NOT", exp);
-        public Expression BETWEEN(Expression exp1, Expression exp2) => new Expression(this).WrapSpace($"BETWEEN").Append(OPR(exp1, "AND", exp2));
-        public Expression EXISTS(SqlBuilder condition) => new Expression(this).Append($"EXISTS ({condition})");
-
-        public Expression CASE(Expression _case)
-        {
-            var expr = new Expression(this)
-                .AppendSpace("CASE")
-                .Append(_case);
-
-            return expr;
-        }
-
-
-        public Expression WHEN(Expression condition)
-        {
-            return new Expression(this).WrapSpace("WHEN").Append(condition);
-        }
-
-        public Expression THEN(Expression then)
-        {
-            return new Expression(this).WrapSpace("THEN").Append(then);
-        }
-
-        public Expression ELSE(Expression _else)
-        {
-            return new Expression(this).WrapSpace("ELSE").Append(_else).AppendSpace();
-        }
-
-        public Expression END()
-        {
-            return new Expression(this).Append("END");
-        }
-
-        public static Expression WHEN(Expression condition, Expression then)
-        {
-            return new Expression("WHEN").AppendSpace().Append(condition).WrapSpace("THEN").Append(then);
-        }
-
-        public static Expression CASE(Expression _case, Expression[] whens, Expression _else)
-        {
-            var expr = new Expression("CASE")
-                .AppendSpace()
-                .Append(_case)
-                .AppendSpace();
-
-            foreach (var when in whens)
-            {
-                expr.Append(when).AppendSpace();
-            }
-
-            if (_else is object)
-                expr.AppendSpace("ELSE").Append(_else).AppendSpace();
-
-            expr.Append("END");
-
-            return expr;
-        }
 
         #region +-*/, compare, logical operation
 
@@ -504,6 +430,47 @@ namespace Sys.Data.Coding
                 .Append(")");
 
             return exp;
+        }
+
+        public Expression LEN()
+        {
+            return Function("LEN", this);
+        }
+
+        public Expression SUBSTRING(Expression start, Expression length)
+        {
+            return Function("SUBSTRING", this, start, length);
+        }
+
+
+        public Expression SUM()
+        {
+            return Function("SUM", this);
+        }
+
+        public Expression MAX()
+        {
+            return Function("MAX", this);
+        }
+
+        public Expression MIN()
+        {
+            return Function("MIN", this);
+        }
+
+        public Expression COUNT()
+        {
+            return Function("COUNT", this);
+        }
+
+        public Expression AND(Expression expr)
+        {
+            return OPR(this, "AND", expr);
+        }
+
+        public Expression OR(Expression expr)
+        {
+            return OPR(this, "OR", expr);
         }
 
         public override bool Equals(object obj)

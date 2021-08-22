@@ -159,10 +159,10 @@ namespace UnitTestProject
         {
             var SQL = new SqlBuilder()
                 .SELECT()
-                .COLUMNS("CategoryID".ColumnName(), Expression.COUNT)
+                .COLUMNS("CategoryID".ColumnName(), Expression.COUNT_STAR)
                 .FROM("Products")
                 .GROUP_BY("CategoryID")
-                .HAVING(Expression.COUNT > 10)
+                .HAVING(Expression.COUNT_STAR > 10)
                 .ToString();
 
             Debug.Assert(SQL == "SELECT [CategoryID], COUNT(*) FROM [Products] GROUP BY [CategoryID] HAVING COUNT(*) > 10");
@@ -224,6 +224,20 @@ namespace UnitTestProject
                 .ToString();
 
             Debug.Assert(SQL == "SELECT TOP 10 [ProductID], [Category] = CASE [CategoryID] WHEN 1 THEN N'Road' WHEN 2 THEN N'Mountain' WHEN 3 THEN N'Touring' WHEN 4 THEN N'Other sale items' ELSE N'Not for sale' END, [ProductName] FROM [Products] ORDER BY [ProductID]");
+        }
+
+        [TestMethod]
+        public void Test_PARAMETER()
+        {
+            Context context = new Context();
+            var SQL = new SqlBuilder()
+                .SELECT()
+                .COLUMNS()
+                .FROM("Orders")
+                .WHERE("OrderDate".ColumnName() <= Expression.GETDATE & "EmployeeID".ColumnName() == context.ParameterName("EmployeeID"))
+                .ToString();
+
+            Debug.Assert(SQL == "SELECT * FROM [Orders] WHERE ([OrderDate] <= GETDATE()) AND ([EmployeeID] = @EmployeeID)");
         }
     }
 }
