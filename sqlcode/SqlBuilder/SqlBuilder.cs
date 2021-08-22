@@ -183,7 +183,7 @@ namespace Sys.Data.Coding
 
         public SqlBuilder VALUES(params Expression[] values)
         {
-            return AppendLine($"VALUES ({string.Join<Expression>(",", values)})");
+            return AppendLine($"VALUES ({string.Join<Expression>(", ", values)})");
         }
 
         public SqlBuilder DELETE_FROM<T>()
@@ -287,14 +287,22 @@ namespace Sys.Data.Coding
         public SqlBuilder DESC() => AppendSpace("DESC");
         public SqlBuilder ASC() => AppendSpace("ASC");
 
+        public SqlBuilder INTO(TableName tableName) => AppendSpace("INTO").TABLE_NAME(tableName, null);
+
+        public SqlBuilder ALTER() => AppendSpace("ALTER");
+        public SqlBuilder CREATE() => AppendSpace("CREATE");
+        public SqlBuilder DROP() => AppendSpace("DROP");
+        public SqlBuilder AS() => AppendSpace("AS");
+        public SqlBuilder PROCEDURE(string procedureName) => AppendSpace("PROCEDURE").AppendSpace(procedureName);
+
         private static string JoinColumns(IEnumerable<Expression> columns)
         {
-            return string.Join(",", columns.Select(x => x.ToString()));
+            return string.Join(", ", columns.Select(x => x.ToString()));
         }
 
         private static string JoinColumns(IEnumerable<string> columns)
         {
-            return string.Join(",", columns.Select(x => new ColumnName(x)));
+            return string.Join(", ", columns.Select(x => new ColumnName(x)));
         }
 
 

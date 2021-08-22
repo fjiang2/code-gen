@@ -95,7 +95,7 @@ namespace UnitTestProject
                 .VALUES("Seafood", "Seaweed and fish", new byte[] { 0x15, 0xC2 })
                 .ToString();
 
-            Debug.Assert(SQL == "INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2)");
+            Debug.Assert(SQL == "INSERT INTO [Categories] ([CategoryName], [Description], [Picture]) VALUES (N'Seafood', N'Seaweed and fish', 0x15C2)");
         }
 
         [TestMethod]
@@ -165,13 +165,13 @@ namespace UnitTestProject
                 .IF(select.EXISTS().NOT(), insert, update)
                 .ToString();
 
-            Debug.Assert(SQL == "IF NOT EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
+            Debug.Assert(SQL == "IF NOT EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName], [Description], [Picture]) VALUES (N'Seafood', N'Seaweed and fish', 0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
 
             SQL = new Statement()
                 .IF(select.EXISTS(), insert, update)
                 .ToString();
 
-            Debug.Assert(SQL == "IF EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName],[Description],[Picture]) VALUES (N'Seafood',N'Seaweed and fish',0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
+            Debug.Assert(SQL == "IF EXISTS (SELECT * FROM [Categories] WHERE [CategoryID] = 8) INSERT INTO [Categories] ([CategoryName], [Description], [Picture]) VALUES (N'Seafood', N'Seaweed and fish', 0x15C2) ELSE UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
 
         }
 
@@ -396,6 +396,14 @@ namespace UnitTestProject
 
             Debug.Assert(SQL == "SELECT DATEDIFF(day,[OrderDate],[ShippedDate]) AS Day, CONVERT(INT,[Freight]) AS Freight, * FROM [Orders]");
 
+        }
+
+        [TestMethod]
+        public void Test_Cast()
+        {
+            string categoryID = "CategoryID";
+            var column = new ColumnName(categoryID);
+            Expression x = (Expression)column;
         }
     }
 }
