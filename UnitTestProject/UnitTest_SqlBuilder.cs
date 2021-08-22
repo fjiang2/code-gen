@@ -381,5 +381,21 @@ namespace UnitTestProject
             Debug.Assert(SQL == "SELECT * FROM [Categories] WHERE ([CategoryId] IS NOT NULL AND [CategoryName] IS NULL) AND [Description] IS NULL");
 
         }
+
+        [TestMethod]
+        public void Test_DATE()
+        {
+            var SQL = new SqlBuilder()
+                .SELECT()
+                .COLUMNS(
+                    "OrderDate".ColumnName().DATEDIFF(DateInterval.day, "ShippedDate".ColumnName()).AS("Day"), 
+                    "Freight".ColumnName().CONVERT<int>().AS("Freight"),
+                    Expression.STAR)
+                .FROM("Orders")
+                .ToString();
+
+            Debug.Assert(SQL == "SELECT DATEDIFF(day,[OrderDate],[ShippedDate]) AS Day, CONVERT(INT,[Freight]) AS Freight, * FROM [Orders]");
+
+        }
     }
 }

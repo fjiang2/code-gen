@@ -26,7 +26,10 @@ namespace Sys.Data.Coding
     {
         public static readonly Expression STAR = new Expression("*");
         public static readonly Expression COUNT_STAR = new Expression("COUNT(*)");
+        
         public static readonly Expression GETDATE = Function("GETDATE");
+        public static readonly Expression GETUTCDATE = Function("GETUTCDATE");
+        public static readonly Expression SYSDATETIME = Function("SYSDATETIME");
 
         private readonly StringBuilder script = new StringBuilder();
 
@@ -34,7 +37,7 @@ namespace Sys.Data.Coding
         /// Compound expression
         /// </summary>
         private bool compound = false;
-        
+
         internal Expression(VariableName name)
         {
             script.Append(name);
@@ -424,6 +427,16 @@ namespace Sys.Data.Coding
 
         #endregion
 
+        public static Expression CAST(Expression expr, Type type) => new Expression($"CAST({expr} AS {type.SqlType()})");
+        public static Expression CAST<T>(Expression expr) => CAST(expr, typeof(T));
+        public Expression CAST(Type type) => CAST(this, type);
+        public Expression CAST<T>() => CAST(typeof(T));
+
+        public static Expression CONVERT(Type type, Expression expr) => Function("CONVERT", type.SqlType(), expr);
+        public static Expression CONVERT<T>(Expression expr) => CONVERT(typeof(T), expr);
+        public Expression CONVERT(Type type) => CONVERT(type, this);
+        public Expression CONVERT<T>() => CONVERT(typeof(T));
+
 
         public static Expression Function(string func, params Expression[] expressions)
         {
@@ -434,6 +447,27 @@ namespace Sys.Data.Coding
 
             return exp;
         }
+
+        public Expression DATEADD(DateInterval interval, Expression number)
+        {
+            return Function("DATEADD", interval.DateIntervalType(), number, this);
+        }
+
+        public Expression DATEDIFF(DateInterval interval, Expression date)
+        {
+            return Function("DATEDIFF", interval.DateIntervalType(), this, date);
+        }
+
+        public Expression DATEPART(DateInterval interval)
+        {
+            return Function("DATEPART", interval.DateIntervalType(), this);
+        }
+
+        public Expression DATENAME(DateInterval interval)
+        {
+            return Function("DATENAME", interval.DateIntervalType(), this);
+        }
+
 
         public Expression LEN()
         {

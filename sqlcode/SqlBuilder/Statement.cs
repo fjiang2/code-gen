@@ -53,6 +53,18 @@ namespace Sys.Data.Coding
 			return this;
 		}
 
+		public Statement DECLARE(VariableName name, Type type)
+		{
+			AppendLine($"DECLARE @{name} AS {type.SqlType()}");
+			return this;
+		}
+
+		public Statement SET(VariableName name, Expression value)
+		{
+			AppendLine($"SET @{name} = {value}");
+			return this;
+		}
+
 		public static implicit operator Statement(SqlBuilder sql)
 		{
 			return new Statement().AppendLine(sql.Query);
