@@ -32,12 +32,6 @@ namespace Sys.Data.Coding
 			return Expression.Assign(name, value);
 		}
 
-		public static Expression Equal(this string name, object value)
-		{
-			return Expression.Equal(name, value);
-		}
-
-
 		public static Expression AS(this string columnName, string name)
 		{
 			return columnName.ColumnName().AS(name);
@@ -70,17 +64,7 @@ namespace Sys.Data.Coding
 		}
 
 
-		/// <summary>
-		/// write directly into SQL clause
-		/// </summary>
-		/// <param name="any"></param>
-		/// <returns></returns>
-		public static Expression Inject(this string any)
-		{
-			return Expression.Write(any);
-		}
-
-
+	
 		/// <summary>
 		/// "name" -> "@name"
 		/// </summary>
@@ -187,11 +171,6 @@ namespace Sys.Data.Coding
 		public static Expression EXISTS(this SqlBuilder sql)
 		{
 			return new Expression().EXISTS(sql);
-		}
-
-		public static Expression WHEN(this Expression condition, Expression then)
-		{
-			return Expression.WHEN(condition, then);
 		}
 	}
 }
