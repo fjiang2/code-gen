@@ -67,9 +67,9 @@ namespace Sys.Data.Coding
         /// </summary>
         /// <param name="parameterName"></param>
         /// <returns></returns>
-        public static Expression ParameterName(this Context context, string parameterName, string columnName = null)
+        public static Expression ParameterName(this Context context, string parameterName, object value = null)
         {
-            return new Expression(context.CreateParameter(parameterName, columnName));
+            return new Expression(context.CreateParameter(parameterName, value));
         }
 
 

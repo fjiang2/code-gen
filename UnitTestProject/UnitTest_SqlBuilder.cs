@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define HAS_SQL_SERVER
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,13 @@ namespace UnitTestProject
     [TestClass]
     public class UnitTest_SqlBuilder
     {
+        private System.Data.SqlClient.SqlConnectionStringBuilder conn;
+
+        public UnitTest_SqlBuilder()
+        {
+            conn = new System.Data.SqlClient.SqlConnectionStringBuilder(@"Server = (LocalDB)\MSSQLLocalDB;initial catalog=Northwind;Integrated Security = true;");
+        }
+
         [TestMethod]
         public void Test_SELECT()
         {
@@ -234,10 +243,23 @@ namespace UnitTestProject
                 .SELECT()
                 .COLUMNS()
                 .FROM("Orders")
-                .WHERE("OrderDate".ColumnName() <= Expression.GETDATE & "EmployeeID".ColumnName() == context.ParameterName("EmployeeID"))
+                .WHERE("OrderDate".ColumnName() <= Expression.GETDATE & "ShipCity".ColumnName() == "London" & "EmployeeID".ColumnName() == context.ParameterName("Id", value: 7))
                 .ToString();
 
-            Debug.Assert(SQL == "SELECT * FROM [Orders] WHERE ([OrderDate] <= GETDATE()) AND ([EmployeeID] = @EmployeeID)");
+            Debug.Assert(SQL == "SELECT * FROM [Orders] WHERE (([OrderDate] <= GETDATE()) AND ([ShipCity] = N'London')) AND ([EmployeeID] = @Id)");
+
+#if HAS_SQL_SERVER
+
+            var dt1 = new SqlCmd(conn, SQL, new { Id = 7 }).FillDataTable();
+            Debug.Assert(dt1.Rows.Count >= 5);
+
+            //if you want to change value of parameter from 7 to 10
+            //context.Parameters["Id"] = 10;
+
+            var dt2 = new SqlCmd(conn, SQL, context.Parameters).FillDataTable();
+            Debug.Assert(dt2.Rows.Count >= 5);
+#endif
+
         }
     }
 }
