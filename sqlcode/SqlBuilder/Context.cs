@@ -24,18 +24,18 @@ namespace Sys.Data.Coding
 	public class Context
 	{
 		//<parameter, column>
-		private readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
+		private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
 
 		public Context()
 		{
 		}
 
-		public Dictionary<string, string> Parameters => this.parameters;
+		public IDictionary<string, object> Parameters => this.parameters;
 
-		public ParameterName CreateParameter(string parameterName, string columnName)
+		public ParameterName CreateParameter(string parameterName, object value)
 		{
 			if (!parameters.ContainsKey(parameterName))
-				parameters.Add(parameterName, columnName);
+				parameters.Add(parameterName, value);
 
 			return new ParameterName(parameterName);
 		}

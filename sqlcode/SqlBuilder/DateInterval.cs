@@ -14,15 +14,21 @@
 //                                                                                                  //
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Sys.Data.Coding
 {
-    public interface IQueryScript
+    public enum DateInterval
     {
-        string Script { get; }
+        year, //yyyy, yy = Year
+        quarter, //qq, q = Quarter
+        month, //mm, m = month
+        dayofyear, //dy, y = Day of the year
+        day, //dd, d = Day
+        week, //ww, wk = Week
+        weekday, //dw, w = Weekday
+        hour, //hh = hour
+        minute, //mi, n = Minute
+        second, //ss, s = Second
+        millisecond, //ms = Millisecond
     }
 }
