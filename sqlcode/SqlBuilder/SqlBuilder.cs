@@ -44,10 +44,24 @@ namespace Sys.Data.Coding
             }
         }
 
-        private SqlBuilder Append(string text)
+        /// <summary>
+        /// Append any code
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public SqlBuilder Append(string text)
         {
             script.Add(text);
             return this;
+        }
+
+        /// <summary>
+        /// Add a new line
+        /// </summary>
+        /// <returns></returns>
+        private SqlBuilder AppendLine()
+        {
+            return Append(Environment.NewLine);
         }
 
         private SqlBuilder AppendSpace(string text)
@@ -56,14 +70,10 @@ namespace Sys.Data.Coding
             return this;
         }
 
-        private SqlBuilder AppendLine(string value)
+        private SqlBuilder AppendSemicolon(string text)
         {
-            return Append(value).AppendLine();
-        }
-
-        private SqlBuilder AppendLine()
-        {
-            return Append(Environment.NewLine);
+            script.Add(text + ";");
+            return this;
         }
 
         private SqlBuilder TABLE_NAME(TableName tableName, string alias)
@@ -77,14 +87,9 @@ namespace Sys.Data.Coding
 
         public SqlBuilder USE(string database)
         {
-            return AppendLine($"USE {database}");
+            return AppendSpace($"USE {database}");
         }
 
-
-        public SqlBuilder SET(string key, Expression value)
-        {
-            return AppendLine($"SET {key} {value}");
-        }
 
         #region SELECT clause
 
@@ -183,7 +188,7 @@ namespace Sys.Data.Coding
 
         public SqlBuilder VALUES(params Expression[] values)
         {
-            return AppendLine($"VALUES ({string.Join<Expression>(", ", values)})");
+            return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
         }
 
         public SqlBuilder DELETE_FROM<T>()
@@ -196,13 +201,25 @@ namespace Sys.Data.Coding
             return AppendSpace($"DELETE FROM").TABLE_NAME(tableName, null);
         }
 
-
+        /// <summary>
+        /// skip WHERE if expr is null
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
         public SqlBuilder WHERE(Expression expr)
         {
+            if (expr is null)
+                return this;
+
             return WHERE(expr.Script);
         }
 
-        private SqlBuilder WHERE(string condition)
+        /// <summary>
+        /// skip WHERE if expr is null or empty
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public SqlBuilder WHERE(string condition)
         {
             if (!string.IsNullOrEmpty(condition))
                 AppendSpace($"WHERE {condition}");

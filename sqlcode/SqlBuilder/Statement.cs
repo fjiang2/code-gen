@@ -63,6 +63,23 @@ namespace Sys.Data.Coding
             return this;
         }
 
+        /// <summary>
+        /// SET XXX ON / OFF
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public Statement SET(string key, Expression value)
+        {
+            return AppendLine($"SET {key} {value}");
+        }
+
+        /// <summary>
+        /// SET @VAR = 12
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public Statement SET(VariableName name, Expression value)
         {
             AppendLine($"SET @{name} = {value}");

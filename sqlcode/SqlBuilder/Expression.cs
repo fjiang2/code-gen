@@ -26,7 +26,9 @@ namespace Sys.Data.Coding
     {
         public static readonly Expression NULL = new Expression("NULL");
         public static readonly Expression STAR = new Expression("*");
-        
+        public static readonly Expression IDENTITY = new Expression("@@IDENTITY");
+        public static readonly Expression ERROR = new Expression("@@ERROR");
+
 
         private readonly StringBuilder script = new StringBuilder();
 
