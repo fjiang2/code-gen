@@ -55,32 +55,23 @@ namespace Sys.Data.Coding
             return this;
         }
 
-        /// <summary>
-        /// Add a new line
-        /// </summary>
-        /// <returns></returns>
-        private SqlBuilder AppendLine()
-        {
-            return Append(Environment.NewLine);
-        }
-
         private SqlBuilder AppendSpace(string text)
         {
             script.Add(text + " ");
             return this;
         }
 
-        private SqlBuilder WithTableName(string key, string tableName, string alias)
+        private SqlBuilder WithTableName(string keyword, string tableName, string alias)
         {
-            AppendSpace(key);
-            
+            AppendSpace(keyword);
+
             int start = tableName.IndexOf("[");
             int stop = tableName.IndexOf("]");
             if (start >= 0 && stop > 0 && start < stop)
                 AppendSpace(tableName);
             else
                 AppendSpace(new TableName(tableName).FullName);
-            
+
             if (!string.IsNullOrEmpty(alias))
                 AppendSpace(alias);
 
@@ -97,9 +88,9 @@ namespace Sys.Data.Coding
 
         public SqlBuilder SELECT() => AppendSpace("SELECT");
 
-        public SqlBuilder DISTINCT() => AppendSpace("DISTINCT");
+        public SqlBuilder DISTINCT(bool nop = false) => !nop ? AppendSpace("DISTINCT") : this;
 
-        public SqlBuilder ALL() => AppendSpace("ALL");
+        public SqlBuilder ALL(bool nop = false) => !nop ? AppendSpace("ALL") : this;
 
         public SqlBuilder TOP(int n)
         {

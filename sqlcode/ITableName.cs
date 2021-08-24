@@ -14,10 +14,16 @@
 //                                                                                                  //
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
-namespace Sys.Data.Coding
+namespace Sys.Data
 {
     public interface ITableName
     {
+        /// <summary>
+        /// Table full name: 
+        ///     [Categories], 
+        ///     dbo.[Categories], 
+        ///     [Northwind].[dbo].[Categories]
+        /// </summary>
         string FullName { get; }
     }
 }
