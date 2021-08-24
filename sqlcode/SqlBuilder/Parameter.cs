@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace Sys.Data.Coding
 {
@@ -6,6 +7,12 @@ namespace Sys.Data.Coding
     {
 		public ParameterName Name { get; set; }
 		public Type ParameterType { get; set; }
+		public ParameterDirection Direction { get; set; }
+
+		public Parameter()
+        {
+
+        }
 
 		public override string ToString()
 		{

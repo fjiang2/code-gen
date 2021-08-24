@@ -38,7 +38,7 @@ namespace UnitTestProject
                 .SELECT().DISTINCT().COLUMNS(CategoryID).FROM("dbo.[Products]").WHERE(CategoryID >= 2)
                 .ToString();
 
-            Debug.Assert(SQL == "SELECT DISTINCT [CategoryID] FROM [Products] WHERE [CategoryID] >= 2");
+            Debug.Assert(SQL == "SELECT DISTINCT [CategoryID] FROM dbo.[Products] WHERE [CategoryID] >= 2");
         }
 
         [TestMethod]

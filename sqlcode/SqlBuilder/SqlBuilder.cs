@@ -70,15 +70,17 @@ namespace Sys.Data.Coding
             return this;
         }
 
-        private SqlBuilder AppendSemicolon(string text)
+        private SqlBuilder WithTableName(string key, string tableName, string alias)
         {
-            script.Add(text + ";");
-            return this;
-        }
-
-        private SqlBuilder TABLE_NAME(TableName tableName, string alias)
-        {
-            AppendSpace(tableName.ToString());
+            AppendSpace(key);
+            
+            int start = tableName.IndexOf("[");
+            int stop = tableName.IndexOf("]");
+            if (start >= 0 && stop > 0 && start < stop)
+                AppendSpace(tableName);
+            else
+                AppendSpace(new TableName(tableName).FullName);
+            
             if (!string.IsNullOrEmpty(alias))
                 AppendSpace(alias);
 
@@ -135,40 +137,29 @@ namespace Sys.Data.Coding
 
         #endregion
 
-        public SqlBuilder FROM<T>(string alias = null)
+        public SqlBuilder FROM(ITableName from, string alias = null) => FROM(from.FullName, alias);
+        public SqlBuilder FROM(string from, string alias = null) => WithTableName("FROM", from, alias);
+
+
+        public SqlBuilder UPDATE(ITableName tableName, string alias = null) => UPDATE(tableName.FullName, alias);
+        public SqlBuilder UPDATE(string tableName, string alias = null)
         {
-            return FROM(typeof(T).TableName(), alias);
-        }
-
-        public SqlBuilder FROM(TableName from, string alias = null) => AppendSpace($"FROM").TABLE_NAME(from, alias);
-
-
-        public SqlBuilder UPDATE<T>(string alias = null)
-        {
-            return UPDATE(typeof(T).TableName(), alias);
-        }
-
-        public SqlBuilder UPDATE(TableName tableName, string alias = null)
-        {
-            return AppendSpace($"UPDATE").TABLE_NAME(tableName, alias);
+            return WithTableName("UPDATE", tableName, alias);
         }
 
         public SqlBuilder SET(params Expression[] assignments) => AppendSpace("SET").AppendSpace(string.Join<Expression>(", ", assignments));
 
-        public SqlBuilder INSERT_INTO<T>(params string[] columns)
+        public SqlBuilder INSERT_INTO(ITableName tableName) => INSERT_INTO(tableName.FullName);
+        public SqlBuilder INSERT_INTO(string tableName)
         {
-            return INSERT_INTO(typeof(T).TableName(), columns);
-        }
-
-        public SqlBuilder INSERT_INTO(TableName tableName)
-        {
-            AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
-
+            WithTableName("INSERT INTO", tableName, null);
             return this;
         }
-        public SqlBuilder INSERT_INTO(TableName tableName, IEnumerable<Expression> columns)
+
+        public SqlBuilder INSERT_INTO(ITableName tableName, IEnumerable<Expression> columns) => INSERT_INTO(tableName.FullName, columns);
+        public SqlBuilder INSERT_INTO(string tableName, IEnumerable<Expression> columns)
         {
-            AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
+            WithTableName("INSERT INTO", tableName, null);
 
             if (columns.Count() > 0)
                 AppendSpace($"({JoinColumns(columns)})");
@@ -176,9 +167,10 @@ namespace Sys.Data.Coding
             return this;
         }
 
-        public SqlBuilder INSERT_INTO(TableName tableName, IEnumerable<string> columns)
+        public SqlBuilder INSERT_INTO(ITableName tableName, IEnumerable<string> columns) => INSERT_INTO(tableName.FullName, columns);
+        public SqlBuilder INSERT_INTO(string tableName, IEnumerable<string> columns)
         {
-            AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
+            WithTableName("INSERT INTO", tableName, null);
 
             if (columns.Count() > 0)
                 AppendSpace($"({JoinColumns(columns)})");
@@ -191,14 +183,11 @@ namespace Sys.Data.Coding
             return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
         }
 
-        public SqlBuilder DELETE_FROM<T>()
-        {
-            return DELETE_FROM(typeof(T).TableName());
-        }
 
-        public SqlBuilder DELETE_FROM(TableName tableName)
+        public SqlBuilder DELETE_FROM(ITableName tableName) => DELETE_FROM(tableName.FullName);
+        public SqlBuilder DELETE_FROM(string tableName)
         {
-            return AppendSpace($"DELETE FROM").TABLE_NAME(tableName, null);
+            return WithTableName("DELETE FROM", tableName, null);
         }
 
         /// <summary>
@@ -239,9 +228,8 @@ namespace Sys.Data.Coding
         public SqlBuilder OUTTER() => AppendSpace("OUTTER");
         public SqlBuilder FULL() => AppendSpace("FULL");
 
-        public SqlBuilder JOIN<T>(string alias = null) => JOIN(typeof(T).TableName(), alias);
-
-        public SqlBuilder JOIN(TableName tableName, string alias = null) => AppendSpace("JOIN").TABLE_NAME(tableName, alias);
+        public SqlBuilder JOIN(ITableName tableName, string alias = null) => JOIN(tableName.FullName, alias);
+        public SqlBuilder JOIN(string tableName, string alias = null) => WithTableName("JOIN", tableName, alias);
 
         public SqlBuilder ON(Expression expr)
         {
@@ -299,7 +287,8 @@ namespace Sys.Data.Coding
         public SqlBuilder DESC() => AppendSpace("DESC");
         public SqlBuilder ASC() => AppendSpace("ASC");
 
-        public SqlBuilder INTO(TableName tableName) => AppendSpace("INTO").TABLE_NAME(tableName, null);
+        public SqlBuilder INTO(ITableName tableName) => INTO(tableName.FullName);
+        public SqlBuilder INTO(string tableName) => WithTableName("INTO", tableName, null);
 
         public SqlBuilder ALTER() => AppendSpace("ALTER");
         public SqlBuilder CREATE() => AppendSpace("CREATE");
