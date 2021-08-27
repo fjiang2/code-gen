@@ -34,6 +34,9 @@ namespace Sys.Data.Coding
 
         public SqlValue(object value)
         {
+            if (value is SqlValue v)
+                this.value = v.value;
+            
             this.value = value;
         }
 

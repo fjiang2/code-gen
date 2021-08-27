@@ -132,6 +132,11 @@ namespace Sys.Data.Coding
 
 		public SqlBuilder COLUMNS(params Expression[] columns)
 		{
+			return COLUMNS((IEnumerable<Expression>)columns);
+		}
+
+		public SqlBuilder COLUMNS(IEnumerable<Expression> columns)
+		{
 			if (columns.Count() == 0)
 				return COLUMNS("*");
 			else
@@ -140,7 +145,12 @@ namespace Sys.Data.Coding
 
 		public SqlBuilder COLUMNS(params string[] columns)
 		{
-			if (columns.Length == 0)
+			return COLUMNS((IEnumerable<string>)columns);
+		}
+
+		public SqlBuilder COLUMNS(IEnumerable<string> columns)
+		{
+			if (columns.Count() == 0)
 				return COLUMNS("*");
 			else
 				return COLUMNS(JoinColumns(columns));
@@ -217,6 +227,14 @@ namespace Sys.Data.Coding
 				return this;
 
 			return WHERE(expr.Script);
+		}
+
+		public SqlBuilder WHERE(ILocator locator)
+		{
+			if (locator is null)
+				return this;
+
+			return WHERE(locator);
 		}
 
 		/// <summary>
