@@ -2,17 +2,17 @@
 {
     public class SqlColumnValuePair
     {
-        public SqlColumn Field { get; }
-        public SqlValue Value { get; set; }
+        internal SqlColumn Column { get; }
+        internal SqlValue Value { get; set; }
 
 
         public SqlColumnValuePair(string columnName, object value)
         {
-            this.Field = new SqlColumn(columnName, value?.GetType());
+            this.Column = new SqlColumn(columnName, value?.GetType());
             this.Value = new SqlValue(value);
         }
 
-        public string ColumnName => Field.Name;
+        public string ColumnName => Column.Name;
 
         public string ColumnFormalName => FormalName(ColumnName);
 

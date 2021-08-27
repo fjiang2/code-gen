@@ -142,9 +142,9 @@ WHERE Products.[Discontinued] <> 1";
             string SQL = new SqlBuilder()
                 .UPDATE("Categories")
                 .SET(
-                    "CategoryName".LetColumnBe("Seafood"),
-                    "Description".LetColumnBe("Seaweed and fish"),
-                    "Picture".LetColumnBe(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".AssignColumn("Seafood"),
+                    "Description".AssignColumn("Seaweed and fish"),
+                    "Picture".AssignColumn(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".AsColumn() == 8)
                 .ToString();
@@ -206,9 +206,9 @@ WHERE Products.[Discontinued] <> 1";
             var update = new SqlBuilder()
                 .UPDATE(Categories)
                 .SET(
-                    "CategoryName".LetColumnBe("Seafood"),
-                    "Description".LetColumnBe("Seaweed and fish"),
-                    "Picture".LetColumnBe(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".AssignColumn("Seafood"),
+                    "Description".AssignColumn("Seaweed and fish"),
+                    "Picture".AssignColumn(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".AsColumn() == 8);
 
@@ -270,7 +270,7 @@ WHERE Products.[Discontinued] <> 1";
 
             var SQL = new SqlBuilder()
                 .SELECT().TOP(10)
-                .COLUMNS("ProductID".AsColumn(), "Category".LetColumnBe(case_when), "ProductName".AsColumn())
+                .COLUMNS("ProductID".AsColumn(), "Category".AssignColumn(case_when), "ProductName".AsColumn())
                 .FROM("Products")
                 .ORDER_BY("ProductID")
                 .ToString();
@@ -496,8 +496,7 @@ WHERE Products.[Discontinued] <> 1";
         public void Test_Cast()
         {
             string categoryID = "CategoryID";
-            var column = new ColumnName(categoryID);
-            Expression x = (Expression)column;
+            Expression column = categoryID.AsColumn();
         }
 
     }

@@ -22,7 +22,7 @@ using System.Reflection;
 
 namespace Sys.Data.Coding
 {
-    public class SqlColumn
+    class SqlColumn
     {
         private readonly string fieldName;
         private bool saved = true;

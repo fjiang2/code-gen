@@ -11,10 +11,10 @@ namespace Sys.Data.Coding
 
         #region implicit section
 
-        public static implicit operator Expression(SqlValue value)
-        {
-            return new Expression(value); 
-        }
+        //public static implicit operator Expression(SqlValue value)
+        //{
+        //    return new Expression(value); 
+        //}
 
         public static implicit operator Expression(string value)
         {

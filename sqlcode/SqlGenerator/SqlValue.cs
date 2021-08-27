@@ -25,7 +25,7 @@ namespace Sys.Data.Coding
     /// <summary>
     /// a value can be used on SQL statement
     /// </summary>
-    public class SqlValue
+    class SqlValue
     {
         private const string DELIMETER = "'";
         private const string NULL = "NULL";

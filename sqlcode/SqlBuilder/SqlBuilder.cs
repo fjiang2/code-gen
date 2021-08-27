@@ -199,12 +199,17 @@ namespace Sys.Data.Coding
 			return this;
 		}
 
-		//public SqlBuilder VALUES(params Expression[] values)
-		//{
-		//	return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
-		//}
+		public SqlBuilder VALUES(params Expression[] values)
+		{
+			return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
+		}
 
 		public SqlBuilder VALUES(params object[] values)
+		{
+			return VALUES((IEnumerable<object>)values);
+		}
+
+		public SqlBuilder VALUES(IEnumerable<object> values)
 		{
 			var L = values.Select(x => new Expression(new SqlValue(x))).ToArray();
 			return AppendSpace($"VALUES ({string.Join<Expression>(", ", L)})");

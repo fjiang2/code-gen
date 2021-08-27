@@ -24,6 +24,11 @@ namespace Sys.Data.Coding
 {
 	public static class FluentExpression
 	{
+		public static Expression AsValue(this object value)
+		{
+			return new Expression(new SqlValue(value));
+		}
+
 		/// <summary>
 		/// Create  expression of variable 
 		/// </summary>
@@ -40,7 +45,7 @@ namespace Sys.Data.Coding
 		/// <param name="variableName"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static Expression LetVaribleBe(this string variableName, object value)
+		public static Expression AssignVarible(this string variableName, object value)
 		{
 			return variableName.AsVariable().LET(value);
 		}
@@ -101,7 +106,7 @@ namespace Sys.Data.Coding
 		/// <param name="columnName"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static Expression LetColumnBe(this string columnName, object value)
+		public static Expression AssignColumn(this string columnName, object value)
 		{
 			return columnName.AsColumn().LET(value);
 		}
