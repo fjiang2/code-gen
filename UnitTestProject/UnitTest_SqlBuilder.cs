@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sys.Data;
 using Sys.Data.Coding;
 
 namespace UnitTestProject
@@ -16,6 +17,14 @@ namespace UnitTestProject
     public class UnitTest_SqlBuilder
     {
         private System.Data.SqlClient.SqlConnectionStringBuilder conn;
+
+        private readonly Expression ProductId = "ProductId".AsColumn();
+
+        //private readonly ITableName Products = "Products".AsTableName();
+        private readonly string Products = "Products";
+
+        private readonly ITableName Categories = "Categories".AsTableName();
+        //private readonly string Categories = "Categories";
 
         public UnitTest_SqlBuilder()
         {
@@ -38,11 +47,11 @@ namespace UnitTestProject
                 .SELECT().DISTINCT().COLUMNS(CategoryID).FROM("dbo.[Products]").WHERE(CategoryID >= 2)
                 .ToString();
 
-            Debug.Assert(SQL == "SELECT DISTINCT [CategoryID] FROM [Products] WHERE [CategoryID] >= 2");
+            Debug.Assert(SQL == "SELECT DISTINCT [CategoryID] FROM dbo.[Products] WHERE [CategoryID] >= 2");
         }
 
         [TestMethod]
-        public void Test_JOIN()
+        public void Test_JOIN1()
         {
             string SQL = new SqlBuilder()
                 .SELECT().COLUMNS("CategoryName".AsColumn("C"), "*".AsColumn("P"))
@@ -54,6 +63,35 @@ namespace UnitTestProject
             Debug.Assert(SQL == "SELECT C.[CategoryName], P.* FROM [Products] P INNER JOIN [Categories] C ON C.[CategoryID] = P.[CategoryID] WHERE C.[CategoryName] = N'Dairy Products'");
 
         }
+
+        [TestMethod]
+        public void Test_JOIN2()
+        {
+            string sql = @"SELECT [Categories].[CategoryName], Products.[ProductName], Products.[QuantityPerUnit], Products.[UnitsInStock], Products.[Discontinued]
+FROM [Categories]
+INNER JOIN [Products] ON [Categories].[CategoryID] = Products.[CategoryID]
+WHERE Products.[Discontinued] <> 1";
+
+            string query = new SqlBuilder()
+                .SELECT()
+                .COLUMNS(
+                    "CategoryName".AsColumn(Categories),
+                    "ProductName".AsColumn(Products),
+                    "QuantityPerUnit".AsColumn(Products),
+                    "UnitsInStock".AsColumn(Products),
+                    "Discontinued".AsColumn(Products)
+                    )
+                .AppendLine()
+                .FROM(Categories)
+                .AppendLine()
+                .INNER().JOIN(Products).ON("CategoryID".AsColumn(Categories) == "CategoryID".AsColumn(Products))
+                .AppendLine()
+                .WHERE("Discontinued".AsColumn(Products) != 1)
+                .ToString();
+
+            Debug.Assert(sql == query);
+        }
+
 
         [TestMethod]
         public void Test_Column_AS_Name()
@@ -99,14 +137,14 @@ namespace UnitTestProject
         }
 
         [TestMethod]
-        public void Test_UPDATE()
+        public void Test_UPDATE1()
         {
             string SQL = new SqlBuilder()
                 .UPDATE("Categories")
                 .SET(
-                    "CategoryName".LetColumnBe("Seafood"),
-                    "Description".LetColumnBe("Seaweed and fish"),
-                    "Picture".LetColumnBe(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".AssignColumn("Seafood"),
+                    "Description".AssignColumn("Seaweed and fish"),
+                    "Picture".AssignColumn(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".AsColumn() == 8)
                 .ToString();
@@ -124,6 +162,19 @@ namespace UnitTestProject
                 .ToString();
 
             Debug.Assert(SQL == "UPDATE [Categories] SET [CategoryName] = N'Seafood', [Description] = N'Seaweed and fish', [Picture] = 0x15C2 WHERE [CategoryID] = 8");
+        }
+
+        [TestMethod]
+        public void Test_UPDATE2()
+        {
+            string sql = "UPDATE [Products] SET [ProductName] = N'Apple', [UnitPrice] = 20 WHERE [ProductId] BETWEEN 10 AND 30";
+            string query = new SqlBuilder()
+                .UPDATE(Products)
+                .SET("ProductName".AsColumn() == "Apple", "UnitPrice".AsColumn() == 20)
+                .WHERE(ProductId.BETWEEN(10, 30))
+                .ToString();
+
+            Debug.Assert(sql == query);
         }
 
         [TestMethod]
@@ -155,9 +206,9 @@ namespace UnitTestProject
             var update = new SqlBuilder()
                 .UPDATE(Categories)
                 .SET(
-                    "CategoryName".LetColumnBe("Seafood"),
-                    "Description".LetColumnBe("Seaweed and fish"),
-                    "Picture".LetColumnBe(new byte[] { 0x15, 0xC2 })
+                    "CategoryName".AssignColumn("Seafood"),
+                    "Description".AssignColumn("Seaweed and fish"),
+                    "Picture".AssignColumn(new byte[] { 0x15, 0xC2 })
                     )
                 .WHERE("CategoryID".AsColumn() == 8);
 
@@ -219,7 +270,7 @@ namespace UnitTestProject
 
             var SQL = new SqlBuilder()
                 .SELECT().TOP(10)
-                .COLUMNS("ProductID".AsColumn(), "Category".LetColumnBe(case_when), "ProductName".AsColumn())
+                .COLUMNS("ProductID".AsColumn(), "Category".AssignColumn(case_when), "ProductName".AsColumn())
                 .FROM("Products")
                 .ORDER_BY("ProductID")
                 .ToString();
@@ -250,7 +301,7 @@ namespace UnitTestProject
         [TestMethod]
         public void Test_PARAMETER()
         {
-            Context context = new Context();
+            ParameterContext context = new ParameterContext();
             var SQL = new SqlBuilder()
                 .SELECT()
                 .COLUMNS()
@@ -363,7 +414,7 @@ namespace UnitTestProject
         }
 
         [TestMethod]
-        public void Test_IS_NOT_NULL()
+        public void Test_IS_NOT_NULL1()
         {
             var Description = "Description".AsColumn();
             var CategoryId = "CategoryId".AsColumn();
@@ -383,6 +434,16 @@ namespace UnitTestProject
         }
 
         [TestMethod]
+        public void Test_IS_NOT_NULL2()
+        {
+            string sql = "SELECT COUNT(*) FROM [Products] WHERE [ProductId] IS NOT NULL";
+            string query = new SqlBuilder().SELECT().COLUMNS(Expression.COUNT_STAR).FROM(Products).WHERE(ProductId != null).ToString();
+
+            Debug.Assert(sql == query);
+        }
+
+
+        [TestMethod]
         public void Test_DATE()
         {
             var SQL = new SqlBuilder()
@@ -398,12 +459,47 @@ namespace UnitTestProject
 
         }
 
+        
+
+        [TestMethod]
+        public void Test_TOP()
+        {
+            string sql = "SELECT TOP 20 * FROM [Products] WHERE [ProductId] < 10";
+            string query = new SqlBuilder().SELECT().TOP(20).COLUMNS().FROM(Products).WHERE(ProductId < 10).ToString();
+
+            Debug.Assert(sql == query);
+        }
+
+        [TestMethod]
+        public void Test_IS_NULL()
+        {
+            string sql = "SELECT COUNT(*) FROM [Products] WHERE [ProductId] IS NULL";
+            string query = new SqlBuilder().SELECT().COLUMNS(Expression.COUNT_STAR).FROM(Products).WHERE(ProductId.IS_NULL()).ToString();
+
+            Debug.Assert(sql == query);
+        }
+
+
+        [TestMethod]
+        public void TEST_BETWEEN()
+        {
+            string sql = "SELECT COUNT(*), MAX([ProductId]) FROM [Products] WHERE [ProductId] BETWEEN 10 AND 30";
+            string query = new SqlBuilder().SELECT().COLUMNS(Expression.COUNT_STAR, ProductId.MAX()).FROM(Products).WHERE(ProductId.BETWEEN(10, 30)).ToString();
+
+            Debug.Assert(sql == query);
+        }
+
+      
+
+      
         [TestMethod]
         public void Test_Cast()
         {
             string categoryID = "CategoryID";
-            var column = new ColumnName(categoryID);
-            Expression x = (Expression)column;
+            Expression column = categoryID.AsColumn();
         }
+
     }
 }
+
+

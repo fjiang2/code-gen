@@ -12,6 +12,20 @@ namespace Sys.Data.Coding
 			this.name = name;
 		}
 
+		public override int GetHashCode()
+		{
+			return name.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			var x = obj as ParameterName;
+			if (x == null)
+				return false;
+
+			return this.name == x.name;
+		}
+
 		public override string ToString()
 		{
 			return "@" + name;

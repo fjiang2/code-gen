@@ -18,7 +18,7 @@ using System;
 
 namespace Sys.Data.Coding
 {
-	public class TableName
+	class TableName : ITableName
 	{
 		public const string dbo = "dbo";
 		public const string empty = "";
@@ -32,11 +32,11 @@ namespace Sys.Data.Coding
 			//tableName may have format like [db.dbo.tableName], [db..tableName], or [tableName]
 			string[] t = fullTableName.Split(new char[] { '.' });
 
-			databaseName = "";
-			this.tableName = "";
+			this.databaseName = empty;
+			this.tableName = empty;
 			if (t.Length > 2)
 			{
-				databaseName = t[0];
+				this.databaseName = t[0];
 				this.schemaName = t[1];
 				this.tableName = t[2];
 			}
@@ -48,22 +48,21 @@ namespace Sys.Data.Coding
 			else
 				this.tableName = fullTableName;
 
-			databaseName = databaseName.Replace("[", "").Replace("]", "");
+			this.databaseName = databaseName.Replace("[", "").Replace("]", "");
 			this.schemaName = this.schemaName.Replace("[", "").Replace("]", "");
 			this.tableName = this.tableName.Replace("[", "").Replace("]", "");
 		}
 
 		public TableName(string databaseName, string schemaName, string tableName)
 		{
-			this.databaseName = databaseName;
-			this.schemaName = schemaName;
-			this.tableName = tableName;
+			this.databaseName = databaseName ?? string.Empty;
+			this.schemaName = schemaName ?? string.Empty;
+			this.tableName = tableName ?? throw new ArgumentNullException(nameof(tableName));
 		}
 
 		public TableName(string schemaName, string tableName)
+			: this(string.Empty, schemaName, tableName)
 		{
-			this.schemaName = schemaName;
-			this.tableName = tableName;
 		}
 
 		public string SchemaName => this.schemaName;
@@ -106,7 +105,7 @@ namespace Sys.Data.Coding
 					_schema = $"[{schemaName}]";
 				}
 
-				if (this.databaseName != "")
+				if (this.databaseName != empty)
 					return $"[{databaseName}].{_schema}.[{tableName}]";
 				else if (schemaName != dbo && schemaName != empty)
 					return $"{schemaName}.[{tableName}]";
@@ -123,10 +122,6 @@ namespace Sys.Data.Coding
 			return new TableName(tableName);
 		}
 
-		public static implicit operator TableName(Type dpoType)
-		{
-			return new TableName(dpoType.TableName());
-		}
 
 		public override string ToString()
 		{

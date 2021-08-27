@@ -4,7 +4,7 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Sys.Data.Coding
+namespace Sys.Data
 {
     public class SqlGenerator : SqlColumnValuePairCollection
     {
@@ -30,13 +30,13 @@ namespace Sys.Data.Coding
         {
             var pair = base.Add(name, value);
 
-            pair.Field.Primary = PrimaryKeys != null && PrimaryKeys.Contains(name);
-            pair.Field.Identity = IdentityKeys != null && IdentityKeys.Contains(name);
+            pair.Column.Primary = PrimaryKeys != null && PrimaryKeys.Contains(name);
+            pair.Column.Identity = IdentityKeys != null && IdentityKeys.Contains(name);
 
             return pair;
         }
 
-        private string[] notUpdateColumns => columns.Where(p => !p.Field.Saved).Select(p => p.Field.Name).ToArray();
+        private string[] notUpdateColumns => columns.Where(p => !p.Column.Saved).Select(p => p.Column.Name).ToArray();
 
 
         public string Select()
@@ -92,7 +92,7 @@ namespace Sys.Data.Coding
 
         public string Insert()
         {
-            var C = columns.Where(c => !c.Field.Identity && !c.Value.IsNull);
+            var C = columns.Where(c => !c.Column.Identity && !c.Value.IsNull);
             var L1 = string.Join(",", C.Select(c => c.ColumnFormalName));
             var L2 = string.Join(",", C.Select(c => c.Value.ToString()));
 

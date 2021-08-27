@@ -14,40 +14,13 @@
 //                                                                                                  //
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Sys.Data.Coding
+namespace Sys.Data
 {
-	public class Context
+	public interface ILocator
 	{
-		//<parameter, column>
-		private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
-
-		public Context()
-		{
-		}
-
-		public IDictionary<string, object> Parameters => this.parameters;
-
-		public ParameterName CreateParameter(string parameterName, object value)
-		{
-			if (!parameters.ContainsKey(parameterName))
-				parameters.Add(parameterName, value);
-
-			return new ParameterName(parameterName);
-		}
-
-		public ParameterName CreateParameter(string parameterName)
-		{
-			return CreateParameter(parameterName, null);
-		}
-
-		public override string ToString()
-		{
-			return parameters.ToString();
-		}
+        /// <summary>
+        /// Logical expression used by WHERE ...
+        /// </summary>
+        string Where { get;  }
 	}
 }

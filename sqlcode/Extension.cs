@@ -6,11 +6,7 @@ namespace Sys.Data.Coding
 {
     static class Extension
     {
-        public static string TableName(this Type type)
-        {
-            return type.Name;
-        }
-
+     
         public static Expression SqlType(this Type type)
         {
             return type.ToSqlType().AsVariable();

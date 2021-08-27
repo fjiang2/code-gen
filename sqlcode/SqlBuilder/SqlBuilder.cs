@@ -21,307 +21,335 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-    /// <summary>
-    /// SQL clauses builder
-    /// </summary>
-    public sealed class SqlBuilder : IQueryScript
-    {
-        private readonly List<string> script = new List<string>();
-
-        public SqlBuilder()
-        {
-        }
-
-        public string Script
-        {
-            get
-            {
-                StringBuilder builder = new StringBuilder();
-                foreach (string item in script)
-                    builder.Append(item);
-
-                return builder.ToString().Trim();
-            }
-        }
-
-        /// <summary>
-        /// Append any code
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public SqlBuilder Append(string text)
-        {
-            script.Add(text);
-            return this;
-        }
-
-        /// <summary>
-        /// Add a new line
-        /// </summary>
-        /// <returns></returns>
-        private SqlBuilder AppendLine()
-        {
-            return Append(Environment.NewLine);
-        }
-
-        private SqlBuilder AppendSpace(string text)
-        {
-            script.Add(text + " ");
-            return this;
-        }
-
-        private SqlBuilder AppendSemicolon(string text)
-        {
-            script.Add(text + ";");
-            return this;
-        }
-
-        private SqlBuilder TABLE_NAME(TableName tableName, string alias)
-        {
-            AppendSpace(tableName.ToString());
-            if (!string.IsNullOrEmpty(alias))
-                AppendSpace(alias);
-
-            return this;
-        }
-
-        public SqlBuilder USE(string database)
-        {
-            return AppendSpace($"USE {database}");
-        }
-
-
-        #region SELECT clause
-
-        public SqlBuilder SELECT() => AppendSpace("SELECT");
-
-        public SqlBuilder DISTINCT() => AppendSpace("DISTINCT");
-
-        public SqlBuilder ALL() => AppendSpace("ALL");
-
-        public SqlBuilder TOP(int n)
-        {
-            if (n > 0)
-                return AppendSpace($"TOP {n}");
-
-            return this;
-        }
-
-        private SqlBuilder COLUMNS(string columns)
-        {
-            return AppendSpace(columns);
-        }
-
-        public SqlBuilder COLUMNS()
-        {
-            return COLUMNS("*");
-        }
-
-        public SqlBuilder COLUMNS(params Expression[] columns)
-        {
-            if (columns.Count() == 0)
-                return COLUMNS("*");
-            else
-                return COLUMNS(JoinColumns(columns));
-        }
-
-        public SqlBuilder COLUMNS(params string[] columns)
-        {
-            if (columns.Length == 0)
-                return COLUMNS("*");
-            else
-                return COLUMNS(JoinColumns(columns));
-        }
-
-        #endregion
-
-        public SqlBuilder FROM<T>(string alias = null)
-        {
-            return FROM(typeof(T).TableName(), alias);
-        }
+	/// <summary>
+	/// SQL clauses builder
+	/// </summary>
+	public sealed class SqlBuilder : IQueryScript
+	{
+		private readonly List<string> script = new List<string>();
+
+		public SqlBuilder()
+		{
+		}
+
+		public string Script
+		{
+			get
+			{
+				List<string> lines = new List<string>();
+				StringBuilder builder = new StringBuilder();
+
+				foreach (string item in script)
+				{
+					if (item == Environment.NewLine)
+					{
+						//remove extra space letter on each line
+						lines.Add(builder.ToString().Trim());
+						builder.Clear();
+					}
+
+					builder.Append(item);
+				}
+
+				if (builder.Length > 0)
+					lines.Add(builder.ToString().Trim());
+
+				return string.Join(Environment.NewLine, lines);
+			}
+		}
+
+		/// <summary>
+		/// Append any code
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public SqlBuilder Append(string text)
+		{
+			script.Add(text);
+			return this;
+		}
+
+		public SqlBuilder AppendLine()
+		{
+			script.Add(Environment.NewLine);
+			return this;
+		}
+
+		private SqlBuilder AppendSpace(string text)
+		{
+			script.Add(text + " ");
+			return this;
+		}
+
+		private SqlBuilder WithTableName(string keyword, string tableName, string alias)
+		{
+			AppendSpace(keyword);
+
+			int start = tableName.IndexOf("[");
+			int stop = tableName.IndexOf("]");
+			if (start >= 0 && stop > 0 && start < stop)
+				AppendSpace(tableName);
+			else
+				AppendSpace(new TableName(tableName).FullName);
+
+			if (!string.IsNullOrEmpty(alias))
+				AppendSpace(alias);
+
+			return this;
+		}
+
+		public SqlBuilder USE(string database)
+		{
+			return AppendSpace($"USE {database}");
+		}
+
+
+		#region SELECT clause
+
+		public SqlBuilder SELECT() => AppendSpace("SELECT");
+
+		public SqlBuilder DISTINCT(bool nop = false) => !nop ? AppendSpace("DISTINCT") : this;
+
+		public SqlBuilder ALL(bool nop = false) => !nop ? AppendSpace("ALL") : this;
+
+		public SqlBuilder TOP(int n)
+		{
+			if (n > 0)
+				return AppendSpace($"TOP {n}");
+
+			return this;
+		}
+
+		private SqlBuilder COLUMNS(string columns)
+		{
+			return AppendSpace(columns);
+		}
+
+		public SqlBuilder COLUMNS()
+		{
+			return COLUMNS("*");
+		}
+
+		public SqlBuilder COLUMNS(params Expression[] columns)
+		{
+			return COLUMNS((IEnumerable<Expression>)columns);
+		}
+
+		public SqlBuilder COLUMNS(IEnumerable<Expression> columns)
+		{
+			if (columns.Count() == 0)
+				return COLUMNS("*");
+			else
+				return COLUMNS(JoinColumns(columns));
+		}
+
+		public SqlBuilder COLUMNS(params string[] columns)
+		{
+			return COLUMNS((IEnumerable<string>)columns);
+		}
+
+		public SqlBuilder COLUMNS(IEnumerable<string> columns)
+		{
+			if (columns.Count() == 0)
+				return COLUMNS("*");
+			else
+				return COLUMNS(JoinColumns(columns));
+		}
+
+		#endregion
+
+		public SqlBuilder FROM(ITableName from, string alias = null) => FROM(from.FullName, alias);
+		public SqlBuilder FROM(string from, string alias = null) => WithTableName("FROM", from, alias);
+
+
+		public SqlBuilder UPDATE(ITableName tableName, string alias = null) => UPDATE(tableName.FullName, alias);
+		public SqlBuilder UPDATE(string tableName, string alias = null)
+		{
+			return WithTableName("UPDATE", tableName, alias);
+		}
+
+		public SqlBuilder SET(params Expression[] assignments) => AppendSpace("SET").AppendSpace(string.Join<Expression>(", ", assignments));
+
+		public SqlBuilder INSERT_INTO(ITableName tableName) => INSERT_INTO(tableName.FullName);
+		public SqlBuilder INSERT_INTO(string tableName)
+		{
+			WithTableName("INSERT INTO", tableName, null);
+			return this;
+		}
+
+		public SqlBuilder INSERT_INTO(ITableName tableName, IEnumerable<Expression> columns) => INSERT_INTO(tableName.FullName, columns);
+		public SqlBuilder INSERT_INTO(string tableName, IEnumerable<Expression> columns)
+		{
+			WithTableName("INSERT INTO", tableName, null);
+
+			if (columns.Count() > 0)
+				AppendSpace($"({JoinColumns(columns)})");
+
+			return this;
+		}
+
+		public SqlBuilder INSERT_INTO(ITableName tableName, IEnumerable<string> columns) => INSERT_INTO(tableName.FullName, columns);
+		public SqlBuilder INSERT_INTO(string tableName, IEnumerable<string> columns)
+		{
+			WithTableName("INSERT INTO", tableName, null);
+
+			if (columns.Count() > 0)
+				AppendSpace($"({JoinColumns(columns)})");
+
+			return this;
+		}
+
+		public SqlBuilder VALUES(params Expression[] values)
+		{
+			return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
+		}
+
+		public SqlBuilder VALUES(params object[] values)
+		{
+			return VALUES((IEnumerable<object>)values);
+		}
 
-        public SqlBuilder FROM(TableName from, string alias = null) => AppendSpace($"FROM").TABLE_NAME(from, alias);
+		public SqlBuilder VALUES(IEnumerable<object> values)
+		{
+			var L = values.Select(x => new Expression(new SqlValue(x))).ToArray();
+			return AppendSpace($"VALUES ({string.Join<Expression>(", ", L)})");
+		}
 
+		public SqlBuilder DELETE_FROM(ITableName tableName) => DELETE_FROM(tableName.FullName);
+		public SqlBuilder DELETE_FROM(string tableName)
+		{
+			return WithTableName("DELETE FROM", tableName, null);
+		}
 
-        public SqlBuilder UPDATE<T>(string alias = null)
-        {
-            return UPDATE(typeof(T).TableName(), alias);
-        }
+		/// <summary>
+		/// skip WHERE if expr is null
+		/// </summary>
+		/// <param name="expr"></param>
+		/// <returns></returns>
+		public SqlBuilder WHERE(Expression expr)
+		{
+			if (expr is null)
+				return this;
 
-        public SqlBuilder UPDATE(TableName tableName, string alias = null)
-        {
-            return AppendSpace($"UPDATE").TABLE_NAME(tableName, alias);
-        }
+			return WHERE(expr.Script);
+		}
 
-        public SqlBuilder SET(params Expression[] assignments) => AppendSpace("SET").AppendSpace(string.Join<Expression>(", ", assignments));
+		public SqlBuilder WHERE(ILocator locator)
+		{
+			if (locator is null)
+				return this;
 
-        public SqlBuilder INSERT_INTO<T>(params string[] columns)
-        {
-            return INSERT_INTO(typeof(T).TableName(), columns);
-        }
+			return WHERE(locator);
+		}
 
-        public SqlBuilder INSERT_INTO(TableName tableName)
-        {
-            AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
+		/// <summary>
+		/// skip WHERE if expr is null or empty
+		/// </summary>
+		/// <param name="condition"></param>
+		/// <returns></returns>
+		public SqlBuilder WHERE(string condition)
+		{
+			if (!string.IsNullOrEmpty(condition))
+				AppendSpace($"WHERE {condition}");
 
-            return this;
-        }
-        public SqlBuilder INSERT_INTO(TableName tableName, IEnumerable<Expression> columns)
-        {
-            AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
+			return this;
+		}
 
-            if (columns.Count() > 0)
-                AppendSpace($"({JoinColumns(columns)})");
 
-            return this;
-        }
+		#region INNER/OUT JOIN clause
 
-        public SqlBuilder INSERT_INTO(TableName tableName, IEnumerable<string> columns)
-        {
-            AppendSpace($"INSERT INTO").TABLE_NAME(tableName, null);
+		public SqlBuilder LEFT() => AppendSpace("LEFT");
 
-            if (columns.Count() > 0)
-                AppendSpace($"({JoinColumns(columns)})");
+		public SqlBuilder RIGHT() => AppendSpace("RIGHT");
 
-            return this;
-        }
+		public SqlBuilder INNER() => AppendSpace("INNER");
 
-        public SqlBuilder VALUES(params Expression[] values)
-        {
-            return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
-        }
+		public SqlBuilder OUTTER() => AppendSpace("OUTTER");
+		public SqlBuilder FULL() => AppendSpace("FULL");
 
-        public SqlBuilder DELETE_FROM<T>()
-        {
-            return DELETE_FROM(typeof(T).TableName());
-        }
+		public SqlBuilder JOIN(ITableName tableName, string alias = null) => JOIN(tableName.FullName, alias);
+		public SqlBuilder JOIN(string tableName, string alias = null) => WithTableName("JOIN", tableName, alias);
 
-        public SqlBuilder DELETE_FROM(TableName tableName)
-        {
-            return AppendSpace($"DELETE FROM").TABLE_NAME(tableName, null);
-        }
+		public SqlBuilder ON(Expression expr)
+		{
+			AppendSpace($"ON {expr}");
+			return this;
+		}
 
-        /// <summary>
-        /// skip WHERE if expr is null
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <returns></returns>
-        public SqlBuilder WHERE(Expression expr)
-        {
-            if (expr is null)
-                return this;
+		#endregion
 
-            return WHERE(expr.Script);
-        }
 
-        /// <summary>
-        /// skip WHERE if expr is null or empty
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public SqlBuilder WHERE(string condition)
-        {
-            if (!string.IsNullOrEmpty(condition))
-                AppendSpace($"WHERE {condition}");
 
-            return this;
-        }
+		#region GROUP BY / HAVING clause
+		public SqlBuilder GROUP_BY(params Expression[] columns)
+		{
+			if (columns == null || columns.Length == 0)
+				return this;
 
+			return AppendSpace($"GROUP BY {JoinColumns(columns)}");
+		}
 
-        #region INNER/OUT JOIN clause
+		public SqlBuilder GROUP_BY(params string[] columns)
+		{
+			if (columns == null || columns.Length == 0)
+				return this;
 
-        public SqlBuilder LEFT() => AppendSpace("LEFT");
+			return AppendSpace($"GROUP BY {JoinColumns(columns)}");
+		}
 
-        public SqlBuilder RIGHT() => AppendSpace("RIGHT");
+		public SqlBuilder HAVING(Expression condition)
+		{
+			return AppendSpace($"HAVING {condition}");
+		}
 
-        public SqlBuilder INNER() => AppendSpace("INNER");
+		#endregion
 
-        public SqlBuilder OUTTER() => AppendSpace("OUTTER");
-        public SqlBuilder FULL() => AppendSpace("FULL");
 
-        public SqlBuilder JOIN<T>(string alias = null) => JOIN(typeof(T).TableName(), alias);
 
-        public SqlBuilder JOIN(TableName tableName, string alias = null) => AppendSpace("JOIN").TABLE_NAME(tableName, alias);
+		public SqlBuilder ORDER_BY(params Expression[] columns)
+		{
+			if (columns == null || columns.Length == 0)
+				return this;
 
-        public SqlBuilder ON(Expression expr)
-        {
-            AppendSpace($"ON {expr}");
-            return this;
-        }
+			return AppendSpace($"ORDER BY {JoinColumns(columns)}");
+		}
 
-        #endregion
+		public SqlBuilder ORDER_BY(params string[] columns)
+		{
+			if (columns == null || columns.Length == 0)
+				return this;
 
+			return AppendSpace($"ORDER BY {JoinColumns(columns)}");
+		}
 
+		public SqlBuilder UNION() => AppendSpace("UNION");
+		public SqlBuilder DESC() => AppendSpace("DESC");
+		public SqlBuilder ASC() => AppendSpace("ASC");
 
-        #region GROUP BY / HAVING clause
-        public SqlBuilder GROUP_BY(params Expression[] columns)
-        {
-            if (columns == null || columns.Length == 0)
-                return this;
+		public SqlBuilder INTO(ITableName tableName) => INTO(tableName.FullName);
+		public SqlBuilder INTO(string tableName) => WithTableName("INTO", tableName, null);
 
-            return AppendSpace($"GROUP BY {JoinColumns(columns)}");
-        }
+		public SqlBuilder ALTER() => AppendSpace("ALTER");
+		public SqlBuilder CREATE() => AppendSpace("CREATE");
+		public SqlBuilder DROP() => AppendSpace("DROP");
 
-        public SqlBuilder GROUP_BY(params string[] columns)
-        {
-            if (columns == null || columns.Length == 0)
-                return this;
+		private static string JoinColumns(IEnumerable<Expression> columns)
+		{
+			return string.Join(", ", columns.Select(x => x.ToString()));
+		}
 
-            return AppendSpace($"GROUP BY {JoinColumns(columns)}");
-        }
+		private static string JoinColumns(IEnumerable<string> columns)
+		{
+			return string.Join(", ", columns.Select(x => new ColumnName(x)));
+		}
 
-        public SqlBuilder HAVING(Expression condition)
-        {
-            return AppendSpace($"HAVING {condition}");
-        }
 
-        #endregion
+		public static explicit operator string(SqlBuilder sql)
+		{
+			return sql.Script;
+		}
 
 
-
-        public SqlBuilder ORDER_BY(params Expression[] columns)
-        {
-            if (columns == null || columns.Length == 0)
-                return this;
-
-            return AppendSpace($"ORDER BY {JoinColumns(columns)}");
-        }
-
-        public SqlBuilder ORDER_BY(params string[] columns)
-        {
-            if (columns == null || columns.Length == 0)
-                return this;
-
-            return AppendSpace($"ORDER BY {JoinColumns(columns)}");
-        }
-
-        public SqlBuilder UNION() => AppendSpace("UNION");
-        public SqlBuilder DESC() => AppendSpace("DESC");
-        public SqlBuilder ASC() => AppendSpace("ASC");
-
-        public SqlBuilder INTO(TableName tableName) => AppendSpace("INTO").TABLE_NAME(tableName, null);
-
-        public SqlBuilder ALTER() => AppendSpace("ALTER");
-        public SqlBuilder CREATE() => AppendSpace("CREATE");
-        public SqlBuilder DROP() => AppendSpace("DROP");
-
-        private static string JoinColumns(IEnumerable<Expression> columns)
-        {
-            return string.Join(", ", columns.Select(x => x.ToString()));
-        }
-
-        private static string JoinColumns(IEnumerable<string> columns)
-        {
-            return string.Join(", ", columns.Select(x => new ColumnName(x)));
-        }
-
-
-        public static explicit operator string(SqlBuilder sql)
-        {
-            return sql.Script;
-        }
-
-
-        public override string ToString() => Script;
-    }
+		public override string ToString() => Script;
+	}
 }

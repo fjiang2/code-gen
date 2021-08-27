@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-    public class ColumnName
+    class ColumnName
     {
         private readonly string tableName;
         private readonly string name;
@@ -17,6 +17,12 @@ namespace Sys.Data.Coding
         public ColumnName(string tableName, string columnName)
         {
             this.tableName = tableName;
+            this.name = columnName;
+        }
+
+        public ColumnName(ITableName tableName, string columnName)
+        {
+            this.tableName = tableName.FullName;
             this.name = columnName;
         }
 

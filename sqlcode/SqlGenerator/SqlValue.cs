@@ -20,12 +20,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sys.Data.Coding
+namespace Sys.Data
 {
     /// <summary>
     /// a value can be used on SQL statement
     /// </summary>
-    public class SqlValue
+    class SqlValue
     {
         private const string DELIMETER = "'";
         private const string NULL = "NULL";
@@ -34,6 +34,9 @@ namespace Sys.Data.Coding
 
         public SqlValue(object value)
         {
+            if (value is SqlValue v)
+                this.value = v.value;
+            
             this.value = value;
         }
 
