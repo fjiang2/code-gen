@@ -42,6 +42,11 @@ namespace Sys.Data.Coding
             script.Append(name);
         }
 
+        internal Expression(TableName name)
+        {
+            script.Append(name);
+        }
+
         internal Expression(ColumnName name)
         {
             script.Append(name);

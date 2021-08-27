@@ -55,6 +55,12 @@ namespace Sys.Data.Coding
             return this;
         }
 
+        public SqlBuilder AppendLine()
+		{
+            script.Add(Environment.NewLine);
+            return this;
+        }
+
         private SqlBuilder AppendSpace(string text)
         {
             script.Add(text + " ");
