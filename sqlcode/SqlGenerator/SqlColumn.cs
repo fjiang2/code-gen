@@ -20,7 +20,7 @@ using System.Data;
 using System.Text;
 using System.Reflection;
 
-namespace Sys.Data.Coding
+namespace Sys.Data
 {
     class SqlColumn
     {

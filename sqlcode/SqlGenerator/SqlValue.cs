@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sys.Data.Coding
+namespace Sys.Data
 {
     /// <summary>
     /// a value can be used on SQL statement

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Sys.Data.Coding
+namespace Sys.Data
 {
     public class SqlGenerator : SqlColumnValuePairCollection
     {
