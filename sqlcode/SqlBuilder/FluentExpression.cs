@@ -52,7 +52,7 @@ namespace Sys.Data.Coding
 		/// <param name="parameterName">name of parameter</param>
 		/// <param name="value">the value of parameter</param>
 		/// <returns></returns>
-		public static Expression AsParameter(this Context context, string parameterName, object value = null)
+		public static Expression AsParameter(this ParameterContext context, string parameterName, object value = null)
 		{
 			return new Expression(context.CreateParameter(parameterName, value));
 		}

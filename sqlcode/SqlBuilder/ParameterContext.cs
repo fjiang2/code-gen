@@ -21,12 +21,12 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-	public class Context
+	public class ParameterContext
 	{
 		//<parameter, column>
 		private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
 
-		public Context()
+		public ParameterContext()
 		{
 		}
 

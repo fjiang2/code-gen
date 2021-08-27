@@ -189,11 +189,16 @@ namespace Sys.Data.Coding
 			return this;
 		}
 
-		public SqlBuilder VALUES(params Expression[] values)
-		{
-			return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
-		}
+		//public SqlBuilder VALUES(params Expression[] values)
+		//{
+		//	return AppendSpace($"VALUES ({string.Join<Expression>(", ", values)})");
+		//}
 
+		public SqlBuilder VALUES(params object[] values)
+		{
+			var L = values.Select(x => new Expression(new SqlValue(x))).ToArray();
+			return AppendSpace($"VALUES ({string.Join<Expression>(", ", L)})");
+		}
 
 		public SqlBuilder DELETE_FROM(ITableName tableName) => DELETE_FROM(tableName.FullName);
 		public SqlBuilder DELETE_FROM(string tableName)

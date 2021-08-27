@@ -301,7 +301,7 @@ WHERE Products.[Discontinued] <> 1";
         [TestMethod]
         public void Test_PARAMETER()
         {
-            Context context = new Context();
+            ParameterContext context = new ParameterContext();
             var SQL = new SqlBuilder()
                 .SELECT()
                 .COLUMNS()
