@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sys.Data;
 using Sys.Data.Coding;
 
 namespace UnitTestProject
@@ -18,8 +19,12 @@ namespace UnitTestProject
         private System.Data.SqlClient.SqlConnectionStringBuilder conn;
 
         private readonly Expression ProductId = "ProductId".AsColumn();
+
+        //private readonly ITableName Products = "Products".AsTableName();
         private readonly string Products = "Products";
-        private readonly string Categories = "Categories";
+
+        private readonly ITableName Categories = "Categories".AsTableName();
+        //private readonly string Categories = "Categories";
 
         public UnitTest_SqlBuilder()
         {
@@ -62,9 +67,9 @@ namespace UnitTestProject
         [TestMethod]
         public void Test_JOIN2()
         {
-            string sql = @"SELECT Categories.[CategoryName], Products.[ProductName], Products.[QuantityPerUnit], Products.[UnitsInStock], Products.[Discontinued] 
-FROM [Categories] 
-INNER JOIN [Products] ON Categories.[CategoryID] = Products.[CategoryID] 
+            string sql = @"SELECT [Categories].[CategoryName], Products.[ProductName], Products.[QuantityPerUnit], Products.[UnitsInStock], Products.[Discontinued]
+FROM [Categories]
+INNER JOIN [Products] ON [Categories].[CategoryID] = Products.[CategoryID]
 WHERE Products.[Discontinued] <> 1";
 
             string query = new SqlBuilder()

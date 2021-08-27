@@ -25,7 +25,7 @@ namespace Sys.Data.Coding
 	public static class FluentExpression
 	{
 		/// <summary>
-		/// Create variable 
+		/// Create  expression of variable 
 		/// </summary>
 		/// <param name="variableName"></param>
 		/// <returns></returns>
@@ -58,7 +58,7 @@ namespace Sys.Data.Coding
 		}
 
 		/// <summary>
-		/// Create column name: "name" -> [name]
+		/// Create expression of  column name: "name" -> [name]
 		/// </summary>
 		/// <param name="columnName"></param>
 		/// <returns></returns>
@@ -68,7 +68,7 @@ namespace Sys.Data.Coding
 		}
 
 		/// <summary>
-		/// Create column name:  [Categories].[CategoryID], C.[CategoryID]
+		/// Create expression of column name:  [Categories].[CategoryID], C.[CategoryID]
 		/// </summary>
 		/// <param name="columnName"></param>
 		/// <param name="tableName"></param>
@@ -79,15 +79,20 @@ namespace Sys.Data.Coding
 			return new Expression(new ColumnName(tableName, columnName));
 		}
 
+		public static Expression AsColumn(this string columnName, ITableName tableName)
+		{
+			return new Expression(new ColumnName(tableName.FullName, columnName));
+		}
+
 		/// <summary>
-		/// 
+		/// Create an instance of ITableName
 		/// </summary>
 		/// <param name="tableName"></param>
 		/// <param name="schemaName"></param>
 		/// <returns></returns>
-		public static Expression AsTable(this string tableName, string schemaName = null)
+		public static ITableName AsTableName(this string tableName, string schemaName = null)
 		{
-			return new Expression(new TableName(schemaName, tableName));
+			return new TableName(schemaName, tableName);
 		}
 
 		/// <summary>
