@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sys.Data
 {
-
-    class SqlTemplate
+    public class SqlTemplate
     {
         private readonly string formalName;
         private SqlTemplateFormat format = SqlTemplateFormat.SingleLine;

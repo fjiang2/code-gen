@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sys.Data.Coding
 {
-    static class Extension
+    static class SqlExtension
     {
      
         public static Expression SqlType(this Type type)
