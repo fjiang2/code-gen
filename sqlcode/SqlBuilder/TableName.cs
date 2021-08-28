@@ -16,7 +16,7 @@
 //--------------------------------------------------------------------------------------------------//
 using System;
 
-namespace Sys.Data.Coding
+namespace Sys.Data.Text
 {
 	class TableName : ITableName
 	{

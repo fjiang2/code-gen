@@ -15,7 +15,7 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
-namespace Sys.Data.Coding
+namespace Sys.Data.Text
 {
     public enum DateInterval
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Sys.Data.Coding
+namespace Sys.Data.Text
 {
     public class ParameterName
 	{

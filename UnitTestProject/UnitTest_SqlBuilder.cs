@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sys.Data;
-using Sys.Data.Coding;
+using Sys.Data.Text;
 
 namespace UnitTestProject
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace Sys.Data.Coding
+namespace Sys.Data.Text
 {
     public class Parameter
     {

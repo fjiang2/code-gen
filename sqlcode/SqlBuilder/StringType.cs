@@ -1,4 +1,4 @@
-﻿namespace Sys.Data.Coding
+﻿namespace Sys.Data.Text
 {
     enum StringType
     {

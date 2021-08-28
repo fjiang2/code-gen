@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sys.Data.Coding
+namespace Sys.Data.Text
 {
 	public sealed class VariableName : IComparable, IComparable<string>, IEquatable<VariableName>
 	{
