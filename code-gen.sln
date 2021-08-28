@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "syscode", "syscode\syscode.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{2B7361F9-4FCA-45B2-B9B3-C810CA4C8A64}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C2C10CD0-11C4-4EE4-9FCD-EA71D36224DF}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\syscode.nuspec = .nuget\syscode.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
