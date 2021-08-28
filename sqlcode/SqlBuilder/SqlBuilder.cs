@@ -239,7 +239,7 @@ namespace Sys.Data.Coding
 			if (locator is null)
 				return this;
 
-			return WHERE(locator);
+			return WHERE(locator.Where);
 		}
 
 		/// <summary>
