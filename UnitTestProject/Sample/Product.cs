@@ -6,7 +6,7 @@ namespace UnitTestProject
 	[Table("Product", TableId = 1)]
 	public class Product
 	{
-		[Column(PRODUCTID, Primary = true)]
+		[Column(PRODUCTID, Primary = true, Identity = true)]
 		//default column: NOT NULL
 		public int ProductID { get; set; }
 		
@@ -39,6 +39,10 @@ namespace UnitTestProject
 		//default column: NOT NULL
 		public bool Discontinued { get; set; }
 		
+		public Product()
+		{
+		}
+		
 		public Product(DataRow row)
 		{
 			FillObject(row);
@@ -56,6 +60,20 @@ namespace UnitTestProject
 			this.UnitsOnOrder = row.Field<short>(UNITSONORDER);
 			this.ReorderLevel = row.Field<short>(REORDERLEVEL);
 			this.Discontinued = row.Field<bool>(DISCONTINUED);
+		}
+		
+		public void CopyTo(Product obj)
+		{
+			obj.ProductID = this.ProductID;
+			obj.ProductName = this.ProductName;
+			obj.SupplierID = this.SupplierID;
+			obj.CategoryID = this.CategoryID;
+			obj.QuantityPerUnit = this.QuantityPerUnit;
+			obj.UnitPrice = this.UnitPrice;
+			obj.UnitsInStock = this.UnitsInStock;
+			obj.UnitsOnOrder = this.UnitsOnOrder;
+			obj.ReorderLevel = this.ReorderLevel;
+			obj.Discontinued = this.Discontinued;
 		}
 		public const string PRODUCTID = "ProductID";
 		public const string PRODUCTNAME = "ProductName";
