@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Data;
+using System.IO;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sys.CodeBuilder;
@@ -160,12 +161,23 @@ namespace UnitTestProject
         public void Test_Partial_Utility_Class()
         {
             var clss = new PartialClass(typeof(Sample.Device));
-            clss.AddMethod(CommonMethodType.ThisCompare);
+
             clss.AddMethod(CommonMethodType.ThisCopy);
+            clss.AddMethod(CommonMethodType.ThisClone);
+            clss.AddMethod(CommonMethodType.ThisCompare);
+            clss.AddMethod(CommonMethodType.ThisEquals);
+            clss.AddMethod(CommonMethodType.ThisGetHashCode);
+            clss.AddMethod(CommonMethodType.ThisMap);
+            clss.AddMethod(CommonMethodType.ThisToDictionary);
+            clss.AddMethod(CommonMethodType.ThisFromDictionary);
             clss.AddMethod(CommonMethodType.ThisToString);
 
-            string fileName = System.IO.Path.GetFullPath(@"..\..\..\Sample\Device-1.cs");
+            string fileName = Path.GetFullPath(@"..\..\..\Sample\Device-1.cs");
+            string before = File.ReadAllText(fileName);
             clss.Output(fileName);
+            string after = File.ReadAllText(fileName);
+
+            Assert.AreEqual(before, after);
         }
     }
 }

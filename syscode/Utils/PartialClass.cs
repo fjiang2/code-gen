@@ -9,8 +9,9 @@ namespace Sys.CodeBuilder
     public class PartialClass
     {
         private readonly Type type;
-        private readonly Class clss;
         private readonly PropertyInfo[] properties;
+        private readonly Class clss;
+        private readonly CSharpBuilder csbuilder;
 
         public PartialClass(Type type)
         {
@@ -20,28 +21,36 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Partial | Modifier.Public
             };
 
+
+            this.csbuilder = new CSharpBuilder()
+            {
+                Namespace = type.Namespace,
+            };
+
+            csbuilder.AddUsing("System");
+            csbuilder.AddClass(clss);
+
             this.properties = type.GetProperties()
                 .Select(p => new PropertyInfo(p.Name) { PropertyType = new TypeInfo(p.PropertyType) })
                 .ToArray();
         }
 
+        public Class Class => clss;
+        public CSharpBuilder CSharp => csbuilder;
+
         public void AddMethod(CommonMethodType methodType)
         {
+            if (methodType == CommonMethodType.ThisFromDictionary || methodType == CommonMethodType.ThisToDictionary)
+                csbuilder.AddUsing("System.Collections.Generic");
+
             clss.AddMethod(properties, methodType);
         }
 
 
         public void Output(string fileName)
         {
-            CSharpBuilder builder = new CSharpBuilder()
-            {
-                Namespace = type.Namespace,
-            };
-
-            builder.AddClass(clss);
-
             string directory = Path.GetDirectoryName(fileName);
-            builder.Output(directory, fileName);
+            csbuilder.Output(directory, fileName);
         }
 
         public override string ToString()
