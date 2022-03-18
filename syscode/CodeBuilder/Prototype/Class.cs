@@ -260,48 +260,51 @@ namespace Sys.CodeBuilder
                 .Where(p => (p.Modifier & Modifier.Public) == Modifier.Public && p.CanRead && p.CanWrite)
                 .Select(p => new PropertyInfo { PropertyName = p.Name });
 
-            AddMethod(rw, type);
+            AddMethod(rw, type, isExtensionMethod: false);
         }
 
-        public void AddMethod(IEnumerable<PropertyInfo> propertyNames, CommonMethodType methodType)
+        public void AddMethod(IEnumerable<PropertyInfo> propertyNames, CommonMethodType methodType, bool isExtensionMethod)
         {
-            var x = new CommonMethodGenerator(ClassName, propertyNames);
+            var x = new CommonMethodGenerator(ClassName, propertyNames)
+            {
+                IsExtensionMethod = isExtensionMethod,
+            };
 
             switch (methodType)
             {
-                case CommonMethodType.ThisMap:
+                case CommonMethodType.Map:
                     Add(x.Map());
                     break;
 
-                case CommonMethodType.ThisEquals:
+                case CommonMethodType.Equals:
                     Add(x.Equals());
                     break;
 
-                case CommonMethodType.ThisClone:
+                case CommonMethodType.Clone:
                     Add(x.Clone());
                     break;
 
-                case CommonMethodType.ThisCompare:
+                case CommonMethodType.Compare:
                     Add(x.Compare());
                     break;
 
-                case CommonMethodType.ThisCopy:
+                case CommonMethodType.Copy:
                     Add(x.Copy());
                     break;
 
-                case CommonMethodType.ThisGetHashCode:
+                case CommonMethodType.GetHashCode:
                     Add(x._GetHashCode());
                     break;
 
-                case CommonMethodType.ThisToDictionary:
+                case CommonMethodType.ToDictionary:
                     Add(x.ToDictinary());
                     break;
 
-                case CommonMethodType.ThisFromDictionary:
+                case CommonMethodType.FromDictionary:
                     Add(x.FromDictinary());
                     break;
 
-                case CommonMethodType.ThisToString:
+                case CommonMethodType.ToString:
                     Add(x._ToString_v2());
                     break;
 

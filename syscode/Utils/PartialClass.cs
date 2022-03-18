@@ -11,7 +11,7 @@ namespace Sys.CodeBuilder
         private readonly Type type;
         private readonly PropertyInfo[] properties;
         private readonly Class clss;
-        private readonly CSharpBuilder csbuilder;
+        private readonly CSharpBuilder cs;
 
         public PartialClass(Type type)
         {
@@ -22,35 +22,36 @@ namespace Sys.CodeBuilder
             };
 
 
-            this.csbuilder = new CSharpBuilder()
+            this.cs = new CSharpBuilder()
             {
                 Namespace = type.Namespace,
             };
 
-            csbuilder.AddUsing("System");
-            csbuilder.AddClass(clss);
+            cs.AddUsing("System");
+            cs.AddClass(clss);
 
             this.properties = type.GetProperties()
+                .Where(p => p.CanRead && p.CanWrite)
                 .Select(p => new PropertyInfo(p.Name) { PropertyType = new TypeInfo(p.PropertyType) })
                 .ToArray();
         }
 
         public Class Class => clss;
-        public CSharpBuilder CSharp => csbuilder;
+        public CSharpBuilder CSharp => cs;
 
-        public void AddMethod(CommonMethodType methodType)
+        public void AddMethod(CommonMethodType methodType, bool isExtensionMethod = false)
         {
-            if (methodType == CommonMethodType.ThisFromDictionary || methodType == CommonMethodType.ThisToDictionary)
-                csbuilder.AddUsing("System.Collections.Generic");
+            if (methodType == CommonMethodType.FromDictionary || methodType == CommonMethodType.ToDictionary)
+                cs.AddUsing("System.Collections.Generic");
 
-            clss.AddMethod(properties, methodType);
+            clss.AddMethod(properties, methodType, isExtensionMethod);
         }
 
 
         public void Output(string fileName)
         {
             string directory = Path.GetDirectoryName(fileName);
-            csbuilder.Output(directory, fileName);
+            cs.Output(directory, fileName);
         }
 
         public override string ToString()

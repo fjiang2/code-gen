@@ -28,6 +28,8 @@ namespace Sys.CodeBuilder
         private readonly IEnumerable<PropertyInfo> variables;
         private readonly TypeInfo classType;
 
+        public bool IsExtensionMethod { get; set; }
+
         public CommonMethodGenerator(string className, IEnumerable<PropertyInfo> variables)
         {
             this.className = className;
@@ -69,7 +71,7 @@ namespace Sys.CodeBuilder
             Method mtd = new Method("CopyTo")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "from");
@@ -112,7 +114,7 @@ namespace Sys.CodeBuilder
             Method mtd = new Method(classType, "Clone")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "from");
@@ -196,7 +198,7 @@ namespace Sys.CodeBuilder
             Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "CompareTo")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "a");
@@ -220,7 +222,7 @@ namespace Sys.CodeBuilder
             Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToSimpleString")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "obj");
