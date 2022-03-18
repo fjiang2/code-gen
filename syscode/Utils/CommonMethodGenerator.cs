@@ -22,13 +22,13 @@ using System.Threading.Tasks;
 
 namespace Sys.CodeBuilder
 {
-    class UtilsMethod
+    class CommonMethodGenerator
     {
         private readonly string className;
         private readonly IEnumerable<PropertyInfo> variables;
         private readonly TypeInfo classType;
 
-        public UtilsMethod(string className, IEnumerable<PropertyInfo> variables)
+        public CommonMethodGenerator(string className, IEnumerable<PropertyInfo> variables)
         {
             this.className = className;
             this.variables = variables;
@@ -52,11 +52,9 @@ namespace Sys.CodeBuilder
             {
                 Modifier = Modifier.Public,
             };
-
             mtd.Params.Add(className, "obj");
 
             var sent = mtd.Body;
-
             foreach (var variable in variables)
             {
                 sent.AppendFormat("this.{0} = obj.{0};", variable);
@@ -64,7 +62,9 @@ namespace Sys.CodeBuilder
 
             return mtd;
         }
-        public Method CopyTo()
+
+
+        public Method StaticCopyTo()
         {
             Method mtd = new Method("CopyTo")
             {
@@ -76,7 +76,6 @@ namespace Sys.CodeBuilder
             mtd.Params.Add(className, "to");
 
             var sent = mtd.Body;
-
             foreach (var variable in variables)
             {
                 sent.AppendFormat("to.{0} = from.{0};", variable);
@@ -94,7 +93,6 @@ namespace Sys.CodeBuilder
             };
 
             var sent = mtd.Body;
-
             sent.AppendFormat("var obj = new {0}();", className);
             sent.AppendLine();
 
@@ -109,7 +107,7 @@ namespace Sys.CodeBuilder
             return mtd;
         }
 
-        public Method CloneFrom()
+        public Method StaticCloneFrom()
         {
             Method mtd = new Method(classType, "Clone")
             {
@@ -193,7 +191,7 @@ namespace Sys.CodeBuilder
         }
 
 
-        public Method CompareTo()
+        public Method StaticCompareTo()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "CompareTo")
             {
@@ -217,7 +215,7 @@ namespace Sys.CodeBuilder
             return mtd;
         }
 
-        public Method ToSimpleString()
+        public Method StaticToSimpleString()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToSimpleString")
             {
@@ -228,8 +226,6 @@ namespace Sys.CodeBuilder
             mtd.Params.Add(className, "obj");
 
             var sent = mtd.Body;
-
-
             StringBuilder builder = new StringBuilder("\"{{");
             int index = 0;
             variables.ForEach(
@@ -284,8 +280,6 @@ namespace Sys.CodeBuilder
             };
 
             var sent = mtd.Body;
-
-
             sent.Append("return ");
             sent.Append("$\"");
             variables.ForEach(
@@ -305,7 +299,7 @@ namespace Sys.CodeBuilder
                 Type = new TypeInfo { Type = typeof(IDictionary<string, object>) },
             };
             var sent = method.Body;
-            sent.AppendLine("return new Dictionary<string,object>() ");
+            sent.AppendLine("return new Dictionary<string, object>() ");
             sent.Begin();
 
             foreach (var variable in variables)
