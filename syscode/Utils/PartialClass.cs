@@ -6,6 +6,15 @@ using System.Reflection;
 
 namespace Sys.CodeBuilder
 {
+    public class PartialClass<T>
+        : PartialClass
+    {
+        public PartialClass()
+            : base(typeof(T))
+        {
+        }
+    }
+
     public class PartialClass
     {
         private readonly Type type;

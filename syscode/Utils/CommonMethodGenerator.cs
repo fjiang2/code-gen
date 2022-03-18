@@ -66,9 +66,9 @@ namespace Sys.CodeBuilder
         }
 
 
-        public Method StaticCopyTo()
+        public Method StaticCopy()
         {
-            Method mtd = new Method("CopyTo")
+            Method mtd = new Method("Copy")
             {
                 Modifier = Modifier.Public | Modifier.Static,
                 IsExtensionMethod = IsExtensionMethod
@@ -109,7 +109,7 @@ namespace Sys.CodeBuilder
             return mtd;
         }
 
-        public Method StaticCloneFrom()
+        public Method StaticClone()
         {
             Method mtd = new Method(classType, "Clone")
             {
@@ -193,9 +193,9 @@ namespace Sys.CodeBuilder
         }
 
 
-        public Method StaticCompareTo()
+        public Method StaticCompare()
         {
-            Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "CompareTo")
+            Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "Compare")
             {
                 Modifier = Modifier.Public | Modifier.Static,
                 IsExtensionMethod = IsExtensionMethod
@@ -217,9 +217,9 @@ namespace Sys.CodeBuilder
             return mtd;
         }
 
-        public Method StaticToSimpleString()
+        public Method StaticToString()
         {
-            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToSimpleString")
+            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToString")
             {
                 Modifier = Modifier.Public | Modifier.Static,
                 IsExtensionMethod = IsExtensionMethod
@@ -317,7 +317,7 @@ namespace Sys.CodeBuilder
         public Method FromDictinary()
         {
             var type = new TypeInfo { Type = typeof(IDictionary<string, object>) };
-            Method method = new Method("Copy")
+            Method method = new Method("FromDictinary")
             {
                 Modifier = Modifier.Public,
                 Params = new Parameters(new Parameter[] { new Parameter(type, "dictionary") }),

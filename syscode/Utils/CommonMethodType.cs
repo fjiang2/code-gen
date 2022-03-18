@@ -33,9 +33,9 @@ namespace Sys.CodeBuilder
         FromDictionary,
         ToString,
 
-        StaticCopyTo,
-        StaticCloneFrom,
-        StaticCompareTo,
-        StaticToSimpleString,
+        StaticCopy,
+        StaticClone,
+        StaticCompare,
+        StaticToString,
     }
 }

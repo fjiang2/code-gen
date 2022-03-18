@@ -310,20 +310,20 @@ namespace Sys.CodeBuilder
 
 
 
-                case CommonMethodType.StaticCloneFrom:
-                    Add(x.StaticCloneFrom());
+                case CommonMethodType.StaticClone:
+                    Add(x.StaticClone());
                     break;
 
-                case CommonMethodType.StaticCompareTo:
-                    Add(x.StaticCompareTo());
+                case CommonMethodType.StaticCompare:
+                    Add(x.StaticCompare());
                     break;
 
-                case CommonMethodType.StaticCopyTo:
-                    Add(x.StaticCopyTo());
+                case CommonMethodType.StaticCopy:
+                    Add(x.StaticCopy());
                     break;
 
-                case CommonMethodType.StaticToSimpleString:
-                    Add(x.StaticToSimpleString());
+                case CommonMethodType.StaticToString:
+                    Add(x.StaticToString());
                     break;
             }
         }

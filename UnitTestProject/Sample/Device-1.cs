@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace UnitTestProject.Sample
@@ -68,7 +67,7 @@ namespace UnitTestProject.Sample
 			};
 		}
 		
-		public void Copy(IDictionary<string, object> dictionary)
+		public void FromDictinary(IDictionary<string, object> dictionary)
 		{
 			this.Id = (string)dictionary["Id"];
 			this.Name = (string)dictionary["Name"];
@@ -79,6 +78,43 @@ namespace UnitTestProject.Sample
 		public override string ToString()
 		{
 			return $"Id:{Id}, Name:{Name}, Upper:{Upper}, Lower:{Lower}";
+		}
+		
+		public static Device Clone(Device from)
+		{
+			var obj = new Device();
+			
+			obj.Id = from.Id;
+			obj.Name = from.Name;
+			obj.Upper = from.Upper;
+			obj.Lower = from.Lower;
+			
+			return obj;
+		}
+		
+		public static bool Compare(Device a, Device b)
+		{
+			return a.Id == b.Id
+			&& a.Name == b.Name
+			&& a.Upper == b.Upper
+			&& a.Lower == b.Lower;
+		}
+		
+		public static void Copy(Device from, Device to)
+		{
+			to.Id = from.Id;
+			to.Name = from.Name;
+			to.Upper = from.Upper;
+			to.Lower = from.Lower;
+		}
+		
+		public static string ToString(Device obj)
+		{
+			return string.Format("{{Id:{0}, Name:{1}, Upper:{2}, Lower:{3}}}", 
+			obj.Id, 
+			obj.Name, 
+			obj.Upper, 
+			obj.Lower);
 		}
 	}
 }

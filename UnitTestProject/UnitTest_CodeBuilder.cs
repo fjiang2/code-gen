@@ -160,7 +160,7 @@ namespace UnitTestProject
         [TestMethod]
         public void Test_Partial_Utility_Class()
         {
-            var clss = new PartialClass(typeof(Sample.Device));
+            var clss = new PartialClass<Sample.Device>();
 
             clss.AddMethod(CommonMethodType.Copy);
             clss.AddMethod(CommonMethodType.Clone);
@@ -171,6 +171,11 @@ namespace UnitTestProject
             clss.AddMethod(CommonMethodType.ToDictionary);
             clss.AddMethod(CommonMethodType.FromDictionary);
             clss.AddMethod(CommonMethodType.ToString);
+
+            clss.AddMethod(CommonMethodType.StaticClone);
+            clss.AddMethod(CommonMethodType.StaticCompare);
+            clss.AddMethod(CommonMethodType.StaticCopy);
+            clss.AddMethod(CommonMethodType.StaticToString);
 
             string fileName = Path.GetFullPath(@"..\..\..\Sample\Device-1.cs");
             string before = File.ReadAllText(fileName);
