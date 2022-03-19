@@ -91,7 +91,19 @@ namespace UnitTestProject.Sample
 		
 		public string ToJson()
 		{
-			return $"{{\"Id\":{Id}, \"Name\":\"{Name}\", \"Time\":\"{Time.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}\", \"Exists\":{Exists.ToString().ToLower()}, \"Length\":{Length}, \"Weight\":{Weight}}}";
+			return "{"
+			+ $"\"Id\":{Id}"
+			+ ","
+			+ $"\"Name\":\"{Name}\""
+			+ ","
+			+ $"\"Time\":\"{Time.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}\""
+			+ ","
+			+ $"\"Exists\":{Exists.ToString().ToLower()}"
+			+ ","
+			+ $"\"Length\":{Length}"
+			+ ","
+			+ $"\"Weight\":{Weight}"
+			+ "}";
 		}
 		
 		public override string ToString()

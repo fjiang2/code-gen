@@ -343,7 +343,7 @@ namespace Sys.CodeBuilder
             return method;
         }
 
-        public Method ToJson()
+        public Method ToJsonSingleLine()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToJson")
             {
@@ -358,6 +358,24 @@ namespace Sys.CodeBuilder
                 variable => sent.Append(", ")
                 );
             sent.Append("}}\";");
+
+            return mtd;
+        }
+
+        public Method ToJson()
+        {
+            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToJson")
+            {
+                Modifier = Modifier.Public,
+            };
+
+            var sent = mtd.Body;
+            sent.Append("return \"{\"");
+            variables.ForEach(
+                variable => sent.AppendLine($"+ $\"{SQM}{variable}{SQM}:{GetVariable(variable)}\""),
+                variable => sent.AppendLine("+ \",\"")
+                );
+            sent.AppendLine("+ \"}\";");
 
             return mtd;
         }
