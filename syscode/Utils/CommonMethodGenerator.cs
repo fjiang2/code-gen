@@ -15,6 +15,7 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,11 @@ namespace Sys.CodeBuilder
 {
     class CommonMethodGenerator
     {
+        private const string SQM = "\\\"";
+        private const string QM = "\"";
+        private const string LC = "{";
+        private const string RC = "}";
+
         private readonly string className;
         private readonly IEnumerable<PropertyInfo> variables;
         private readonly TypeInfo classType;
@@ -217,9 +223,9 @@ namespace Sys.CodeBuilder
             return mtd;
         }
 
-        public Method StaticToString()
+        public Method StaticToSimpleString()
         {
-            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToString")
+            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToSimpleString")
             {
                 Modifier = Modifier.Public | Modifier.Static,
                 IsExtensionMethod = IsExtensionMethod
@@ -335,6 +341,42 @@ namespace Sys.CodeBuilder
             }
 
             return method;
+        }
+
+        public Method ToJson()
+        {
+            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToJson")
+            {
+                Modifier = Modifier.Public,
+            };
+
+            var sent = mtd.Body;
+            sent.Append("return ");
+            sent.Append("$\"{{");
+            variables.ForEach(
+                variable => sent.Append($"{SQM}{variable}{SQM}:{GetVariable(variable)}"),
+                variable => sent.Append(", ")
+                );
+            sent.Append("}}\";");
+
+            return mtd;
+        }
+
+        private static string GetVariable(PropertyInfo variable)
+        {
+            var type = variable.PropertyType.Type;
+
+            if (type == typeof(bool))
+                return $"{LC}{variable}.ToString().ToLower(){RC}";
+
+            //2012-04-23T18:25:43.511Z
+            if (type == typeof(DateTime))
+                return $"{SQM}{LC}{variable}.ToString({QM}yyyy-MM-ddTHH:mm:ss.fffZ{QM}){RC}{SQM}";
+
+            if (type.IsPrimitive)
+                return $"{LC}{variable}{RC}";
+            else
+                return $"{SQM}{LC}{variable}{RC}{SQM}";
         }
     }
 }

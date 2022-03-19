@@ -170,17 +170,21 @@ namespace UnitTestProject
             clss.AddMethod(CommonMethodType.Map);
             clss.AddMethod(CommonMethodType.ToDictionary);
             clss.AddMethod(CommonMethodType.FromDictionary);
+            clss.AddMethod(CommonMethodType.ToJson);
             clss.AddMethod(CommonMethodType.ToString);
 
             clss.AddMethod(CommonMethodType.StaticClone);
             clss.AddMethod(CommonMethodType.StaticCompare);
             clss.AddMethod(CommonMethodType.StaticCopy);
-            clss.AddMethod(CommonMethodType.StaticToString);
+            clss.AddMethod(CommonMethodType.StaticToSimpleString);
 
             string fileName = Path.GetFullPath(@"..\..\..\Sample\Device-1.cs");
             string before = File.ReadAllText(fileName);
             clss.Output(fileName);
             string after = File.ReadAllText(fileName);
+
+            var x = new Sample.Device { Id = 10, Name = "Phone", Time = DateTime.Now, Weight = 73.1, Length = 20 };
+            string json = x.ToJson();
 
             Assert.AreEqual(before, after);
         }

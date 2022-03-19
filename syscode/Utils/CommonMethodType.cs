@@ -32,10 +32,11 @@ namespace Sys.CodeBuilder
         ToDictionary,
         FromDictionary,
         ToString,
+        ToJson,
 
         StaticCopy,
         StaticClone,
         StaticCompare,
-        StaticToString,
+        StaticToSimpleString,
     }
 }

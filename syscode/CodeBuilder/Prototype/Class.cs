@@ -308,6 +308,9 @@ namespace Sys.CodeBuilder
                     Add(x._ToString_v2());
                     break;
 
+                case CommonMethodType.ToJson:
+                    Add(x.ToJson());
+                    break;
 
 
                 case CommonMethodType.StaticClone:
@@ -322,8 +325,8 @@ namespace Sys.CodeBuilder
                     Add(x.StaticCopy());
                     break;
 
-                case CommonMethodType.StaticToString:
-                    Add(x.StaticToString());
+                case CommonMethodType.StaticToSimpleString:
+                    Add(x.StaticToSimpleString());
                     break;
             }
         }

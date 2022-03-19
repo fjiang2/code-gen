@@ -9,8 +9,10 @@ namespace UnitTestProject.Sample
 		{
 			this.Id = obj.Id;
 			this.Name = obj.Name;
-			this.Upper = obj.Upper;
-			this.Lower = obj.Lower;
+			this.Time = obj.Time;
+			this.Exists = obj.Exists;
+			this.Length = obj.Length;
+			this.Weight = obj.Weight;
 		}
 		
 		public Device Clone()
@@ -19,8 +21,10 @@ namespace UnitTestProject.Sample
 			
 			obj.Id = this.Id;
 			obj.Name = this.Name;
-			obj.Upper = this.Upper;
-			obj.Lower = this.Lower;
+			obj.Time = this.Time;
+			obj.Exists = this.Exists;
+			obj.Length = this.Length;
+			obj.Weight = this.Weight;
 			
 			return obj;
 		}
@@ -29,8 +33,10 @@ namespace UnitTestProject.Sample
 		{
 			return this.Id.Equals(obj.Id)
 			&& this.Name.Equals(obj.Name)
-			&& this.Upper.Equals(obj.Upper)
-			&& this.Lower.Equals(obj.Lower);
+			&& this.Time.Equals(obj.Time)
+			&& this.Exists.Equals(obj.Exists)
+			&& this.Length.Equals(obj.Length)
+			&& this.Weight.Equals(obj.Weight);
 		}
 		
 		public override bool Equals(object obj)
@@ -39,8 +45,10 @@ namespace UnitTestProject.Sample
 			
 			return this.Id.Equals(x.Id)
 			&& this.Name.Equals(x.Name)
-			&& this.Upper.Equals(x.Upper)
-			&& this.Lower.Equals(x.Lower);
+			&& this.Time.Equals(x.Time)
+			&& this.Exists.Equals(x.Exists)
+			&& this.Length.Equals(x.Length)
+			&& this.Weight.Equals(x.Weight);
 		}
 		
 		public override int GetHashCode()
@@ -52,8 +60,10 @@ namespace UnitTestProject.Sample
 		{
 			this.Id = obj.Id;
 			this.Name = obj.Name;
-			this.Upper = obj.Upper;
-			this.Lower = obj.Lower;
+			this.Time = obj.Time;
+			this.Exists = obj.Exists;
+			this.Length = obj.Length;
+			this.Weight = obj.Weight;
 		}
 		
 		public IDictionary<string, object> ToDictionary()
@@ -62,22 +72,31 @@ namespace UnitTestProject.Sample
 			{
 				["Id"] = this.Id,
 				["Name"] = this.Name,
-				["Upper"] = this.Upper,
-				["Lower"] = this.Lower,
+				["Time"] = this.Time,
+				["Exists"] = this.Exists,
+				["Length"] = this.Length,
+				["Weight"] = this.Weight,
 			};
 		}
 		
 		public void FromDictinary(IDictionary<string, object> dictionary)
 		{
-			this.Id = (string)dictionary["Id"];
+			this.Id = (int)dictionary["Id"];
 			this.Name = (string)dictionary["Name"];
-			this.Upper = (int)dictionary["Upper"];
-			this.Lower = (int)dictionary["Lower"];
+			this.Time = (DateTime)dictionary["Time"];
+			this.Exists = (bool)dictionary["Exists"];
+			this.Length = (int)dictionary["Length"];
+			this.Weight = (double)dictionary["Weight"];
+		}
+		
+		public string ToJson()
+		{
+			return $"{{\"Id\":{Id}, \"Name\":\"{Name}\", \"Time\":\"{Time.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}\", \"Exists\":{Exists.ToString().ToLower()}, \"Length\":{Length}, \"Weight\":{Weight}}}";
 		}
 		
 		public override string ToString()
 		{
-			return $"Id:{Id}, Name:{Name}, Upper:{Upper}, Lower:{Lower}";
+			return $"Id:{Id}, Name:{Name}, Time:{Time}, Exists:{Exists}, Length:{Length}, Weight:{Weight}";
 		}
 		
 		public static Device Clone(Device from)
@@ -86,8 +105,10 @@ namespace UnitTestProject.Sample
 			
 			obj.Id = from.Id;
 			obj.Name = from.Name;
-			obj.Upper = from.Upper;
-			obj.Lower = from.Lower;
+			obj.Time = from.Time;
+			obj.Exists = from.Exists;
+			obj.Length = from.Length;
+			obj.Weight = from.Weight;
 			
 			return obj;
 		}
@@ -96,25 +117,31 @@ namespace UnitTestProject.Sample
 		{
 			return a.Id == b.Id
 			&& a.Name == b.Name
-			&& a.Upper == b.Upper
-			&& a.Lower == b.Lower;
+			&& a.Time == b.Time
+			&& a.Exists == b.Exists
+			&& a.Length == b.Length
+			&& a.Weight == b.Weight;
 		}
 		
 		public static void Copy(Device from, Device to)
 		{
 			to.Id = from.Id;
 			to.Name = from.Name;
-			to.Upper = from.Upper;
-			to.Lower = from.Lower;
+			to.Time = from.Time;
+			to.Exists = from.Exists;
+			to.Length = from.Length;
+			to.Weight = from.Weight;
 		}
 		
-		public static string ToString(Device obj)
+		public static string ToSimpleString(Device obj)
 		{
-			return string.Format("{{Id:{0}, Name:{1}, Upper:{2}, Lower:{3}}}", 
+			return string.Format("{{Id:{0}, Name:{1}, Time:{2}, Exists:{3}, Length:{4}, Weight:{5}}}", 
 			obj.Id, 
 			obj.Name, 
-			obj.Upper, 
-			obj.Lower);
+			obj.Time, 
+			obj.Exists, 
+			obj.Length, 
+			obj.Weight);
 		}
 	}
 }
