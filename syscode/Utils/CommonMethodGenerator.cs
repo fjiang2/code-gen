@@ -15,6 +15,7 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,71 +23,79 @@ using System.Threading.Tasks;
 
 namespace Sys.CodeBuilder
 {
-    class UtilsMethod
+    class CommonMethodGenerator : ICommonMethod
     {
+        private const string SQM = "\\\"";
+        private const string QM = "\"";
+        private const string LC = "{";
+        private const string RC = "}";
+
+        private Class clss;
         private readonly string className;
         private readonly IEnumerable<PropertyInfo> variables;
         private readonly TypeInfo classType;
 
-        public UtilsMethod(string className, IEnumerable<PropertyInfo> variables)
+        public bool IsExtensionMethod { get; set; }
+
+        public CommonMethodGenerator(Class clss, IEnumerable<PropertyInfo> variables)
         {
-            this.className = className;
+            this.clss = clss;
+            this.className = clss.ClassName;
             this.variables = variables;
             this.classType = new TypeInfo { UserType = className };
 
         }
 
-        public Method Map()
+        public void Map()
         {
-            return Assign("Map");
+            Assign("Map");
         }
 
-        public Method Copy()
+        public void Copy()
         {
-            return Assign("Copy");
+            Assign("Copy");
         }
 
-        private Method Assign(string methodName)
+        private void Assign(string methodName)
         {
             Method mtd = new Method(methodName)
             {
                 Modifier = Modifier.Public,
             };
-
             mtd.Params.Add(className, "obj");
 
             var sent = mtd.Body;
-
             foreach (var variable in variables)
             {
                 sent.AppendFormat("this.{0} = obj.{0};", variable);
             }
 
-            return mtd;
+            clss.Add(mtd);
         }
-        public Method CopyTo()
+
+
+        public void StaticCopy()
         {
-            Method mtd = new Method("CopyTo")
+            Method mtd = new Method("Copy")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "from");
             mtd.Params.Add(className, "to");
 
             var sent = mtd.Body;
-
             foreach (var variable in variables)
             {
                 sent.AppendFormat("to.{0} = from.{0};", variable);
             }
 
-            return mtd;
+            clss.Add(mtd);
         }
 
 
-        public Method Clone()
+        public void Clone()
         {
             Method mtd = new Method(classType, "Clone")
             {
@@ -94,7 +103,6 @@ namespace Sys.CodeBuilder
             };
 
             var sent = mtd.Body;
-
             sent.AppendFormat("var obj = new {0}();", className);
             sent.AppendLine();
 
@@ -106,15 +114,15 @@ namespace Sys.CodeBuilder
             sent.AppendLine();
             sent.Return("obj");
 
-            return mtd;
+            clss.Add(mtd);
         }
 
-        public Method CloneFrom()
+        public void StaticClone()
         {
             Method mtd = new Method(classType, "Clone")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "from");
@@ -131,10 +139,10 @@ namespace Sys.CodeBuilder
             sent.AppendLine();
             sent.Return("obj");
 
-            return mtd;
+            clss.Add(mtd);
         }
 
-        public Method Equals()
+        public void Equals()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "Equals")
             {
@@ -155,10 +163,11 @@ namespace Sys.CodeBuilder
                 );
 
             sent.Append(";");
-            return mtd;
+
+            clss.Add(mtd);
         }
 
-        public Method _GetHashCode()
+        public void GetHashCode(string property)
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(int) }, "GetHashCode")
             {
@@ -166,11 +175,12 @@ namespace Sys.CodeBuilder
             };
 
             var sent = mtd.Body;
-            sent.AppendLine("return 0;");
-            return mtd;
+            sent.AppendLine($"return {property};");
+
+            clss.Add(mtd);
         }
 
-        public Method Compare()
+        public void Compare()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "Compare")
             {
@@ -189,16 +199,17 @@ namespace Sys.CodeBuilder
                 );
 
             sent.Append(";");
-            return mtd;
+
+            clss.Add(mtd);
         }
 
 
-        public Method CompareTo()
+        public void StaticCompare()
         {
-            Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "CompareTo")
+            Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "Compare")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "a");
@@ -214,22 +225,21 @@ namespace Sys.CodeBuilder
                 );
 
             sent.Append(";");
-            return mtd;
+
+            clss.Add(mtd);
         }
 
-        public Method ToSimpleString()
+        public void StaticToSimpleString()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToSimpleString")
             {
                 Modifier = Modifier.Public | Modifier.Static,
-                IsExtensionMethod = true
+                IsExtensionMethod = IsExtensionMethod
             };
 
             mtd.Params.Add(className, "obj");
 
             var sent = mtd.Body;
-
-
             StringBuilder builder = new StringBuilder("\"{{");
             int index = 0;
             variables.ForEach(
@@ -245,10 +255,19 @@ namespace Sys.CodeBuilder
                 );
 
             sent.AppendFormat("return string.Format({0});", builder);
-            return mtd;
+
+            clss.Add(mtd);
         }
 
-        public Method _ToString()
+        public void ToString(bool useFormat)
+        {
+            if (useFormat)
+                ToString_v1();
+            else
+                ToString_v2();
+        }
+
+        private void ToString_v1()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToString")
             {
@@ -273,10 +292,11 @@ namespace Sys.CodeBuilder
                 );
 
             sent.AppendFormat("return string.Format({0});", builder);
-            return mtd;
+
+            clss.Add(mtd);
         }
 
-        public Method _ToString_v2()
+        private void ToString_v2()
         {
             Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToString")
             {
@@ -284,8 +304,6 @@ namespace Sys.CodeBuilder
             };
 
             var sent = mtd.Body;
-
-
             sent.Append("return ");
             sent.Append("$\"");
             variables.ForEach(
@@ -294,18 +312,18 @@ namespace Sys.CodeBuilder
                 );
             sent.Append("\";");
 
-            return mtd;
+            clss.Add(mtd);
         }
 
-        public Method ToDictinary()
+        public void ToDictionary()
         {
-            Method method = new Method("ToDictionary")
+            Method mtd = new Method("ToDictionary")
             {
                 Modifier = Modifier.Public,
                 Type = new TypeInfo { Type = typeof(IDictionary<string, object>) },
             };
-            var sent = method.Body;
-            sent.AppendLine("return new Dictionary<string,object>() ");
+            var sent = mtd.Body;
+            sent.AppendLine("return new Dictionary<string, object>() ");
             sent.Begin();
 
             foreach (var variable in variables)
@@ -315,19 +333,19 @@ namespace Sys.CodeBuilder
             }
             sent.End(";");
 
-            return method;
+            clss.Add(mtd);
         }
 
-        public Method FromDictinary()
+        public void FromDictionary()
         {
             var type = new TypeInfo { Type = typeof(IDictionary<string, object>) };
-            Method method = new Method("Copy")
+            Method mtd = new Method("FromDictionary")
             {
                 Modifier = Modifier.Public,
                 Params = new Parameters(new Parameter[] { new Parameter(type, "dictionary") }),
             };
 
-            var sent = method.Body;
+            var sent = mtd.Body;
             foreach (var variable in variables)
             {
                 TypeInfo typeInfo = variable.PropertyType;
@@ -338,7 +356,70 @@ namespace Sys.CodeBuilder
                 sent.AppendLine(line);
             }
 
-            return method;
+            clss.Add(mtd);
+        }
+
+        public void ToJson(bool singleLine)
+        {
+            if (singleLine)
+                ToJsonSingleLine();
+            else
+                ToMultipleJson();
+        }
+        
+
+        private void ToJsonSingleLine()
+        {
+            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToJson")
+            {
+                Modifier = Modifier.Public,
+            };
+
+            var sent = mtd.Body;
+            sent.Append("return ");
+            sent.Append("$\"{{");
+            variables.ForEach(
+                variable => sent.Append($"{SQM}{variable}{SQM}:{GetVariable(variable)}"),
+                variable => sent.Append(", ")
+                );
+            sent.Append("}}\";");
+
+            clss.Add(mtd);
+        }
+
+        private void ToMultipleJson()
+        {
+            Method mtd = new Method(new TypeInfo { Type = typeof(string) }, "ToJson")
+            {
+                Modifier = Modifier.Public,
+            };
+
+            var sent = mtd.Body;
+            sent.Append("return \"{\"");
+            variables.ForEach(
+                variable => sent.AppendLine($"+ $\"{SQM}{variable}{SQM}:{GetVariable(variable)}\""),
+                variable => sent.AppendLine("+ \",\"")
+                );
+            sent.AppendLine("+ \"}\";");
+
+            clss.Add(mtd);
+        }
+
+        private static string GetVariable(PropertyInfo variable)
+        {
+            var type = variable.PropertyType.Type;
+
+            if (type == typeof(bool))
+                return $"{LC}{variable}.ToString().ToLower(){RC}";
+
+            //2012-04-23T18:25:43.511Z
+            if (type == typeof(DateTime))
+                return $"{SQM}{LC}{variable}.ToString({QM}yyyy-MM-ddTHH:mm:ss.fffZ{QM}){RC}{SQM}";
+
+            if (type.IsPrimitive)
+                return $"{LC}{variable}{RC}";
+            else
+                return $"{SQM}{LC}{variable}{RC}{SQM}";
         }
     }
 }

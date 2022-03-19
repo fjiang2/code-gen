@@ -15,21 +15,25 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
-using System;
-
 namespace Sys.CodeBuilder
 {
-    [Flags]
-    public enum UtilsThisMethod
+    public interface ICommonMethod
     {
-        Undefined = 0x00,
-        Copy = 0x01,
-        Clone = 0x02,
-        Compare = 0x04,
-        ToString = 0x08,
-        Equals = 0x10,
-        GetHashCode = 0x20,
-        Map = 0x40,
-        ToDictionary = 0x80,
+        void Clone();
+        void Compare();
+        void Copy();
+        void Equals();
+        void ToDictionary();
+        void FromDictionary();
+        void Map();
+
+        void ToJson(bool singleLine);
+        void GetHashCode(string property);
+        void ToString(bool useFormat);
+
+        void StaticClone();
+        void StaticCompare();
+        void StaticCopy();
+        void StaticToSimpleString();
     }
 }

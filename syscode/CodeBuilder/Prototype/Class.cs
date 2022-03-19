@@ -47,6 +47,8 @@ namespace Sys.CodeBuilder
             base.Modifier = Modifier.Public;
         }
 
+        public string ClassName => base.Name;
+
         public void Clear()
         {
             list.Clear();
@@ -78,7 +80,7 @@ namespace Sys.CodeBuilder
 
         public Constructor AddConstructor()
         {
-            var constructor = new Constructor(base.Name);
+            var constructor = new Constructor(ClassName);
 
             this.Add(constructor);
             return constructor;
@@ -182,7 +184,7 @@ namespace Sys.CodeBuilder
                 clss.AppendFormat($"{Comment}");
             }
 
-            clss.AppendFormat("{0} class {1}", new ModifierString(Modifier), base.Name);
+            clss.AppendFormat("{0} class {1}", new ModifierString(Modifier), ClassName);
             if (Inherits.Length > 0)
                 clss.AppendFormat("\t: {0}", string.Join(", ", Inherits.Select(inherit => inherit.ToString())));
 
@@ -252,66 +254,21 @@ namespace Sys.CodeBuilder
             clss.AddWithBeginEnd(body);
         }
 
-        public void AddUtilsMethod(UtilsThisMethod type)
+        public ICommonMethod CommonMethod()
         {
             var rw = properties
                 .Where(p => (p.Modifier & Modifier.Public) == Modifier.Public && p.CanRead && p.CanWrite)
                 .Select(p => new PropertyInfo { PropertyName = p.Name });
 
-            AddUtilsMethod(this.Name, rw, type);
+            return CommonMethod(rw, isExtensionMethod: false);
         }
 
-        public void AddUtilsMethod(string className, IEnumerable<PropertyInfo> propertyNames, UtilsThisMethod type)
+        public ICommonMethod CommonMethod(IEnumerable<PropertyInfo> propertyNames, bool isExtensionMethod)
         {
-            var x = new UtilsMethod(className, propertyNames);
-
-            if ((type & UtilsThisMethod.Map) == UtilsThisMethod.Map)
-                Add(x.Map());
-
-            if ((type & UtilsThisMethod.Equals) == UtilsThisMethod.Equals)
-                Add(x.Equals());
-
-            if ((type & UtilsThisMethod.Clone) == UtilsThisMethod.Clone)
-                Add(x.Clone());
-
-            if ((type & UtilsThisMethod.Compare) == UtilsThisMethod.Compare)
-                Add(x.Compare());
-
-            if ((type & UtilsThisMethod.Copy) == UtilsThisMethod.Copy)
-                Add(x.Copy());
-
-            if ((type & UtilsThisMethod.GetHashCode) == UtilsThisMethod.GetHashCode)
-                Add(x._GetHashCode());
-
-            if ((type & UtilsThisMethod.ToDictionary) == UtilsThisMethod.ToDictionary)
+            return new CommonMethodGenerator(this, propertyNames)
             {
-                Add(x.ToDictinary());
-                Add(x.FromDictinary());
-            }
-
-            if ((type & UtilsThisMethod.ToString) == UtilsThisMethod.ToString)
-                Add(x._ToString_v2());
-
-        }
-
-        public void AddUtilsMethod(string className, IEnumerable<PropertyInfo> propertyNames, UtilsStaticMethod type)
-        {
-            var x = new UtilsMethod(className, propertyNames);
-
-
-            if ((type & UtilsStaticMethod.CloneFrom) == UtilsStaticMethod.CloneFrom)
-                Add(x.CloneFrom());
-
-
-            if ((type & UtilsStaticMethod.CompareTo) == UtilsStaticMethod.CompareTo)
-                Add(x.CompareTo());
-
-
-            if ((type & UtilsStaticMethod.CopyTo) == UtilsStaticMethod.CopyTo)
-                Add(x.CopyTo());
-
-            if ((type & UtilsStaticMethod.ToSimpleString) == UtilsStaticMethod.ToSimpleString)
-                Add(x.ToSimpleString());
+                IsExtensionMethod = isExtensionMethod,
+            };
         }
 
 
