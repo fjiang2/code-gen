@@ -162,21 +162,22 @@ namespace UnitTestProject
         {
             var clss = new PartialClass<Sample.Device>();
 
-            clss.AddMethod(CommonMethodType.Copy);
-            clss.AddMethod(CommonMethodType.Clone);
-            clss.AddMethod(CommonMethodType.Compare);
-            clss.AddMethod(CommonMethodType.Equals);
-            clss.AddMethod(CommonMethodType.GetHashCode);
-            clss.AddMethod(CommonMethodType.Map);
-            clss.AddMethod(CommonMethodType.ToDictionary);
-            clss.AddMethod(CommonMethodType.FromDictionary);
-            clss.AddMethod(CommonMethodType.ToJson);
-            clss.AddMethod(CommonMethodType.ToString);
+            var gen = clss.CommonMethod();
+            gen.Copy();
+            gen.Clone();
+            gen.Compare();
+            gen.Equals();
+            gen.GetHashCode(nameof(Sample.Device.Id));
+            gen.Map();
+            gen.ToDictionary();
+            gen.FromDictionary();
+            gen.ToJson(singleLine:false);
+            gen.ToString(false);
 
-            clss.AddMethod(CommonMethodType.StaticClone);
-            clss.AddMethod(CommonMethodType.StaticCompare);
-            clss.AddMethod(CommonMethodType.StaticCopy);
-            clss.AddMethod(CommonMethodType.StaticToSimpleString);
+            gen.StaticClone();
+            gen.StaticCompare();
+            gen.StaticCopy();
+            gen.StaticToSimpleString();
 
             string fileName = Path.GetFullPath(@"..\..\..\Sample\Device-1.cs");
             string before = File.ReadAllText(fileName);

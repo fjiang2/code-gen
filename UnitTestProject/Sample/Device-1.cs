@@ -53,7 +53,7 @@ namespace UnitTestProject.Sample
 		
 		public override int GetHashCode()
 		{
-			return 0;
+			return Id;
 		}
 		
 		public void Map(Device obj)
@@ -79,7 +79,7 @@ namespace UnitTestProject.Sample
 			};
 		}
 		
-		public void FromDictinary(IDictionary<string, object> dictionary)
+		public void FromDictionary(IDictionary<string, object> dictionary)
 		{
 			this.Id = (int)dictionary["Id"];
 			this.Name = (string)dictionary["Name"];

@@ -48,12 +48,10 @@ namespace Sys.CodeBuilder
         public Class Class => clss;
         public CSharpBuilder CSharp => cs;
 
-        public void AddMethod(CommonMethodType methodType, bool isExtensionMethod = false)
+        public ICommonMethod CommonMethod(bool isExtensionMethod = false)
         {
-            if (methodType == CommonMethodType.FromDictionary || methodType == CommonMethodType.ToDictionary)
-                cs.AddUsing("System.Collections.Generic");
-
-            clss.AddMethod(properties, methodType, isExtensionMethod);
+            cs.AddUsing("System.Collections.Generic");
+            return clss.CommonMethod(properties, isExtensionMethod);
         }
 
 

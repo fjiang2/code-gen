@@ -254,81 +254,21 @@ namespace Sys.CodeBuilder
             clss.AddWithBeginEnd(body);
         }
 
-        public void AddMethod(CommonMethodType type)
+        public ICommonMethod CommonMethod()
         {
             var rw = properties
                 .Where(p => (p.Modifier & Modifier.Public) == Modifier.Public && p.CanRead && p.CanWrite)
                 .Select(p => new PropertyInfo { PropertyName = p.Name });
 
-            AddMethod(rw, type, isExtensionMethod: false);
+            return CommonMethod(rw, isExtensionMethod: false);
         }
 
-        public void AddMethod(IEnumerable<PropertyInfo> propertyNames, CommonMethodType methodType, bool isExtensionMethod)
+        public ICommonMethod CommonMethod(IEnumerable<PropertyInfo> propertyNames, bool isExtensionMethod)
         {
-            var x = new CommonMethodGenerator(ClassName, propertyNames)
+            return new CommonMethodGenerator(this, propertyNames)
             {
                 IsExtensionMethod = isExtensionMethod,
             };
-
-            switch (methodType)
-            {
-                case CommonMethodType.Map:
-                    Add(x.Map());
-                    break;
-
-                case CommonMethodType.Equals:
-                    Add(x.Equals());
-                    break;
-
-                case CommonMethodType.Clone:
-                    Add(x.Clone());
-                    break;
-
-                case CommonMethodType.Compare:
-                    Add(x.Compare());
-                    break;
-
-                case CommonMethodType.Copy:
-                    Add(x.Copy());
-                    break;
-
-                case CommonMethodType.GetHashCode:
-                    Add(x._GetHashCode());
-                    break;
-
-                case CommonMethodType.ToDictionary:
-                    Add(x.ToDictinary());
-                    break;
-
-                case CommonMethodType.FromDictionary:
-                    Add(x.FromDictinary());
-                    break;
-
-                case CommonMethodType.ToString:
-                    Add(x._ToString_v2());
-                    break;
-
-                case CommonMethodType.ToJson:
-                    Add(x.ToJson());
-                    break;
-
-
-                case CommonMethodType.StaticClone:
-                    Add(x.StaticClone());
-                    break;
-
-                case CommonMethodType.StaticCompare:
-                    Add(x.StaticCompare());
-                    break;
-
-                case CommonMethodType.StaticCopy:
-                    Add(x.StaticCopy());
-                    break;
-
-                case CommonMethodType.StaticToSimpleString:
-                    Add(x.StaticToSimpleString());
-                    break;
-            }
         }
 
 
