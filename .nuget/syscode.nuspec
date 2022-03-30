@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>syscode</id>
-    <version>3.0.0.0</version>
+    <version>3.0.1</version>
     <title>C# code generator</title>
     <authors>datconn</authors>
     <license type="expression">MIT</license>
@@ -13,13 +13,16 @@
     </description>
     <summary>C# code generator</summary>
     <releaseNotes>
-	  6/19/2021 v3.0.0.0
+		3/29/2022 v3.0.1
+		Improvements/Enhancements:
+		1.Generate JSON code
+		
+		6/19/2021 v3.0.0.0
 	    Bug Fixes:
   	    1. It is splited from sqlcon project.
-    </releaseNotes>
+</releaseNotes>
     <dependencies>
-      <group targetFramework=".NETStandard2.0">
-      </group>
+      <group targetFramework=".NETStandard2.0"></group>
     </dependencies>
   </metadata>
   <files>
