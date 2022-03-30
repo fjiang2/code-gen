@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Data;
+using System.IO;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sys.CodeBuilder;
@@ -123,6 +124,71 @@ namespace UnitTestProject
 
         }
 
+        [TestMethod]
+        public void Test_Constructor()
+        {
+            string className = "Product";
+            Constructor constructor = new Constructor(className)
+            {
+                Modifier = Modifier.Public,
+                Params = new Parameters().Add(typeof(DataRow), "row")
+            };
+
+            var sent = constructor.Body;
+            sent.AppendLine("FillObject(row);");
+
+            string code = constructor.ToString();
+            Assert.AreEqual(code, "public Product(DataRow row)\r\n{\r\n\tFillObject(row);\r\n}");
+        }
+
+        [TestMethod]
+        public void Test_Constructor_static()
+        {
+            string className = "Product";
+            Constructor constructor = new Constructor(className)
+            {
+                Modifier = Modifier.Static,
+            };
+
+            var sent = constructor.Body;
+            sent.Assign("list", new New(typeof(List<string>), new Arguments()));
+
+            string code = constructor.ToString();
+            Assert.AreEqual(code, "static Product()\r\n{\r\n\tlist = new List<string>();\r\n}");
+        }
+
+        [TestMethod]
+        public void Test_Partial_Utility_Class()
+        {
+            var clss = new PartialClass<Sample.Device>();
+
+            var gen = clss.CommonMethod();
+            gen.Copy();
+            gen.Clone();
+            gen.Compare();
+            gen.Equals();
+            gen.GetHashCode(nameof(Sample.Device.Id));
+            gen.Map();
+            gen.ToDictionary();
+            gen.FromDictionary();
+            gen.ToJson(singleLine:false);
+            gen.ToString(false);
+
+            gen.StaticClone();
+            gen.StaticCompare();
+            gen.StaticCopy();
+            gen.StaticToSimpleString();
+
+            string fileName = Path.GetFullPath(@"..\..\..\Sample\Device-1.cs");
+            string before = File.ReadAllText(fileName);
+            clss.Output(fileName);
+            string after = File.ReadAllText(fileName);
+
+            var x = new Sample.Device { Id = 10, Name = "Phone", Time = DateTime.Now, Weight = 73.1, Length = 20 };
+            string json = x.ToJson();
+
+            Assert.AreEqual(before, after);
+        }
     }
 }
 

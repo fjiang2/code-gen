@@ -1,6 +1,6 @@
 ﻿//--------------------------------------------------------------------------------------------------//
 //                                                                                                  //
-//        DPO(Data Persistent Object)                                                               //
+//        syscode(C# Code Builder)                                                                  //
 //                                                                                                  //
 //          Copyright(c) Datum Connect Inc.                                                         //
 //                                                                                                  //
@@ -14,15 +14,26 @@
 //                                                                                                  //
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Sys.Data.Coding
+namespace Sys.CodeBuilder
 {
-    public interface IQueryScript
+    public interface ICommonMethod
     {
-        string Script { get; }
+        void Clone();
+        void Compare();
+        void Copy();
+        void Equals();
+        void ToDictionary();
+        void FromDictionary();
+        void Map();
+
+        void ToJson(bool singleLine);
+        void GetHashCode(string property);
+        void ToString(bool useFormat);
+
+        void StaticClone();
+        void StaticCompare();
+        void StaticCopy();
+        void StaticToSimpleString();
     }
 }
