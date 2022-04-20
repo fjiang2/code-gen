@@ -256,16 +256,24 @@ namespace Sys.CodeBuilder
 
         public ICommonMethod CommonMethod()
         {
-            var rw = properties
+            var propertyNames = properties
                 .Where(p => (p.Modifier & Modifier.Public) == Modifier.Public && p.CanRead && p.CanWrite)
                 .Select(p => new PropertyInfo { PropertyName = p.Name });
 
-            return CommonMethod(rw, isExtensionMethod: false);
+            return CommonMethod(this.ClassName, propertyNames, isExtensionMethod: false);
         }
 
-        public ICommonMethod CommonMethod(IEnumerable<PropertyInfo> propertyNames, bool isExtensionMethod)
+
+        /// <summary>
+        /// The extension class name could be differenet with entity class name
+        /// </summary>
+        /// <param name="className">class name of entity</param>
+        /// <param name="propertyNames"></param>
+        /// <param name="isExtensionMethod"></param>
+        /// <returns></returns>
+        public ICommonMethod CommonMethod(string className, IEnumerable<PropertyInfo> propertyNames, bool isExtensionMethod)
         {
-            return new CommonMethodGenerator(this, propertyNames)
+            return new CommonMethodGenerator(this, className, propertyNames)
             {
                 IsExtensionMethod = isExtensionMethod,
             };

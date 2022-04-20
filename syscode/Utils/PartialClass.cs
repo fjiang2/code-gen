@@ -51,7 +51,7 @@ namespace Sys.CodeBuilder
         public ICommonMethod CommonMethod(bool isExtensionMethod = false)
         {
             cs.AddUsing("System.Collections.Generic");
-            return clss.CommonMethod(properties, isExtensionMethod);
+            return clss.CommonMethod(clss.ClassName, properties, isExtensionMethod);
         }
 
 

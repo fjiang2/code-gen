@@ -37,10 +37,10 @@ namespace Sys.CodeBuilder
 
         public bool IsExtensionMethod { get; set; }
 
-        public CommonMethodGenerator(Class clss, IEnumerable<PropertyInfo> variables)
+        public CommonMethodGenerator(Class clss, string className, IEnumerable<PropertyInfo> variables)
         {
             this.clss = clss;
-            this.className = clss.ClassName;
+            this.className = className;
             this.variables = variables;
             this.classType = new TypeInfo { UserType = className };
 
