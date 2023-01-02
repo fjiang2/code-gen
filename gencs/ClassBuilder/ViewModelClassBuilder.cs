@@ -13,12 +13,12 @@ namespace gencs.ClassBuilder
     class ViewModelClassBuilder : TheClassBuilder
     {
 
-        IEnumerable<Models.PropertyInfo> fields;
+        IEnumerable<PropertyInfo> properties;
 
-        public ViewModelClassBuilder(ClassInfo classInfo, IEnumerable<Models.PropertyInfo> fields)
+        public ViewModelClassBuilder(ClassInfo classInfo, IEnumerable<PropertyInfo> properties)
             : base(classInfo)
         {
-            this.fields = fields;
+            this.properties = properties;
             builder.AddUsing("System.ComponentModel");
             AddOptionalUsing();
             AddOptionalUsing();
@@ -42,9 +42,9 @@ namespace gencs.ClassBuilder
             Constructor_Default(clss);
 
 
-            foreach (var field in fields)
+            foreach (var property in properties)
             {
-                EachProperty(clss, field.Type, field.Name);
+                EachProperty(clss, property.PropertyType, property.PropertyName);
             }
 
             Method_OnPropertyChanged(clss);
@@ -71,7 +71,7 @@ namespace gencs.ClassBuilder
             clss.Add(constructor);
         }
 
-        private void EachProperty(Class clss, TypeInfo type, string name)
+        private void EachProperty(Class clss, TypeInfo type, Identifier name)
         {
             Field field = new Field(type, $"_{name}")
             {
@@ -93,7 +93,7 @@ namespace gencs.ClassBuilder
             };
             clss.Add(mtdOnChanged);
 
-            Property property = new Property(type, name)
+            Property property = new Property(type, name.ToString())
             {
                 Modifier = Modifier.Public,
             };

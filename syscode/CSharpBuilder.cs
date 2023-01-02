@@ -95,7 +95,7 @@ namespace Sys.CodeBuilder
             writer.Write(this.ToString());
         }
 
-        public void Output(string directory, string cname)
+        public string Output(string directory, string cname)
         {
             if (!Directory.Exists(directory))
             {
@@ -105,6 +105,7 @@ namespace Sys.CodeBuilder
             string code = this.ToString();
             string file = Path.ChangeExtension(Path.Combine(directory, cname), "cs");
             File.WriteAllText(file, code);
+            return file;
         }
 
         public void Output(string directory)

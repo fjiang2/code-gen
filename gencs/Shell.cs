@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sys.CodeBuilder;
 using gencs.ClassBuilder;
 using gencs.Models;
 
@@ -15,7 +16,7 @@ namespace gencs
         {
             if (properties.Count() == 0)
             {
-                Console.WriteLine($"Fields are not defined.");
+                Console.WriteLine($"Properties are not defined.");
                 return Task.CompletedTask;
             }
 
@@ -49,8 +50,8 @@ namespace gencs
 
                 _properties.Add(new PropertyInfo
                 {
-                    Type = new Sys.CodeBuilder.TypeInfo(items[0]),
-                    Name = items[1],
+                    PropertyType = new TypeInfo(items[0]),
+                    PropertyName = items[1],
                 });
             }
 

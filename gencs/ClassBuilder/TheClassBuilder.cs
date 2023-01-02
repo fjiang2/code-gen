@@ -51,18 +51,7 @@ namespace gencs.ClassBuilder
         public string Output(string directory)
         {
             CreateClass();
-
-            string cs = $"{classInfo.ClassName}.cs";
-            string fileName = Path.Combine(directory, cs);
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
-
-            using (var writer = new StreamWriter(fileName))
-            {
-                string code = $"{builder}";
-                writer.Write(code);
-            }
-
+            string fileName = builder.Output(directory, classInfo.ClassName);
             return fileName;
         }
 
