@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using gencs.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -63,10 +64,11 @@ namespace gencs
                 usingsOption, nameSpaceOption, 
                 classNameOption, basesOption,
                 fieldsOption,
+                outputOption,
             };
             
             cmd.SetHandler(shell.GenerateViewModel,
-                usingsOption, nameSpaceOption, classNameOption, basesOption,
+                new ClassInfoBinder(usingsOption, nameSpaceOption, classNameOption, basesOption),
                 fieldsOption, outputOption
                 );
 
