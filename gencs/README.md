@@ -1,0 +1,1 @@
+﻿./gencs.exe view-model UserViewModel -ns App.View.Model -f string+name -f int?+age -output "c:\temp"
