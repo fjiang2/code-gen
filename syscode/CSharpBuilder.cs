@@ -68,7 +68,11 @@ namespace Sys.CodeBuilder
 
         protected override void BuildBlock(CodeBlock block)
         {
-            foreach (var name in usings)
+            var _systems = usings.Where(x => x == "System" || x.StartsWith("System.")).OrderBy(x => x);
+            var _others = usings.Except(_systems).OrderBy(x => x);
+            var _usings = _systems.Union(_others);
+
+            foreach (var name in _usings)
                 block.AppendFormat("using {0};", name);
 
             block.AppendLine();
