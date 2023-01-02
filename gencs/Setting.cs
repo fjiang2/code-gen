@@ -18,7 +18,7 @@ namespace gencs
 
         public Setting(IConfiguration configuration)
         {
-            this.NameSpace = "CodeGeneration";
+            this.NameSpace = "App.ViewModels";
             this.ClassName = "ViewModel";
 
             this.Usings = new string[]
@@ -29,8 +29,8 @@ namespace gencs
             this.Bases = new string[] { };
             this.Fields = new string[]
             {
-                "string+name",
-                "int?+age",
+                "string+Name",
+                "int?+Age",
             };
 
             this.Output = Directory.GetCurrentDirectory();

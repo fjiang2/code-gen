@@ -13,9 +13,9 @@ namespace gencs.ClassBuilder
     class ViewModelClassBuilder : TheClassBuilder
     {
 
-        IEnumerable<FieldInfo> fields;
+        IEnumerable<Models.PropertyInfo> fields;
 
-        public ViewModelClassBuilder(ClassInfo classInfo, IEnumerable<FieldInfo> fields)
+        public ViewModelClassBuilder(ClassInfo classInfo, IEnumerable<Models.PropertyInfo> fields)
             : base(classInfo)
         {
             this.fields = fields;

@@ -48,7 +48,7 @@ namespace gencs.ClassBuilder
             return bases.ToArray();
         }
 
-        public void Output(string directory)
+        public string Output(string directory)
         {
             CreateClass();
 
@@ -62,6 +62,8 @@ namespace gencs.ClassBuilder
                 string code = $"{builder}";
                 writer.Write(code);
             }
+
+            return fileName;
         }
 
     }

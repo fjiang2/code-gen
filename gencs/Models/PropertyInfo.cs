@@ -2,7 +2,7 @@
 
 namespace gencs.Models
 {
-    class FieldInfo
+    class PropertyInfo
     {
         public TypeInfo Type { get; set; } = typeof(string);
         public string Name { get; set; } = string.Empty;

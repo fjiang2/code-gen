@@ -11,22 +11,50 @@ namespace gencs
 {
     internal class Shell
     {
-        public Task GenerateViewModel(ClassInfo classInfo, IEnumerable<string> fields, string output)
+        public Task GenerateViewModel(ClassInfo classInfo, IEnumerable<string> properties, string output)
         {
-            List<FieldInfo> _fields = new List<FieldInfo>();
-            foreach(string field in fields)
+            if (properties.Count() == 0)
             {
-                string[] items = field.Split('+');
-                _fields.Add(new FieldInfo
+                Console.WriteLine($"Fields are not defined.");
+                return Task.CompletedTask;
+            }
+
+            try
+            {
+                List<PropertyInfo> _fields = CreateFields(properties);
+
+                var cs = new ViewModelClassBuilder(classInfo, _fields);
+                string fileName = cs.Output(output);
+                Console.WriteLine($"Code generated: \"{fileName}\"");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Task.CompletedTask;
+        }
+
+
+        private static List<PropertyInfo> CreateFields(IEnumerable<string> properties)
+        {
+            List<PropertyInfo> _properties = new List<PropertyInfo>();
+            foreach (string property in properties)
+            {
+                string[] items = property.Split('+');
+                if (items.Length != 2)
+                {
+                    throw new ArgumentException($"Invalid property: {property}");
+                }
+
+                _properties.Add(new PropertyInfo
                 {
                     Type = new Sys.CodeBuilder.TypeInfo(items[0]),
                     Name = items[1],
                 });
             }
-            
-            var cs = new ViewModelClassBuilder(classInfo, _fields);
-            cs.Output(output);
-            return Task.CompletedTask;
+
+            return _properties;
         }
     }
 }
