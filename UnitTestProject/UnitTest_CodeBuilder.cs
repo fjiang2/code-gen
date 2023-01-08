@@ -77,7 +77,7 @@ namespace UnitTestProject
         public void Test_ImplictOperator()
         {
             var _implict = Operator.Implicit(new TypeInfo(typeof(Expression)), new Parameter(new TypeInfo(typeof(int)), "value"));
-            _implict.Body.Return("new Expression(value)");
+            _implict.Statement.Return("new Expression(value)");
             string code = _implict.ToString();
             Debug.Assert(code == @"public static implicit operator Expression(int value)
 {
@@ -89,7 +89,7 @@ namespace UnitTestProject
         public void Test_ExplictOperator()
         {
             var _explict = Operator.Explicit(new TypeInfo(typeof(string)), new Parameter(new TypeInfo(typeof(Expression)), "expr"));
-            _explict.Body.Return("expr.ToString()");
+            _explict.Statement.Return("expr.ToString()");
             string code = _explict.ToString();
             Debug.Assert(code == @"public static explicit operator string(Expression expr)
 {
@@ -108,7 +108,7 @@ namespace UnitTestProject
                 new Parameter(new TypeInfo(typeof(Expression)), "expr2")
                 );
 
-            _operator.Body.Return("new Expression($\"{exp1} > {exp2}\")");
+            _operator.Statement.Return("new Expression($\"{exp1} > {exp2}\")");
             string code = _operator.ToString();
             Debug.Assert(code == "public static Expression operator >=(Expression expr1, Expression expr2)\r\n{\r\n\treturn new Expression($\"{exp1} > {exp2}\");\r\n}");
 
@@ -118,7 +118,7 @@ namespace UnitTestProject
                new Parameter(new TypeInfo(typeof(Expression)), "expr")
                );
 
-            _operator.Body.Return("new Expression($\"!{expr}\")");
+            _operator.Statement.Return("new Expression($\"!{expr}\")");
             code = _operator.ToString();
             Debug.Assert(code == "public static Expression operator !(Expression expr)\r\n{\r\n\treturn new Expression($\"!{expr}\");\r\n}");
 
@@ -134,7 +134,7 @@ namespace UnitTestProject
                 Params = new Parameters().Add(typeof(DataRow), "row")
             };
 
-            var sent = constructor.Body;
+            var sent = constructor.Statement;
             sent.AppendLine("FillObject(row);");
 
             string code = constructor.ToString();
@@ -150,7 +150,7 @@ namespace UnitTestProject
                 Modifier = Modifier.Static,
             };
 
-            var sent = constructor.Body;
+            var sent = constructor.Statement;
             sent.Assign("list", new New(typeof(List<string>), new Arguments()));
 
             string code = constructor.ToString();

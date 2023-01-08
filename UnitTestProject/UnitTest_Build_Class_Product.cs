@@ -93,7 +93,7 @@ namespace UnitTestProject
 
 			clss.Add(constructor);
 
-			var sent = constructor.Body;
+			var sent = constructor.Statement;
 			sent.AppendLine("FillObject(row);");
 
 			string code = constructor.ToString();
@@ -170,7 +170,7 @@ namespace UnitTestProject
 				Params = new Parameters().Add(typeof(DataRow), "row")
 			};
 			clss.Add(method);
-			var sent = method.Body;
+			var sent = method.Statement;
 
 			foreach (DataColumn column in dt.Columns)
 			{
@@ -193,7 +193,7 @@ namespace UnitTestProject
 			};
 
 			clss.Add(method);
-			var sent = method.Body;
+			var sent = method.Statement;
 
 			foreach (DataColumn column in dt.Columns)
 			{

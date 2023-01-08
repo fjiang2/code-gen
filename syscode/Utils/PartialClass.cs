@@ -6,6 +6,10 @@ using System.Reflection;
 
 namespace Sys.CodeBuilder
 {
+    /// <summary>
+    /// Create common methods from typeof(T)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class PartialClass<T>
         : PartialClass
     {
@@ -15,6 +19,10 @@ namespace Sys.CodeBuilder
         }
     }
 
+
+    /// <summary>
+    /// Create common methods from Type
+    /// </summary>
     public class PartialClass
     {
         private readonly Type type;
@@ -58,7 +66,7 @@ namespace Sys.CodeBuilder
         public void Output(string fileName)
         {
             string directory = Path.GetDirectoryName(fileName);
-            cs.Output(directory, fileName);
+            cs.Output(directory, Path.GetFileName(fileName));
         }
 
         public override string ToString()

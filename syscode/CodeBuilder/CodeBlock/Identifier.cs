@@ -29,7 +29,7 @@ namespace Sys.CodeBuilder
 
         public Identifier(string name)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("identifier cannot be blank");
 
             this.name = name;

@@ -66,9 +66,19 @@ namespace Sys.CodeBuilder
             return this;
         }
 
+        private string[] SortedUsings()
+        {
+            var _systems = usings.Where(x => x == "System" || x.StartsWith("System.")).OrderBy(x => x);
+            var _others = usings.Except(_systems).OrderBy(x => x);
+            var _usings = _systems.Union(_others);
+            return _usings.ToArray();
+        }
+
         protected override void BuildBlock(CodeBlock block)
         {
-            foreach (var name in usings)
+            var _usings = SortedUsings();
+
+            foreach (var name in _usings)
                 block.AppendFormat("using {0};", name);
 
             block.AppendLine();
@@ -91,7 +101,13 @@ namespace Sys.CodeBuilder
             writer.Write(this.ToString());
         }
 
-        public void Output(string directory, string cname)
+        /// <summary>
+        /// Create a file for all classes.
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public string Output(string directory, string fileName)
         {
             if (!Directory.Exists(directory))
             {
@@ -99,10 +115,16 @@ namespace Sys.CodeBuilder
             }
 
             string code = this.ToString();
-            string file = Path.ChangeExtension(Path.Combine(directory, cname), "cs");
+            string file = Path.ChangeExtension(Path.Combine(directory, fileName), "cs");
             File.WriteAllText(file, code);
+            return file;
         }
 
+
+        /// <summary>
+        /// Create class files in the directory. Each class has its own file.
+        /// </summary>
+        /// <param name="directory"></param>
         public void Output(string directory)
         {
             if (!Directory.Exists(directory))
@@ -113,7 +135,8 @@ namespace Sys.CodeBuilder
             foreach (Prototype clss in classes)
             {
                 CodeBlock block = new CodeBlock();
-                foreach (var name in usings)
+                var _usings = SortedUsings();
+                foreach (var name in _usings)
                     block.AppendFormat("using {0};", name);
 
                 block.AppendLine();

@@ -64,7 +64,7 @@ namespace Sys.CodeBuilder
             };
             mtd.Params.Add(className, "obj");
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             foreach (var variable in variables)
             {
                 sent.AppendFormat("this.{0} = obj.{0};", variable);
@@ -85,7 +85,7 @@ namespace Sys.CodeBuilder
             mtd.Params.Add(className, "from");
             mtd.Params.Add(className, "to");
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             foreach (var variable in variables)
             {
                 sent.AppendFormat("to.{0} = from.{0};", variable);
@@ -102,7 +102,7 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Public,
             };
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             sent.AppendFormat("var obj = new {0}();", className);
             sent.AppendLine();
 
@@ -126,7 +126,7 @@ namespace Sys.CodeBuilder
             };
 
             mtd.Params.Add(className, "from");
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
 
             sent.AppendFormat("var obj = new {0}();", className);
             sent.AppendLine();
@@ -151,7 +151,7 @@ namespace Sys.CodeBuilder
 
             mtd.Params.Add<object>("obj");
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             sent.AppendFormat("var x = ({0})obj;", className);
             sent.AppendLine();
 
@@ -174,7 +174,7 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Public | Modifier.Override,
             };
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             sent.AppendLine($"return {property};");
 
             clss.Add(mtd);
@@ -189,7 +189,7 @@ namespace Sys.CodeBuilder
 
             mtd.Params.Add(className, "obj");
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
 
             sent.AppendLine("return ");
 
@@ -215,7 +215,7 @@ namespace Sys.CodeBuilder
             mtd.Params.Add(className, "a");
             mtd.Params.Add(className, "b");
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
 
             sent.AppendLine("return ");
 
@@ -239,7 +239,7 @@ namespace Sys.CodeBuilder
 
             mtd.Params.Add(className, "obj");
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             StringBuilder builder = new StringBuilder("\"{{");
             int index = 0;
             variables.ForEach(
@@ -274,7 +274,7 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Public | Modifier.Override,
             };
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
 
 
             StringBuilder builder = new StringBuilder("\"{{");
@@ -303,7 +303,7 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Public | Modifier.Override,
             };
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             sent.Append("return ");
             sent.Append("$\"");
             variables.ForEach(
@@ -322,7 +322,7 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Public,
                 Type = new TypeInfo { Type = typeof(IDictionary<string, object>) },
             };
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             sent.AppendLine("return new Dictionary<string, object>() ");
             sent.Begin();
 
@@ -345,7 +345,7 @@ namespace Sys.CodeBuilder
                 Params = new Parameters(new Parameter[] { new Parameter(type, "dictionary") }),
             };
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             foreach (var variable in variables)
             {
                 TypeInfo typeInfo = variable.PropertyType;
@@ -375,7 +375,7 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Public,
             };
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             sent.Append("return ");
             sent.Append("$\"{{");
             variables.ForEach(
@@ -394,7 +394,7 @@ namespace Sys.CodeBuilder
                 Modifier = Modifier.Public,
             };
 
-            var sent = mtd.Body;
+            var sent = mtd.Statement;
             sent.Append("return \"{\"");
             variables.ForEach(
                 variable => sent.AppendLine($"+ $\"{SQM}{variable}{SQM}:{GetVariable(variable)}\""),
