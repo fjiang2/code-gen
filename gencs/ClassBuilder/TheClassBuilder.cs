@@ -29,7 +29,6 @@ namespace gencs.ClassBuilder
         protected virtual string ClassName => classInfo.ClassName;
         protected string[] Usings => classInfo.Usings;
 
-
         public void AddOptionalUsing()
         {
             builder.AddUsingRange(classInfo.Usings);

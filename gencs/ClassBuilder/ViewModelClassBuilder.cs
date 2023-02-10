@@ -12,15 +12,14 @@ namespace gencs.ClassBuilder
 
     class ViewModelClassBuilder : TheClassBuilder
     {
-
         IEnumerable<PropertyInfo> properties;
 
         public ViewModelClassBuilder(ClassInfo classInfo, IEnumerable<PropertyInfo> properties)
             : base(classInfo)
         {
             this.properties = properties;
+
             builder.AddUsing("System.ComponentModel");
-            AddOptionalUsing();
             AddOptionalUsing();
         }
 
@@ -28,7 +27,7 @@ namespace gencs.ClassBuilder
         {
             TypeInfo[] _base = new TypeInfo[]
             {
-                new TypeInfo { UserType = $"INotifyPropertyChanged" }
+                new TypeInfo { UserType = "INotifyPropertyChanged" }
             };
 
             _base = OptionalBaseType(_base);
@@ -39,39 +38,21 @@ namespace gencs.ClassBuilder
             };
             builder.AddClass(clss);
 
-            Constructor_Default(clss);
-
+            Constructor constructor = new Constructor(clss.Name)
+            {
+                Modifier = Modifier.Public,
+            };
+            clss.Add(constructor);
 
             foreach (var property in properties)
             {
-                EachProperty(clss, property.PropertyType, property.PropertyName);
+                ForEachProperty(clss, property.PropertyType, property.PropertyName);
             }
 
             Method_OnPropertyChanged(clss);
         }
 
-        private void Constructor_Default(Class clss)
-        {
-            Constructor constructor = new Constructor(clss.Name)
-            {
-                Modifier = Modifier.Public,
-            };
-
-            clss.Add(constructor);
-        }
-
-        private void Method_Create(Class clss)
-        {
-            Method constructor = new Method($"Create{clss.Name}")
-            {
-                Modifier = Modifier.Public | Modifier.Static,
-                Params = new Parameters().Add(typeof(DataRow), "row")
-            };
-
-            clss.Add(constructor);
-        }
-
-        private void EachProperty(Class clss, TypeInfo type, Identifier name)
+        private void ForEachProperty(Class clss, TypeInfo type, Identifier name)
         {
             Field field = new Field(type, $"_{name}")
             {
