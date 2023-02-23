@@ -57,5 +57,28 @@ namespace gencs
 
             return _properties;
         }
+
+
+        public Task GenerateJsonNode(ClassInfo classInfo, string file, string output)
+        {
+            if (!File.Exists(file))
+            {
+                Console.WriteLine($"Json files are not found.");
+                return Task.CompletedTask;
+            }
+
+            try
+            {
+                var cs = new JsonNodeClassBuilder(classInfo, file);
+                string fileName = cs.Output(output);
+                Console.WriteLine($"Code generated: \"{fileName}\"");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

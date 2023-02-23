@@ -21,6 +21,7 @@ namespace gencs
         private readonly Option<IEnumerable<string>> basesOption;
         private readonly Option<string> outputOption;
 
+        private ClassInfoBinder classInfoBinder;
 
         public MainMenu(IConfiguration configuration)
         {
@@ -41,6 +42,8 @@ namespace gencs
             };
 
             outputOption = new Option<string>(new[] { "-o", "--output" }, () => setting.Output, $"Directory of class file generated.");
+
+            classInfoBinder = new ClassInfoBinder(usingsOption, nameSpaceOption, classNameOption, basesOption);
         }
 
 
@@ -49,7 +52,7 @@ namespace gencs
             RootCommand rootCommand = new RootCommand(title)
             {
                 ViewModelCommand(),
-                //SendBatchCommand(),
+                JsonNodeCommand(),
                 //ReceiveCommand(),
             };
 
@@ -59,27 +62,50 @@ namespace gencs
 
         private Command ViewModelCommand()
         {
-            
+
             var propertiesOption = new Option<IEnumerable<string>>(new[] { "-p", "--property" }, () => setting.Fields, $"Properties of view model, pattern:type+variable.")
             {
                 AllowMultipleArgumentsPerToken = true
             };
-            
+
             var cmd = new Command("view-model", "Generate view model class.")
             {
-                usingsOption, nameSpaceOption, 
+                usingsOption, nameSpaceOption,
                 classNameOption, basesOption,
                 propertiesOption,
                 outputOption,
             };
-            
+
             cmd.SetHandler(shell.GenerateViewModel,
-                new ClassInfoBinder(usingsOption, nameSpaceOption, classNameOption, basesOption),
+                classInfoBinder,
                 propertiesOption, outputOption
                 );
 
             return cmd;
         }
 
+        private Command JsonNodeCommand()
+        {
+
+            var fileOption = new Option<string>(new[] { "-f", "--file" }, "Json file name.")
+            {
+                AllowMultipleArgumentsPerToken = false
+            };
+
+            var cmd = new Command("json-node", "Generate JsonNode property value.")
+            {
+                usingsOption, nameSpaceOption,
+                classNameOption, basesOption,
+                fileOption,
+                outputOption,
+            };
+
+            cmd.SetHandler(shell.GenerateJsonNode,
+                classInfoBinder,
+                fileOption, outputOption
+                );
+
+            return cmd;
+        }
     }
 }
