@@ -34,83 +34,62 @@ namespace gencs.ClassBuilder
             };
             builder.AddClass(clss);
 
-            using (MemoryStream memoryStream = new MemoryStream(capacity: 1024 * 1024))
-            using (var writer = new StreamWriter(memoryStream))
-            {
-                WriteCode(writer, 0, node, "");
-                string code = Encoding.UTF8.GetString(memoryStream.ToArray());
-
-                Field field = new Field(new TypeInfo("JsonNode"), $"jsonNode", new Value(new CodeString(code)))
-                {
-                    Modifier = Modifier.Public,
-                };
-
-                clss.Add(field);
-            }
+            CreateField(clss);
         }
 
-        private static void WriteLine(TextWriter writer, int tab, string text)
+        private void CreateField(Class clss)
         {
-            Write(writer, tab, text);
-            writer.WriteLine();
-        }
+            Dictionary<object, object> dict = new Dictionary<object, object>();
+            Value value = WriteCodeValue(node, "");
 
-        private static void Write(TextWriter writer, int tab, string text)
-        {
-            for (int t = 0; t < tab; t++)
+            Field field = new Field(new TypeInfo(typeof(JsonNode)), "jsonNode", value)
             {
-                writer.Write("\t");
-            }
-            writer.Write(text);
+                Modifier = Modifier.Public,
+            };
+
+            clss.Add(field);
         }
 
-        private static void WriteCode(TextWriter writer, int tab, JsonNode node, string propertyName)
+        private static Value WriteCodeValue(JsonNode node, string propertyName)
         {
             if (node is JsonObject jsonObject)
             {
-                WriteLine(writer, tab, "new JsonObject");
-                WriteLine(writer, tab, "{");
-                tab++;
+                Dictionary<object, object> dict = new Dictionary<object, object>();
                 foreach (var field in jsonObject)
                 {
-                    Write(writer, tab, $"[\"{field.Key}\"] = ");
-                    WriteCode(writer, tab, field.Value!, field.Key);
-                    writer.WriteLine(",");
+                    dict.Add(field.Key, WriteCodeValue(field.Value!, field.Key));
                 }
-                tab--;
-                Write(writer, tab, "}");
-                return;
+                return new Value(dict) { Type = new TypeInfo(typeof(JsonObject)) };
             }
 
             if (node is JsonArray jsonArray)
             {
-                writer.WriteLine("new JsonArray");
-                WriteLine(writer, tab, "{");
-                tab++;
+                List<object> list = new List<object>();
                 foreach (var item in jsonArray)
                 {
-                    WriteCode(writer, tab, item!, propertyName);
-                    writer.WriteLine(",");
+                    list.Add(WriteCodeValue(item!, propertyName));
                 }
-                tab--;
-                Write(writer, tab, "}");
-                return;
+                return new Value(list.ToArray())
+                {
+                    Type = new TypeInfo(typeof(JsonArray)),
+                    ArrayColumnNumber = 1,
+                };
             }
 
             if (node is JsonValue jsonValue)
             {
                 if (jsonValue.TryGetValue<string>(out var stringValue))
                 {
-                    writer.Write($"\"{stringValue}\"");
+                    return new Value(stringValue);
                 }
                 else
                 {
-                    writer.Write($"{jsonValue}");
+                    return new Value(new CodeString(jsonValue.ToString()));
                 }
-                return;
             }
 
             throw new NotSupportedException();
         }
+
     }
 }
