@@ -30,12 +30,20 @@ namespace Sys.CodeBuilder
     public class Prototype : Declare
     {
         public string Prefix { get; set; }
-        public string Subdirectory { get; set; }
+
+        /// <summary>
+        /// Relative namespace segements
+        /// </summary>
+        public List<string> Namespaces { get; set; } = new List<string>();
+        public List<string> Usings { get; set; } = new List<string>();
 
         public Prototype(string name)
             : base(name)
         {
         }
+
+        public string RelativeNamespace => string.Join(".", Namespaces);
+        public string Subdirectory => string.Join("\\", Namespaces);
 
         public CSharpBuilder Builder => this.Parent as CSharpBuilder;
 
