@@ -24,7 +24,7 @@ namespace Sys.CodeBuilder
 {
     public class Property : Declare, IBuildable
     {
-        private readonly object value;
+        private readonly Value value;
 
         public Statement Gets { get; } = new Statement();
         public Statement Sets { get; } = new Statement();
@@ -39,7 +39,7 @@ namespace Sys.CodeBuilder
         {
         }
 
-        public Property(TypeInfo returnType, string propertyName, object value)
+        public Property(TypeInfo returnType, string propertyName, Value value)
             : base(propertyName)
         {
             this.Type = returnType;

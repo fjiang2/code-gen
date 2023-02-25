@@ -97,7 +97,7 @@ namespace Sys.CodeBuilder
             return field;
         }
 
-        public Property AddProperty<T>(Modifier modifier, string name, object value = null)
+        public Property AddProperty<T>(Modifier modifier, string name, Value value = null)
         {
             var property = new Property(new TypeInfo { Type = typeof(T) }, name, value)
             {
