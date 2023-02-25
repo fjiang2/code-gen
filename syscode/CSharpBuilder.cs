@@ -146,7 +146,7 @@ namespace Sys.CodeBuilder
                 {
                     foreach (var name in clss.Usings)
                     {
-                        block.AppendLine($"using {name};");
+                        block.AppendLine($"using {this.Namespace}.{name};");
                     }
                 }
 

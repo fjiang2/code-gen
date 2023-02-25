@@ -34,8 +34,12 @@ namespace Sys.CodeBuilder
         /// <summary>
         /// Relative namespace segements
         /// </summary>
-        public List<string> Namespaces { get; set; } = new List<string>();
-        public List<string> Usings { get; set; } = new List<string>();
+        public IEnumerable<string> Namespaces { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Relative using directive
+        /// </summary>
+        internal IList<string> Usings { get; } = new List<string>();
 
         public Prototype(string name)
             : base(name)
@@ -44,6 +48,19 @@ namespace Sys.CodeBuilder
 
         public string RelativeNamespace => string.Join(".", Namespaces);
         public string Subdirectory => string.Join("\\", Namespaces);
+
+        public void AddUsing(IEnumerable<string> nss)
+        {
+            AddUsing(string.Join(".", nss));
+        }
+
+        public void AddUsing(string ns)
+        {
+            if (!string.IsNullOrWhiteSpace(ns) && Usings.IndexOf(ns) == -1)
+            {
+                Usings.Add(ns);
+            }
+        }
 
         public CSharpBuilder Builder => this.Parent as CSharpBuilder;
 
