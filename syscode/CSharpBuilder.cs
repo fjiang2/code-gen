@@ -151,9 +151,9 @@ namespace Sys.CodeBuilder
                 }
 
                 string ns = this.Namespace;
-                if (!string.IsNullOrEmpty(clss.RelativeNamespace))
+                if (!string.IsNullOrEmpty(clss.Subnamespace))
                 {
-                    ns = $"{ns}.{clss.RelativeNamespace}";
+                    ns = $"{ns}.{clss.Subnamespace}";
                 }
 
                 block.AppendLine();

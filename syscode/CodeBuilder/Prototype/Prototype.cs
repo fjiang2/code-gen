@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace Sys.CodeBuilder
         /// <summary>
         /// Relative namespace segements
         /// </summary>
-        public IEnumerable<string> Namespaces { get; set; } = new List<string>();
+        public IList<string> Namespaces { get; set; } = new List<string>();
 
         /// <summary>
         /// Relative using directive
@@ -46,8 +47,15 @@ namespace Sys.CodeBuilder
         {
         }
 
-        public string RelativeNamespace => string.Join(".", Namespaces);
-        public string Subdirectory => string.Join("\\", Namespaces);
+        /// <summary>
+        /// Sub-namespace. The root namespcae is defined on CSharpBuilder.Namespace
+        /// </summary>
+        public string Subnamespace => string.Join(".", Namespaces);
+
+        /// <summary>
+        /// File directory structure matches namespace.
+        /// </summary>
+        public string Subdirectory => string.Join(Path.DirectorySeparatorChar.ToString(), Namespaces);
 
         public void AddUsing(IEnumerable<string> nss)
         {
