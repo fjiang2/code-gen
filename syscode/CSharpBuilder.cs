@@ -142,22 +142,23 @@ namespace Sys.CodeBuilder
                     block.AppendLine($"using {name};");
                 }
 
-                if(clss.Usings.Count > 0)
+                if (clss.Subusings.Count > 0)
                 {
-                    foreach (var name in clss.Usings)
+                    foreach (var name in clss.Subusings)
                     {
                         block.AppendLine($"using {this.Namespace}.{name};");
                     }
                 }
 
                 string ns = this.Namespace;
-                if (!string.IsNullOrEmpty(clss.Subnamespace))
+                if (clss.Subnamespace.Count > 0)
                 {
-                    ns = $"{ns}.{clss.Subnamespace}";
+                    string subns = string.Join(".", clss.Subnamespace);
+                    ns = $"{ns}.{subns}";
                 }
 
                 block.AppendLine();
-                block.AppendFormat("namespace {0}", ns);
+                block.Append($"namespace {ns}");
 
                 var c = new CodeBlock();
                 c.Add(clss.GetBlock());

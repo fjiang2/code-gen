@@ -33,14 +33,14 @@ namespace Sys.CodeBuilder
         public string Prefix { get; set; }
 
         /// <summary>
-        /// Relative namespace segements
+        /// Relative namespace segements.The root namespcae is defined on CSharpBuilder.Namespace
         /// </summary>
-        public IList<string> Namespaces { get; set; } = new List<string>();
+        public IList<string> Subnamespace { get; set; } = new List<string>();
 
         /// <summary>
         /// Relative using directive
         /// </summary>
-        internal IList<string> Usings { get; } = new List<string>();
+        internal IList<string> Subusings { get; } = new List<string>();
 
         public Prototype(string name)
             : base(name)
@@ -48,25 +48,24 @@ namespace Sys.CodeBuilder
         }
 
         /// <summary>
-        /// Sub-namespace. The root namespcae is defined on CSharpBuilder.Namespace
-        /// </summary>
-        public string Subnamespace => string.Join(".", Namespaces);
-
-        /// <summary>
         /// File directory structure matches namespace.
         /// </summary>
-        public string Subdirectory => string.Join(Path.DirectorySeparatorChar.ToString(), Namespaces);
+        public string Subdirectory => string.Join(Path.DirectorySeparatorChar.ToString(), Subnamespace);
 
-        public void AddUsing(IEnumerable<string> nss)
+        /// <summary>
+        /// Add using segments.e.g. AddUsing("System","IO")
+        /// </summary>
+        /// <param name="segments"></param>
+        public void AddSubusing(params string[] segments)
         {
-            AddUsing(string.Join(".", nss));
+            AddSubusing(string.Join(".", segments));
         }
 
-        public void AddUsing(string ns)
+        public void AddSubusing(string name)
         {
-            if (!string.IsNullOrWhiteSpace(ns) && Usings.IndexOf(ns) == -1)
+            if (!string.IsNullOrWhiteSpace(name) && Subusings.IndexOf(name) == -1)
             {
-                Usings.Add(ns);
+                Subusings.Add(name);
             }
         }
 
