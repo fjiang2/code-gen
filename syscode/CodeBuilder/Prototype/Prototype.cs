@@ -55,10 +55,10 @@ namespace Sys.CodeBuilder
         /// <summary>
         /// Add using segments.e.g. AddUsing("System","IO")
         /// </summary>
-        /// <param name="segments"></param>
-        public void AddSubusing(params string[] segments)
+        /// <param name="subnamespace"></param>
+        public void AddSubusing(IEnumerable<string> subnamespace)
         {
-            AddSubusing(string.Join(".", segments));
+            AddSubusing(string.Join(".", subnamespace));
         }
 
         public void AddSubusing(string name)
