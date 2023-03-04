@@ -14,7 +14,18 @@
 
     Default output directory
 
-## Commands
+### Command Prompt Examples
+
+SET GENCS_NAMESPACE=gencs.app.data
+SET GENCS_OUTPUT=C:\code
+
+### PowerShell Examples
+
+$env:GENCS_NAMESPACE='gencs.app.data'
+$env:GENCS_OUTPUT='C:\code'
+
+
+## gencs commands
 
 - View Model
 
@@ -26,4 +37,4 @@
 
     Create JsonNode feild and value:
 
-./gencs.exe json-node JsonNodeData -ns UnitTestProject.Sample -f "RealtimeBuffer_85_1_65.json" --output "C:\temp"
+./gencs.exe json-node UserJsonData -ns Project.Sample -f "sample.json" --output "C:\temp"

@@ -18,8 +18,8 @@ namespace gencs
 
         public Setting(IConfiguration configuration)
         {
-            this.NameSpace = Environment.GetEnvironmentVariable("GENCS_NAMESPACE") ?? "App.ViewModels";
-            this.ClassName = Environment.GetEnvironmentVariable("GENCS_CLASS_NAME") ?? "ViewModel";
+            this.NameSpace = Environment.GetEnvironmentVariable("GENCS_NAMESPACE") ?? "gencs.models";
+            this.ClassName = Environment.GetEnvironmentVariable("GENCS_CLASS_NAME") ?? "Class1";
 
             this.Usings = new string[]
             {

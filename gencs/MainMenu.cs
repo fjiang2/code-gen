@@ -34,8 +34,8 @@ namespace gencs
                 AllowMultipleArgumentsPerToken = true
             };
 
-            nameSpaceOption = new Option<string>(new[] { "-ns", "--namespace" }, () => setting.NameSpace, $"Namespace of view model.");
-            classNameOption = new Argument<string>("class", () => setting.ClassName, $"Class name of view model.");
+            nameSpaceOption = new Option<string>(new[] { "-ns", "--namespace" }, () => setting.NameSpace, $"Namespace.");
+            classNameOption = new Argument<string>("class", () => setting.ClassName, $"Class name.");
             basesOption = new Option<IEnumerable<string>>(new[] { "-b", "--base" }, () => setting.Bases, $"Base class or interface.")
             {
                 AllowMultipleArgumentsPerToken = true
@@ -92,7 +92,7 @@ namespace gencs
                 AllowMultipleArgumentsPerToken = false
             };
 
-            var cmd = new Command("json-node", "Generate JsonNode property value.")
+            var cmd = new Command("json-node", "Generate data class in JsonNode.")
             {
                 usingsOption, nameSpaceOption,
                 classNameOption, basesOption,
