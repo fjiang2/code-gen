@@ -9,7 +9,7 @@ using gencs.Models;
 
 namespace gencs.ClassBuilder
 {
-    abstract class TheClassBuilder
+    public abstract class TheClassBuilder
     {
         protected CSharpBuilder builder;
         protected ClassInfo classInfo;

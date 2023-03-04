@@ -11,18 +11,16 @@ using System.Xml.Linq;
 
 namespace gencs.ClassBuilder
 {
-
-    class JsonNodeClassBuilder : TheClassBuilder
+    public class JsonNodeClassBuilder : TheClassBuilder
     {
         private JsonNode node;
 
-        public JsonNodeClassBuilder(ClassInfo classInfo, string file)
+        public JsonNodeClassBuilder(ClassInfo classInfo, string json)
             : base(classInfo)
         {
             builder.AddUsing("System.Text.Json.Nodes");
             AddOptionalUsing();
 
-            string json = File.ReadAllText(file);
             this.node = JsonNode.Parse(json)!;
         }
 
@@ -37,9 +35,16 @@ namespace gencs.ClassBuilder
             CreateField(clss);
         }
 
+        public static string CreateJsonCode(string json)
+        {
+            ClassInfo classInfo = new ClassInfo();
+            var cs = new JsonNodeClassBuilder(classInfo, json);
+            Value value = WriteCodeValue(cs.node, "");
+            return value.ToString();
+        }
+
         private void CreateField(Class clss)
         {
-            Dictionary<object, object> dict = new Dictionary<object, object>();
             Value value = WriteCodeValue(node, "");
 
             Field field = new Field(new TypeInfo(typeof(JsonNode)), "jsonNode", value)

@@ -69,7 +69,8 @@ namespace gencs
 
             try
             {
-                var cs = new JsonNodeClassBuilder(classInfo, file);
+                string json = File.ReadAllText(file);
+                var cs = new JsonNodeClassBuilder(classInfo, json);
                 string fileName = cs.Output(output);
                 Console.WriteLine($"Code generated: \"{fileName}\"");
             }
