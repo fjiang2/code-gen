@@ -9,7 +9,7 @@ using gencs.Models;
 
 namespace gencs.ClassBuilder
 {
-    public abstract class TheClassBuilder
+    internal abstract class TheClassBuilder
     {
         protected CSharpBuilder builder;
         protected ClassInfo classInfo;
@@ -54,5 +54,13 @@ namespace gencs.ClassBuilder
             return fileName;
         }
 
+        /// <summary>
+        /// Get C# code
+        /// </summary>
+        /// <returns></returns>
+        public string GetCode()
+        {
+            return builder.ToString();
+        }
     }
 }

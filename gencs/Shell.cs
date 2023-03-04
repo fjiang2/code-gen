@@ -37,7 +37,7 @@ namespace gencs
         }
 
 
-        private static List<PropertyInfo> CreateFields(IEnumerable<string> properties)
+        internal static List<PropertyInfo> CreateFields(IEnumerable<string> properties)
         {
             List<PropertyInfo> _properties = new List<PropertyInfo>();
             foreach (string property in properties)

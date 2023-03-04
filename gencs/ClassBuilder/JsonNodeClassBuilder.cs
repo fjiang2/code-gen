@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace gencs.ClassBuilder
 {
-    public class JsonNodeClassBuilder : TheClassBuilder
+    class JsonNodeClassBuilder : TheClassBuilder
     {
         private JsonNode node;
 
