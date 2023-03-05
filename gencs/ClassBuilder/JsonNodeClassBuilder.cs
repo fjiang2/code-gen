@@ -35,12 +35,9 @@ namespace gencs.ClassBuilder
             CreateField(clss);
         }
 
-        public static string CreateJsonCode(string json)
+        public Value CreateField()
         {
-            ClassInfo classInfo = new ClassInfo();
-            var cs = new JsonNodeClassBuilder(classInfo, json);
-            Value value = WriteCodeValue(cs.node, "");
-            return value.ToString();
+            return WriteCodeValue(node, "");
         }
 
         private void CreateField(Class clss)

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using gencs.ClassBuilder;
 using gencs.Models;
+using Sys.CodeBuilder;
 
 namespace gencs
 {
@@ -20,7 +21,10 @@ namespace gencs
         /// <returns></returns>
         public static string CreateJsonNode(string json)
         {
-            return JsonNodeClassBuilder.CreateJsonCode(json);
+            ClassInfo classInfo = new ClassInfo();
+            var cs = new JsonNodeClassBuilder(classInfo, json);
+            Value value = cs.CreateField();
+            return value.ToString();
         }
 
         public static string CreateViewModel(ClassInfo classInfo, IEnumerable<string> properties)

@@ -1,32 +1,6 @@
 ﻿# Tool of C# Code Generation (gencs)
 
-## Environment Variable
-
-- GENCS_NAMESPACE
-
-    Default namespace
-
-- GENCS_CLASS_NAME
-
-    Default class name
-
-- GENCS_OUTPUT
-
-    Default output directory
-
-### Command Prompt Examples
-
-SET GENCS_NAMESPACE=gencs.app.data
-SET GENCS_OUTPUT=C:\code
-SET GENCS_CLASS_NAME=Program
-
-### PowerShell Examples
-
-$env:GENCS_NAMESPACE='gencs.app.data'
-$env:GENCS_OUTPUT='C:\code'
-$env:GENCS_CLASS_NAME='Program'
-
-## gencs commands
+## gencs Commands
 
 - View Model
 
