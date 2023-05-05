@@ -37,7 +37,7 @@ namespace gencs
         }
 
 
-        private static List<PropertyInfo> CreateFields(IEnumerable<string> properties)
+        internal static List<PropertyInfo> CreateFields(IEnumerable<string> properties)
         {
             List<PropertyInfo> _properties = new List<PropertyInfo>();
             foreach (string property in properties)
@@ -56,6 +56,30 @@ namespace gencs
             }
 
             return _properties;
+        }
+
+
+        public Task GenerateJsonNode(ClassInfo classInfo, string file, string output)
+        {
+            if (!File.Exists(file))
+            {
+                Console.WriteLine($"Json files are not found.");
+                return Task.CompletedTask;
+            }
+
+            try
+            {
+                string json = File.ReadAllText(file);
+                var cs = new JsonNodeClassBuilder(classInfo, json);
+                string fileName = cs.Output(output);
+                Console.WriteLine($"Code generated: \"{fileName}\"");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

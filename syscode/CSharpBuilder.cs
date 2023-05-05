@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.IO;
+using System.Xml.Linq;
 
 namespace Sys.CodeBuilder
 {
@@ -137,10 +138,27 @@ namespace Sys.CodeBuilder
                 CodeBlock block = new CodeBlock();
                 var _usings = SortedUsings();
                 foreach (var name in _usings)
-                    block.AppendFormat("using {0};", name);
+                {
+                    block.AppendLine($"using {name};");
+                }
+
+                if (clss.Subusings.Count > 0)
+                {
+                    foreach (var name in clss.Subusings)
+                    {
+                        block.AppendLine($"using {this.Namespace}.{name};");
+                    }
+                }
+
+                string ns = this.Namespace;
+                if (clss.Subnamespace.Count > 0)
+                {
+                    string subns = string.Join(".", clss.Subnamespace);
+                    ns = $"{ns}.{subns}";
+                }
 
                 block.AppendLine();
-                block.AppendFormat("namespace {0}", this.Namespace);
+                block.Append($"namespace {ns}");
 
                 var c = new CodeBlock();
                 c.Add(clss.GetBlock());

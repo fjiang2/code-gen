@@ -18,8 +18,8 @@ namespace gencs
 
         public Setting(IConfiguration configuration)
         {
-            this.NameSpace = "App.ViewModels";
-            this.ClassName = "ViewModel";
+            this.NameSpace = Environment.GetEnvironmentVariable("GENCS_NAMESPACE") ?? "gencs.models";
+            this.ClassName = Environment.GetEnvironmentVariable("GENCS_CLASS_NAME") ?? "Class1";
 
             this.Usings = new string[]
             {
@@ -33,7 +33,7 @@ namespace gencs
                 "int?+Age",
             };
 
-            this.Output = Directory.GetCurrentDirectory();
+            this.Output = Environment.GetEnvironmentVariable("GENCS_OUTPUT") ?? Directory.GetCurrentDirectory();
         }
     }
 }

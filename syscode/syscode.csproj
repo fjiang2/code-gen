@@ -6,5 +6,7 @@
     <Version>3.0.2</Version>
     <Description>C# code generator</Description>
     <Copyright></Copyright>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageOutputPath>C:\devel\nuget</PackageOutputPath>
   </PropertyGroup>
 </Project>
