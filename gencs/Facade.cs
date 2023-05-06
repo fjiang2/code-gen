@@ -33,5 +33,19 @@ namespace gencs
             var cs = new ViewModelClassBuilder(classInfo, fields);
             return cs.GetCode();
         }
+
+        public static string CreateValueModel(object obj)
+        {
+            ClassInfo classInfo = new ClassInfo();
+            var cs = new ValueModelClassBuilder(classInfo, obj);
+            Value value = cs.CreateField();
+            return value.ToString();
+        }
+
+        public static void CreateValueModel(ClassInfo classInfo, object obj, string outputDirectory)
+        {
+            var cs = new ValueModelClassBuilder(classInfo, obj);
+            cs.Output(outputDirectory);
+        }
     }
 }
