@@ -42,13 +42,13 @@ namespace gencs
             return value.ToString();
         }
 
-        public static void CreateValueModel(ClassInfo classInfo, string fieldName, object obj, string outputDirectory)
+        public static string CreateValueModel(ClassInfo classInfo, string fieldName, object obj)
         {
             var cs = new ValueModelClassBuilder(classInfo, obj) 
             {
                 FieldName = fieldName,
             };
-            cs.Output(outputDirectory);
+            return cs.GetCode();
         }
     }
 }

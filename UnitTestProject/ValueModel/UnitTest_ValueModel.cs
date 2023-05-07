@@ -322,7 +322,8 @@ namespace UnitTestProject.ValueModel
                 ClassName = "EntityValue",
                 NameSpace = "UnitTestProject.ValueModel",
             };
-            Facade.CreateValueModel(classInfo, "entityObj" , intersectionEntity,  @"../../../ValueModel");
+            string code = Facade.CreateValueModel(classInfo, "entityObj" , intersectionEntity);
+            File.WriteAllText(@"../../../ValueModel/EntityValue.cs", code);
 
             string json1 = jsonNode.ToJsonString().Prettify();
             string json2 = Json.Serialize(new EntityValue().entityObj);
