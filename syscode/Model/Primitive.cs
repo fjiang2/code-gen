@@ -54,9 +54,9 @@ namespace Sys.CodeBuilder
                         //return "new byte[] {0x" + BitConverter.ToString((byte[])value).Replace("-", ",0x") + "}";
                     }
 
-                case Enum enumValue:
-                    Type type = obj.GetType();
-                    return enumValue.ToString().Split(',').Select(x => $"{type.Name}.{x.Trim()}").Aggregate((x, y) => $"{x} | {y}");
+                //case Enum enumValue:
+                //    Type type = obj.GetType();
+                //    return enumValue.ToString().Split(',').Select(x => $"{type.Name}.{x.Trim()}").Aggregate((x, y) => $"{x} | {y}");
             }
 
             return ToCodeString(obj);
@@ -133,7 +133,7 @@ namespace Sys.CodeBuilder
         private static string EnumBitFlags(object host)
         {
             Type type = host.GetType();
-            string fullName = type.FullName;
+            string fullName = type.Name;        // type.FullName;
             if (Enum.IsDefined(type, host))
             {
                 return string.Format("{0}.{1}", fullName, host);

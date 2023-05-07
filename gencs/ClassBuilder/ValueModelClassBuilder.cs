@@ -10,16 +10,16 @@ namespace gencs.ClassBuilder
 {
     class ValueModelClassBuilder : TheClassBuilder
     {
-        private object node;
+        private object entity;
 
         public string FieldName { get; set; } = "obj";
 
-        public ValueModelClassBuilder(ClassInfo classInfo, object node)
+        public ValueModelClassBuilder(ClassInfo classInfo, object entity)
             : base(classInfo)
         {
             builder.AddUsing("System");
             AddOptionalUsing();
-            this.node = node;
+            this.entity = entity;
         }
 
         protected override void CreateClass()
@@ -35,14 +35,14 @@ namespace gencs.ClassBuilder
 
         public Value CreateField()
         {
-            return WriteCodeValue(node, "");
+            return WriteCodeValue(entity);
         }
 
         private void CreateField(Class clss)
         {
-            Value value = WriteCodeValue(node, "");
+            Value value = WriteCodeValue(entity);
 
-            Field field = new Field(new TypeInfo(node.GetType()), FieldName, value)
+            Field field = new Field(new TypeInfo(entity.GetType()), FieldName, value)
             {
                 Modifier = Modifier.Public,
             };
@@ -50,33 +50,29 @@ namespace gencs.ClassBuilder
             clss.Add(field);
         }
 
-        private Value WriteCodeValue(object node, string propertyName)
+        private Value WriteCodeValue(object entity)
         {
-            Type type = node.GetType();
+            Type type = entity.GetType();
+            builder.AddUsing(type.Namespace);
 
-            if (node is string stringValue)
+            if (type.IsValueType || type.IsPrimitive || type.IsEnum || entity is string)
             {
-                return new Value(stringValue);
+                return new Value(entity);
             }
 
-            //if (type.IsEnum)
-            //{
-            //    return new Value(new CodeString($"{type.Name}.{node}"));
-            //}
-
-            if (type.IsValueType || type.IsPrimitive)
+            if(entity is IDictionary)
             {
-                return new Value(node);
+
             }
 
-
-            if (type.IsArray)
+            if (entity is IEnumerable)
             {
                 List<object> list = new List<object>();
-                foreach (var item in (Array)node)
+                foreach (var item in (IEnumerable)entity)
                 {
-                    list.Add(WriteCodeValue(item!, propertyName));
+                    list.Add(WriteCodeValue(item!));
                 }
+
                 return new Value(list.ToArray())
                 {
                     Type = new TypeInfo(type),
@@ -84,43 +80,17 @@ namespace gencs.ClassBuilder
                 };
             }
 
-            if (node is IList)
+            New newObject = new New(new TypeInfo(type))
             {
-                New newObject = new New(new TypeInfo(type));
-                builder.AddUsing(type.Namespace);
-
-                List<object> list = new List<object>();
-                foreach (var item in (IList)node)
-                {
-                    list.Add(WriteCodeValue(item!, propertyName));
-                }
-                return new Value(list.ToArray())
-                {
-                    Type = new TypeInfo(type),
-                    ArrayColumnNumber = 1,
-                };
-            }
-            else
+                Format = ValueOutputFormat.MultipleLine,
+            };
+            foreach (var propertyInfo in type.GetProperties())
             {
-                New newObject = new New(new TypeInfo(type))
-                {
-                    Format = ValueOutputFormat.MultipleLine,
-                };
-                builder.AddUsing(type.Namespace);
-
-                foreach (var propertyInfo in type.GetProperties())
-                {
-                    object? value = propertyInfo.GetValue(node);
-                    if (value == null)
-                    {
-
-                    }
-                    newObject.AddProperty(propertyInfo.Name, WriteCodeValue(value!, propertyInfo.Name));
-                }
-
-                return new Value(newObject);
+                object? value = propertyInfo.GetValue(entity);
+                newObject.AddProperty(propertyInfo.Name, WriteCodeValue(value!));
             }
+
+            return new Value(newObject);
         }
-
     }
 }
