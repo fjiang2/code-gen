@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-
 namespace UnitTestProject
 {
 	[Table("Product", TableId = 1)]

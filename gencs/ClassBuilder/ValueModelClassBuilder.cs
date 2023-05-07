@@ -17,7 +17,7 @@ namespace gencs.ClassBuilder
         public ValueModelClassBuilder(ClassInfo classInfo, object node)
             : base(classInfo)
         {
-            //builder.AddUsing("System.Text.Json.Nodes");
+            builder.AddUsing("System");
             AddOptionalUsing();
             this.node = node;
         }
@@ -59,15 +59,16 @@ namespace gencs.ClassBuilder
                 return new Value(stringValue);
             }
 
-            if (type.IsEnum)
-            {
-                return new Value(new CodeString($"{type.Name}.{node}"));
-            }
+            //if (type.IsEnum)
+            //{
+            //    return new Value(new CodeString($"{type.Name}.{node}"));
+            //}
 
-            if (type.IsPrimitive)
+            if (type.IsValueType || type.IsPrimitive)
             {
                 return new Value(node);
             }
+
 
             if (type.IsArray)
             {
@@ -83,7 +84,7 @@ namespace gencs.ClassBuilder
                 };
             }
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+            if (node is IList)
             {
                 New newObject = new New(new TypeInfo(type));
                 builder.AddUsing(type.Namespace);
@@ -107,10 +108,13 @@ namespace gencs.ClassBuilder
                 };
                 builder.AddUsing(type.Namespace);
 
-                Dictionary<object, object> dict = new Dictionary<object, object>();
                 foreach (var propertyInfo in type.GetProperties())
                 {
                     object? value = propertyInfo.GetValue(node);
+                    if (value == null)
+                    {
+
+                    }
                     newObject.AddProperty(propertyInfo.Name, WriteCodeValue(value!, propertyInfo.Name));
                 }
 

@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnitTestProject.ValueModel;
 
 namespace UnitTestProject.ValueModel
 {
-	public partial class EntityValue
+	public partial class EntityObject
 	{
 		public TableEntity entityObj = new TableEntity
 		{

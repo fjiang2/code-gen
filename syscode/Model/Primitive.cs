@@ -39,7 +39,7 @@ namespace Sys.CodeBuilder
                     return $"new Guid(\"{value}\")";
 
                 case DateTime time:
-                    return $"new DateTime({time.Year}, {time.Month}, {time.Day}, {time.Hour}, {time.Minute}, {time.Second})";
+                    return $"new DateTime({time.Year}, {time.Month}, {time.Day}, {time.Hour}, {time.Minute}, {time.Second}, {time.Millisecond}, DateTimeKind.{time.Kind})";
 
                 case DateTimeOffset time:
                     return $"new DateTimeOffset({time.Year}, {time.Month}, {time.Day}, {time.Hour}, {time.Minute}, {time.Second}, {time.Offset})";
@@ -53,6 +53,10 @@ namespace Sys.CodeBuilder
                         return "new byte[] {" + hex + "}";
                         //return "new byte[] {0x" + BitConverter.ToString((byte[])value).Replace("-", ",0x") + "}";
                     }
+
+                case Enum enumValue:
+                    Type type = obj.GetType();
+                    return enumValue.ToString().Split(',').Select(x => $"{type.Name}.{x.Trim()}").Aggregate((x, y) => $"{x} | {y}");
             }
 
             return ToCodeString(obj);

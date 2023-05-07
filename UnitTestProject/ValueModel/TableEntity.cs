@@ -318,6 +318,7 @@ namespace UnitTestProject.ValueModel
 
     }
 
+    [Flags]
     public enum DetectorPurpose
     {
         StopBar = 0x0001,
@@ -350,6 +351,32 @@ namespace UnitTestProject.ValueModel
 
         Subdetector,
 
+    }
+
+    public class ScanElementEntity
+    {
+        public string TenantId { get; set; } = string.Empty;
+        public string ScanElementId { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string IntersectionId { get; set; } = string.Empty;
+        public string Shape { get; set; } = string.Empty;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Altitude { get; set; }
+        public double ScaleX { get; set; }
+        public double ScaleY { get; set; }
+        public double Angle { get; set; }
+        public List<ScanProperty> ScanValues { get; set; } = new List<ScanProperty>();
+        public DateTime LastUpdated { get; set; }
+    }
+    public class ScanProperty
+    {
+        public string Parameter { get; set; } = string.Empty;
+        public int Number { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+        public int Priority { get; set; }
+        public bool Flash { get; set; }
     }
 
 }

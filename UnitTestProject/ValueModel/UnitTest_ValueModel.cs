@@ -5,11 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using gencs;
 using gencs.Models;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTestProject.ValueModel
@@ -17,13 +15,20 @@ namespace UnitTestProject.ValueModel
     [TestClass]
     public class UnitTest_ValueModel
     {
-        private readonly JsonNode jsonNode = new JsonObject
+        public UnitTest_ValueModel()
         {
-            ["tenantId"] = "devel",
-            ["type"] = "Layout#INT-1002#2023-05-02",
-            ["intersection"] = new JsonObject
+        }
+
+        [TestMethod]
+        public void Test_object_ValueModel()
+        {
+            JsonNode jsonNode = new JsonObject
             {
-                ["approaches"] = new JsonArray
+                ["tenantId"] = "devel",
+                ["type"] = "Layout#INT-1002#2023-05-02",
+                ["intersection"] = new JsonObject
+                {
+                    ["approaches"] = new JsonArray
                 {
                   new JsonObject
                   {
@@ -94,7 +99,7 @@ namespace UnitTestProject.ValueModel
                     }
                   }
                 },
-                ["detectors"] = new JsonArray
+                    ["detectors"] = new JsonArray
                 {
                   new JsonObject
                   {
@@ -295,7 +300,7 @@ namespace UnitTestProject.ValueModel
                     ["scanElementId"] = "INT-1002#LANE-DET3"
                   }
                 },
-                ["pedDetectors"] = new JsonArray
+                    ["pedDetectors"] = new JsonArray
                 {
                   new JsonObject
                   {
@@ -305,31 +310,254 @@ namespace UnitTestProject.ValueModel
                     ["scanElementId"] = "INT-1002#PED-DET1"
                   }
                 }
-            },
-        };
-
-
-        public UnitTest_ValueModel()
-        {
-        }
-
-        [TestMethod]
-        public void TestValueModel()
-        {
-            TableEntity intersectionEntity = Json.Deserialize<TableEntity>(jsonNode);
+                },
+            };
+            TableEntity entity = Json.Deserialize<TableEntity>(jsonNode);
             ClassInfo classInfo = new ClassInfo
             {
-                ClassName = "EntityValue",
+                ClassName = "EntityObject",
                 NameSpace = "UnitTestProject.ValueModel",
             };
-            string code = Facade.CreateValueModel(classInfo, "entityObj" , intersectionEntity);
-            File.WriteAllText(@"../../../ValueModel/EntityValue.cs", code);
+            string code = Facade.CreateValueModel(classInfo, "entityObj" , entity);
+            File.WriteAllText(@"../../../ValueModel/EntityObject.cs", code);
 
             string json1 = jsonNode.ToJsonString().Prettify();
-            string json2 = Json.Serialize(new EntityValue().entityObj);
+            string json2 = Json.Serialize(new EntityObject().entityObj);
+            //File.WriteAllText(@"c:\temp\gencs1.json", json1);
+            //File.WriteAllText(@"c:\temp\gencs2.json", json2);
+            Assert.AreEqual(json1, json2);
+        }
+
+
+        [TestMethod]
+        public void Test_List_ValueModel()
+        {
+            JsonNode jsonNode = new JsonArray
+            {
+                new JsonObject
+                {
+                    ["tenantId"] = "devel",
+                    ["scanElementId"] = "INT-1002#LANE-DET1",
+                    ["name"] = "LANE-DET1",
+                    ["intersectionId"] = "INT-1002",
+                    ["shape"] = "lane/detector/L",
+                    ["latitude"] = 1,
+                    ["longitude"] = 1,
+                    ["altitude"] = 0,
+                    ["scaleX"] = 1,
+                    ["scaleY"] = 1,
+                    ["angle"] = 45,
+                    ["scanValues"] = new JsonArray
+                    {
+                        new JsonObject
+                        {
+                            ["parameter"] = "ON",
+                            ["number"] = 0,
+                            ["status"] = "Red",
+                            ["color"] = "Red",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        },
+                        new JsonObject
+                        {
+                            ["parameter"] = "OFF",
+                            ["number"] = 0,
+                            ["status"] = "Grey",
+                            ["color"] = "Grey",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        }
+                    },
+                    ["lastUpdated"] = "2023-05-02T14:44:40.563-05:00"
+                },
+                new JsonObject
+                {
+                    ["tenantId"] = "devel",
+                    ["scanElementId"] = "INT-1002#LANE-DET2",
+                    ["name"] = "LANE-DET2",
+                    ["intersectionId"] = "INT-1002",
+                    ["shape"] = "lane/detector/R",
+                    ["latitude"] = 1.1,
+                    ["longitude"] = 1.1,
+                    ["altitude"] = 0,
+                    ["scaleX"] = 1,
+                    ["scaleY"] = 1,
+                    ["angle"] = 0.1,
+                    ["scanValues"] = new JsonArray
+                    {
+                        new JsonObject
+                        {
+                            ["parameter"] = "ON",
+                            ["number"] = 0,
+                            ["status"] = "Red",
+                            ["color"] = "Red",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        },
+                        new JsonObject
+                        {
+                            ["parameter"] = "OFF",
+                            ["number"] = 0,
+                            ["status"] = "Grey",
+                            ["color"] = "Grey",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        }
+                    },
+                    ["lastUpdated"] = "2023-05-02T14:44:40.737-05:00"
+                },
+                new JsonObject
+                {
+                    ["tenantId"] = "devel",
+                    ["scanElementId"] = "INT-1002#LANE-DET3",
+                    ["name"] = "LANE-DET3",
+                    ["intersectionId"] = "INT-1002",
+                    ["shape"] = "lane/detector/T",
+                    ["latitude"] = 1.1,
+                    ["longitude"] = 1.1,
+                    ["altitude"] = 0,
+                    ["scaleX"] = 1,
+                    ["scaleY"] = 1,
+                    ["angle"] = 90,
+                    ["scanValues"] = new JsonArray
+                    {
+                        new JsonObject
+                        {
+                            ["parameter"] = "ON",
+                            ["number"] = 0,
+                            ["status"] = "Red",
+                            ["color"] = "Red",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        },
+                        new JsonObject
+                        {
+                            ["parameter"] = "OFF",
+                            ["number"] = 0,
+                            ["status"] = "Grey",
+                            ["color"] = "Grey",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        }
+                    },
+                    ["lastUpdated"] = "2023-05-02T14:44:40.873-05:00"
+                },
+                new JsonObject
+                {
+                    ["tenantId"] = "devel",
+                    ["scanElementId"] = "INT-1002#LANE-NBT1",
+                    ["name"] = "LANE-NBT1",
+                    ["intersectionId"] = "INT-1002",
+                    ["shape"] = "lane/L",
+                    ["latitude"] = 1,
+                    ["longitude"] = 1,
+                    ["altitude"] = 0,
+                    ["scaleX"] = 1,
+                    ["scaleY"] = 1,
+                    ["angle"] = 1,
+                    ["scanValues"] = new JsonArray
+                    {
+                        new JsonObject
+                        {
+                            ["parameter"] = "Phase",
+                            ["number"] = 1,
+                            ["status"] = "1",
+                            ["color"] = "Red",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        },
+                        new JsonObject
+                        {
+                            ["parameter"] = "Phase",
+                            ["number"] = 1,
+                            ["status"] = "1",
+                            ["color"] = "Yellow",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        },
+                        new JsonObject
+                        {
+                            ["parameter"] = "Phase",
+                            ["number"] = 1,
+                            ["status"] = "1",
+                            ["color"] = "Green",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        }
+                    },
+                    ["lastUpdated"] = "2023-05-02T14:44:40.249-05:00"
+                },
+                new JsonObject
+                {
+                    ["tenantId"] = "devel",
+                    ["scanElementId"] = "INT-1002#PED-DET1",
+                    ["name"] = "PED-DET1",
+                    ["intersectionId"] = "INT-1002",
+                    ["shape"] = "pedcrossing/detector/NB",
+                    ["latitude"] = 1,
+                    ["longitude"] = 1,
+                    ["altitude"] = 0,
+                    ["scaleX"] = 1,
+                    ["scaleY"] = 1,
+                    ["angle"] = 10,
+                    ["scanValues"] = new JsonArray
+                    {
+                        new JsonObject
+                        {
+                            ["parameter"] = "ON",
+                            ["number"] = 0,
+                            ["status"] = "Red",
+                            ["color"] = "Red",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        },
+                        new JsonObject
+                        {
+                            ["parameter"] = "OFF",
+                            ["number"] = 0,
+                            ["status"] = "Grey",
+                            ["color"] = "Grey",
+                            ["priority"] = 0,
+                            ["flash"] = false
+                        }
+                    },
+                    ["lastUpdated"] = "2023-05-02T14:44:40.925-05:00"
+                },
+                new JsonObject
+                {
+                    ["tenantId"] = "devel",
+                    ["scanElementId"] = "INT-1002#PED-NB",
+                    ["name"] = "PED-NB",
+                    ["intersectionId"] = "INT-1002",
+                    ["shape"] = "pedcrossing/NB",
+                    ["latitude"] = 0,
+                    ["longitude"] = 0,
+                    ["altitude"] = 0,
+                    ["scaleX"] = 1,
+                    ["scaleY"] = 1,
+                    ["angle"] = 0,
+                    ["scanValues"] = new JsonArray
+                    {
+
+                    },
+                    ["lastUpdated"] = "2023-05-02T14:44:40.446-05:00"
+                }
+            };
+            List<ScanElementEntity> entities = Json.Deserialize<List<ScanElementEntity>>(jsonNode);
+            ClassInfo classInfo = new ClassInfo
+            {
+                ClassName = "EntityList",
+                NameSpace = "UnitTestProject.ValueModel",
+            };
+            string code = Facade.CreateValueModel(classInfo, "entityList", entities);
+            File.WriteAllText(@"../../../ValueModel/EntityList.cs", code);
+
+            string json1 = jsonNode.ToJsonString().Prettify();
+            string json2 = Json.Serialize(new EntityList().entityList);
             File.WriteAllText(@"c:\temp\gencs1.json", json1);
             File.WriteAllText(@"c:\temp\gencs2.json", json2);
             Assert.AreEqual(json1, json2);
         }
+
     }
 }
