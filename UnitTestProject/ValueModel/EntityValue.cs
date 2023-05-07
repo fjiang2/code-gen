@@ -5,7 +5,7 @@ namespace UnitTestProject.ValueModel
 {
 	public partial class EntityValue
 	{
-		public TableEntity obj = new TableEntity
+		public TableEntity entityObj = new TableEntity
 		{
 			TenantId = "devel",
 			Type = "Layout#INT-1002#2023-05-02",

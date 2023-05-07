@@ -322,10 +322,10 @@ namespace UnitTestProject.ValueModel
                 ClassName = "EntityValue",
                 NameSpace = "UnitTestProject.ValueModel",
             };
-            Facade.CreateValueModel(classInfo, intersectionEntity, @"../../../ValueModel");
+            Facade.CreateValueModel(classInfo, "entityObj" , intersectionEntity,  @"../../../ValueModel");
 
             string json1 = jsonNode.ToJsonString().Prettify();
-            string json2 = Json.Serialize(new EntityValue().obj);
+            string json2 = Json.Serialize(new EntityValue().entityObj);
             File.WriteAllText(@"c:\temp\gencs1.json", json1);
             File.WriteAllText(@"c:\temp\gencs2.json", json2);
             Assert.AreEqual(json1, json2);

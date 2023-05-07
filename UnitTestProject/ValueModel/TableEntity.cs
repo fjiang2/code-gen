@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using static UnitTestProject.ValueModel.TableEntity;
 
 namespace UnitTestProject.ValueModel
 {

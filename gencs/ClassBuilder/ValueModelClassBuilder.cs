@@ -12,6 +12,8 @@ namespace gencs.ClassBuilder
     {
         private object node;
 
+        public string FieldName { get; set; } = "obj";
+
         public ValueModelClassBuilder(ClassInfo classInfo, object node)
             : base(classInfo)
         {
@@ -40,7 +42,7 @@ namespace gencs.ClassBuilder
         {
             Value value = WriteCodeValue(node, "");
 
-            Field field = new Field(new TypeInfo(node.GetType()), "obj", value)
+            Field field = new Field(new TypeInfo(node.GetType()), FieldName, value)
             {
                 Modifier = Modifier.Public,
             };
