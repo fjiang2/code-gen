@@ -60,6 +60,7 @@ namespace gencs.ClassBuilder
         /// <returns></returns>
         public string GetCode()
         {
+            CreateClass();
             return builder.ToString();
         }
     }

@@ -16,6 +16,7 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\gencs\gencs.csproj" />
     <ProjectReference Include="..\syscode\syscode.csproj" />
   </ItemGroup>
 </Project>

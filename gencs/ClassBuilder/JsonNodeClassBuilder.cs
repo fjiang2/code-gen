@@ -14,6 +14,7 @@ namespace gencs.ClassBuilder
     class JsonNodeClassBuilder : TheClassBuilder
     {
         private JsonNode node;
+        public string FieldName { get; set; } = "jsonNode";
 
         public JsonNodeClassBuilder(ClassInfo classInfo, string json)
             : base(classInfo)
@@ -44,7 +45,7 @@ namespace gencs.ClassBuilder
         {
             Value value = WriteCodeValue(node, "");
 
-            Field field = new Field(new TypeInfo(typeof(JsonNode)), "jsonNode", value)
+            Field field = new Field(new TypeInfo(typeof(JsonNode)), FieldName, value)
             {
                 Modifier = Modifier.Public,
             };
