@@ -10,7 +10,7 @@
 
 - Json Node
 
-    Create JsonNode feild and value:
+    Create JsonNode field and value:
 
 ./gencs.exe json-node UserJsonData -ns Project.Sample -f "sample.json" --output "C:\temp"
 

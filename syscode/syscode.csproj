@@ -7,6 +7,6 @@
     <Description>C# code generator</Description>
     <Copyright></Copyright>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageOutputPath>C:\devel\nuget</PackageOutputPath>
+    <PackageOutputPath>C:\local\nuget</PackageOutputPath>
   </PropertyGroup>
 </Project>

@@ -17,7 +17,7 @@ namespace gencs.ClassBuilder
         public TheClassBuilder(ClassInfo classInfo)
         {
             this.classInfo = classInfo;
-            builder = new CSharpBuilder
+            this.builder = new CSharpBuilder
             {
                 Namespace = classInfo.NameSpace,
             };
