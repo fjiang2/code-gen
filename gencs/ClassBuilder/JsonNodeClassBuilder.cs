@@ -60,7 +60,14 @@ namespace gencs.ClassBuilder
                 Dictionary<object, object> dict = new Dictionary<object, object>();
                 foreach (var field in jsonObject)
                 {
-                    dict.Add(field.Key, WriteCodeValue(field.Value!, field.Key));
+                    if (field.Value != null)
+                    {
+                        dict.Add(field.Key, WriteCodeValue(field.Value, field.Key));
+                    }
+                    else
+                    {
+                       // dict.Add(field.Key, null);
+                    }
                 }
                 return new Value(dict) { Type = new TypeInfo(typeof(JsonObject)) };
             }
