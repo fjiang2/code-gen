@@ -52,7 +52,7 @@ namespace gencs.ClassBuilder
                     break;
 
                 case DtoType.MJ:
-                    builder.AddUsing("System.Text.Json");
+                    builder.AddUsing("System.Text.Json.Serialization");
                     break;
             }
 
@@ -71,7 +71,24 @@ namespace gencs.ClassBuilder
             {
                 Modifier = Modifier.Public | Modifier.Partial
             };
-            clss.AddAttribute(new AttributeInfo("DataContract"));
+
+            AttributeInfo? attr = null;
+            switch (dtoType)
+            {
+                case DtoType.DJ:
+                    attr = new AttributeInfo("DataContract");
+                    break;
+
+                case DtoType.NJ:
+                    attr = new AttributeInfo("JsonObject") { Args = new string[] { $"MemberSerialization.OptIn" } };
+                    break;
+
+                case DtoType.MJ:
+                    break;
+            }
+
+            if (attr != null)
+                clss.AddAttribute(attr);
 
 
             builder.AddClass(clss);
@@ -89,7 +106,25 @@ namespace gencs.ClassBuilder
             {
                 Modifier = Modifier.Public,
             };
-            property.AddAttribute(new AttributeInfo("DataMember") { Args = new string[] { $"Name = \"{_name}\"", "EmitDefaultValue = false" } });
+
+            AttributeInfo? attr = null;
+            switch (dtoType)
+            {
+                case DtoType.DJ:
+                    attr = new AttributeInfo("DataMember") { Args = new string[] { $"Name = \"{_name}\"", "EmitDefaultValue = false" } };
+                    break;
+
+                case DtoType.NJ:
+                    attr = new AttributeInfo("JsonProperty") { Args = new string[] { $"\"{_name}\"", "Required = Required.AllowNull" } };
+                    break;
+
+                case DtoType.MJ:
+                    attr = new AttributeInfo("JsonPropertyName") { Args = new string[] { $"\"{_name}\"" } };
+                    break;
+            }
+
+            if (attr != null)
+                property.AddAttribute(attr);
 
             clss.Add(property);
         }
