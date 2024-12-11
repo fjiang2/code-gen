@@ -52,6 +52,7 @@ namespace gencs
             RootCommand rootCommand = new RootCommand(title)
             {
                 ViewModelCommand(),
+                JsonClassCommand(),
                 JsonNodeCommand(),
                 //ReceiveCommand(),
             };
@@ -103,6 +104,33 @@ namespace gencs
             cmd.SetHandler(shell.GenerateJsonNode,
                 classInfoBinder,
                 fileOption, outputOption
+                );
+
+            return cmd;
+        }
+
+        private Command JsonClassCommand()
+        {
+
+            var propertiesOption = new Option<IEnumerable<string>>(new[] { "-p", "--property" }, () => setting.Fields, $"Properties of class, pattern:type+variable+name.")
+            {
+                AllowMultipleArgumentsPerToken = true
+            };
+
+            var dtoTypeOption = new Option<string>(new[] { "-t", "--type" }, () => setting.DtoType, $"class type, dj:Data Contract Json, nj:NewtonSoft Json, mj:Microsoft Json.");
+
+            var cmd = new Command("dto-class", "Generate data transfer object class.")
+            {
+                usingsOption, nameSpaceOption,
+                classNameOption, basesOption,
+                propertiesOption, dtoTypeOption,
+                outputOption,
+            };
+
+            cmd.SetHandler(shell.GenerateDtoClass,
+                classInfoBinder,
+                propertiesOption, dtoTypeOption,
+                outputOption
                 );
 
             return cmd;
