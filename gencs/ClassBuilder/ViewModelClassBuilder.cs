@@ -19,6 +19,7 @@ namespace gencs.ClassBuilder
         {
             this.properties = properties;
 
+            builder.AddUsing("System");
             builder.AddUsing("System.ComponentModel");
             AddOptionalUsing();
         }
