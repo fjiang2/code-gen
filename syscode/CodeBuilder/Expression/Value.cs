@@ -68,6 +68,19 @@ namespace Sys.CodeBuilder
             };
         }
 
+        private Dictionary<string, Value> objectValue => value as Dictionary<string, Value>;
+
+        public void AddProperty(string propertyName, Value value)
+        {
+            if (objectValue == null)
+                throw new Exception("object property is initialized, use new Value()");
+
+            if (objectValue.ContainsKey(propertyName))
+                throw new Exception($"duplicated property name:{propertyName}");
+
+            objectValue.Add(propertyName, value);
+        }
+
         protected override void BuildBlock(CodeBlock block)
         {
             base.BuildBlock(block);

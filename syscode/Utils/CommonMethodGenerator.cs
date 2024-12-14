@@ -76,7 +76,7 @@ namespace Sys.CodeBuilder
 
         public void StaticCopy()
         {
-            Method mtd = new Method("Copy")
+            Method mtd = new Method("CopyTo")
             {
                 Modifier = Modifier.Public | Modifier.Static,
                 IsExtensionMethod = IsExtensionMethod
@@ -206,7 +206,7 @@ namespace Sys.CodeBuilder
 
         public void StaticCompare()
         {
-            Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "Compare")
+            Method mtd = new Method(new TypeInfo { Type = typeof(bool) }, "CompareTo")
             {
                 Modifier = Modifier.Public | Modifier.Static,
                 IsExtensionMethod = IsExtensionMethod
