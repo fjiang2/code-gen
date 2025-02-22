@@ -46,6 +46,45 @@ namespace Sys.CodeBuilder
             this.expr = $"{variable} = {expr}";
         }
 
+        public Expression(TypeInfo type, IEnumerable<Expression> expressions)
+        : this(type, null, expressions)
+        {
+        }
+
+        public Expression(TypeInfo type, Arguments args)
+            : this(type, args, null)
+        {
+        }
+
+        public Expression(TypeInfo type, Arguments args, IEnumerable<Expression> expressions)
+        {
+            CodeBlock codeBlock = new CodeBlock();
+            if (expressions == null || expressions.Count() == 0)
+            {
+                if (args != null)
+                    codeBlock.Append($"new {type}({args})");
+                else
+                    codeBlock.Append($"new {type}()");
+
+                expr = codeBlock.ToString();
+                return;
+            }
+
+            if (args != null)
+                codeBlock.Append($"new {type}({args})");
+            else
+                codeBlock.Append($"new {type}");
+
+            codeBlock.Append(" { ");
+            expressions.ForEach(
+                assign => codeBlock.Append($"{assign}"),
+                assign => codeBlock.Append(", ")
+            );
+            codeBlock.Append(" }");
+
+            expr = codeBlock.ToString();
+        }
+
         public Expression this[Expression index]
         {
             get => new Expression($"{this}[{index}]");

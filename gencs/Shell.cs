@@ -81,5 +81,35 @@ namespace gencs
 
             return Task.CompletedTask;
         }
+
+        public Task GenerateDtoClass(ClassInfo classInfo, IEnumerable<string> properties, string dtoType, string output)
+        {
+            if (properties.Count() == 0)
+            {
+                Console.WriteLine($"Properties are not defined.");
+                return Task.CompletedTask;
+            }
+
+            try
+            {
+                List<PropertyInfo> _fields = CreateFields(properties);
+                if (Enum.TryParse<DtoType>(dtoType, ignoreCase: true, out var _dtoType))
+                {
+                    var cs = new DtoClassBuilder(classInfo, _fields, _dtoType);
+                    string fileName = cs.Output(output);
+                    Console.WriteLine($"Code generated: \"{fileName}\"");
+                }
+                else
+                {
+                    Console.Error.WriteLine($"Invalid dto type: \"{dtoType}\"");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

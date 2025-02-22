@@ -16,6 +16,11 @@ namespace gencs
         public string[] Fields { get; }
         public string Output { get; }
 
+        /// <summary>
+        ///  dj:DataContract-Json, nj:NewtonSoft-Json, mj:Microsoft-Json
+        /// </summary>
+        public string DtoType { get; }
+
         public Setting(IConfiguration configuration)
         {
             this.NameSpace = Environment.GetEnvironmentVariable("GENCS_NAMESPACE") ?? "gencs.models";
@@ -34,6 +39,9 @@ namespace gencs
             };
 
             this.Output = Environment.GetEnvironmentVariable("GENCS_OUTPUT") ?? Directory.GetCurrentDirectory();
+
+            this.DtoType = "dj";
+
         }
     }
 }
