@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Sys.CodeBuilder;
 using gencs.ClassBuilder;
 using gencs.Models;
+using gencs.ClassBuilder.Mvvm;
 
 namespace gencs
 {
@@ -103,6 +104,25 @@ namespace gencs
                 {
                     Console.Error.WriteLine($"Invalid dto type: \"{dtoType}\"");
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task GenerateMvvmTemplate(ClassInfo classInfo, string modelName, string viewName, string output)
+        {
+            try
+            {
+                string project = output;
+                var name = new MvvmName(modelName, viewName);
+                MvvmClassBuilder gen = new MvvmClassBuilder(classInfo, project);
+                gen.Generate(name);
+
+                Console.WriteLine("OK");
             }
             catch (Exception ex)
             {

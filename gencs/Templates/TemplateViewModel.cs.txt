@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using $NS.Views;
+
+namespace $NS.ViewModels
+{
+    public partial class TemplateViewModel : ObservableRecipient
+    {
+        public TemplateView View { get; set; }
+        public ObservableCollection<TemplateModel> ModelList { get; set; } = new ObservableCollection<TemplateModel>();
+
+        public Setting Setting { get; }
+        private readonly MqService mqService;
+
+        public TemplateViewModel(Setting setting, MqService mqService)
+        {
+            this.Setting = setting;
+            this.mqService = mqService;
+
+            MxClient.Subscribe<TemplateViewModel, FieldChooserMessage>(this, (r, m) => r.Receive(m));
+        }
+
+        private void Receive(FieldChooserMessage message)
+        {
+            if (message.Receiver != View)
+            {
+                return;
+            }
+        }
+
+        public Task<bool> LoadDataAsync()
+        {
+            return Task.FromResult(true);
+        }
+    }
+}

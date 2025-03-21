@@ -8,6 +8,12 @@
 
 ./gencs.exe view-model UserViewModel -ns Mileage.ViewModels -p string+Name -p int?+Age --output "C:\devel\GitHub\mileage\Eux\Mileage\ViewModels"
 
+- Mvvm Template
+
+    Create Mvvm Model/ViewModel/View class:
+
+./gencs.exe mvvm-template -ns Tmdd.WPF -m TmddOwnerCenter -v TmddOwnerCenterTree --output "C:\src\trafficware\atms\Tmdd.WPF"
+
 - Json Node
 
     Create JsonNode field and value:

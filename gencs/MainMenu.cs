@@ -52,6 +52,7 @@ namespace gencs
             RootCommand rootCommand = new RootCommand(title)
             {
                 ViewModelCommand(),
+                MvvmTemplateCommand(),
                 JsonClassCommand(),
                 JsonNodeCommand(),
                 //ReceiveCommand(),
@@ -131,6 +132,28 @@ namespace gencs
                 classInfoBinder,
                 propertiesOption, dtoTypeOption,
                 outputOption
+                );
+
+            return cmd;
+        }
+
+        private Command MvvmTemplateCommand()
+        {
+
+            var modelNameOption = new Option<string>(new[] { "-m", "--model" }, () => setting.ModelPrefix, $"Mvvm prefix model name");
+            var viewNameOption = new Option<string>(new[] { "-v", "--view" }, () => setting.ViewPrefix, $"Mvvm prefix view name");
+
+            var cmd = new Command("mvvm-template", "Generate Mvvm classes.")
+            {
+                usingsOption, nameSpaceOption,
+                modelNameOption, 
+                viewNameOption,
+                outputOption,
+            };
+
+            cmd.SetHandler(shell.GenerateMvvmTemplate,
+                classInfoBinder,
+                modelNameOption, viewNameOption, outputOption
                 );
 
             return cmd;
