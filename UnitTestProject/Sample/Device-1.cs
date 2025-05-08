@@ -125,7 +125,7 @@ namespace UnitTestProject.Sample
 			return obj;
 		}
 		
-		public static bool Compare(Device a, Device b)
+		public static bool CompareTo(Device a, Device b)
 		{
 			return a.Id == b.Id
 			&& a.Name == b.Name
@@ -135,7 +135,7 @@ namespace UnitTestProject.Sample
 			&& a.Weight == b.Weight;
 		}
 		
-		public static void Copy(Device from, Device to)
+		public static void CopyTo(Device from, Device to)
 		{
 			to.Id = from.Id;
 			to.Name = from.Name;

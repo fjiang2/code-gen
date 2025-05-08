@@ -36,7 +36,7 @@ namespace Sys.CodeBuilder
         {
             this.value = value;
         }
-        
+
         public Value(New value)
         {
             this.value = value;
@@ -105,6 +105,11 @@ namespace Sys.CodeBuilder
                 case Dictionary<object, object> dict:
                     block.Append($"new {Type}");
                     WriteDictionary(block, dict);
+                    break;
+
+                case Dictionary<string, Value> list:
+                    block.Append($"new {Type}");
+                    WriteList(block, list);
                     break;
 
                 default:
@@ -191,6 +196,45 @@ namespace Sys.CodeBuilder
                             block.Append(",");
 
                     }
+
+                    block.End();
+                    break;
+            }
+        }
+
+        private void WriteList(CodeBlock block, IDictionary<string, Value> list)
+        {
+
+            switch (Format)
+            {
+                case ValueOutputFormat.SingleLine:
+                    block.Append("{");
+                    list.ForEach(
+                         kvp =>
+                         {
+                             string key = Primitive.ToPrimitive(kvp.Key);
+                             block.Append($"{key} = ");
+                             kvp.Value.BuildBlock(block);
+                         },
+                         _ => block.Append(",")
+                         );
+
+                    block.Append("}");
+                    break;
+
+                default:
+                    block.Begin();
+
+                    list.ForEach(
+                        kvp =>
+                        {
+                            block.AppendLine();
+                            string key = kvp.Key;
+                            block.Append($"{key} = ");
+                            kvp.Value.BuildBlock(block);
+                        },
+                        _ => block.Append(",")
+                        );
 
                     block.End();
                     break;

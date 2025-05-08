@@ -6,6 +6,7 @@ using System.IO;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sys.CodeBuilder;
+using System.Xml.Linq;
 
 namespace UnitTestProject
 {
@@ -171,7 +172,7 @@ namespace UnitTestProject
             gen.Map();
             gen.ToDictionary();
             gen.FromDictionary();
-            gen.ToJson(singleLine:false);
+            gen.ToJson(singleLine: false);
             gen.ToString(false);
 
             gen.StaticClone();
@@ -188,6 +189,33 @@ namespace UnitTestProject
             string json = x.ToJson();
 
             Assert.AreEqual(before, after);
+        }
+
+        [TestMethod]
+        public void Test_ToPrimitive()
+        {
+            string result = Primitive.ToPrimitive(1);
+            Assert.AreEqual("1", result);
+
+            object a = 1;
+            result = Primitive.ToPrimitive(a);
+            Assert.AreEqual("1", result);
+
+        }
+
+        [TestMethod]
+        public void Test_Value_ToString()
+        {
+            TypeInfo type = new TypeInfo { UserType = "className" };
+            var x = new Value(new Dictionary<string, Value>()) { Type = type };
+            x.AddProperty("a", new Value(1));
+            x.AddProperty("b", new Value(DBNull.Value));
+            var s = x.ToString();
+            bool result = s.IndexOf("a = 1") > 0;
+            Assert.IsTrue(result);
+
+            result = s.IndexOf("b = null") > 0;
+            Assert.IsTrue(result);
         }
     }
 }
