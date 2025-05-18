@@ -44,7 +44,7 @@ namespace Sys.CodeBuilder
                 case DateTimeOffset time:
                     return $"new DateTimeOffset({time.Year}, {time.Month}, {time.Day}, {time.Hour}, {time.Minute}, {time.Second}, {time.Offset})";
 
-                
+
                 case byte[] value:
                     {
                         var hex = value
@@ -54,9 +54,9 @@ namespace Sys.CodeBuilder
                         //return "new byte[] {0x" + BitConverter.ToString((byte[])value).Replace("-", ",0x") + "}";
                     }
 
-                //case Enum enumValue:
-                //    Type type = obj.GetType();
-                //    return enumValue.ToString().Split(',').Select(x => $"{type.Name}.{x.Trim()}").Aggregate((x, y) => $"{x} | {y}");
+                    //case Enum enumValue:
+                    //    Type type = obj.GetType();
+                    //    return enumValue.ToString().Split(',').Select(x => $"{type.Name}.{x.Trim()}").Aggregate((x, y) => $"{x} | {y}");
             }
 
             return ToCodeString(obj);
@@ -123,10 +123,17 @@ namespace Sys.CodeBuilder
                     return $"0x{b:X}";
 
                 default:
+                    if (obj == DBNull.Value)
+                    {
+                        o.Write("null");
+                        break;
+                    }
+
                     o.Write(obj);
                     break;
 
             }
+
             return o.ToString();
         }
 

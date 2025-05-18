@@ -1,7 +1,8 @@
 {
   "profiles": {
     "gencs": {
-        "commandName": "Project",
-        "commandLineArgs": "json-node GeoIntersection2 -ns UnitTestProject.Sample -f C:\\spm\\data\\backup\\GEO_2.json --output C:\\spm\\data\\backup"
+      "commandName": "Project",
+      "commandLineArgs": "mvvm-template -ns Tmdd.WPF -m TmddOwnerCenter -v TmddOwnerCenterTree --output \"C:\\src\\trafficware\\atms\\Tmdd.WPF\""
     }
+  }
 }

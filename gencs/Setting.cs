@@ -21,9 +21,12 @@ namespace gencs
         /// </summary>
         public string DtoType { get; }
 
+        public string ModelPrefix { get; }
+        public string ViewPrefix { get; }
+
         public Setting(IConfiguration configuration)
         {
-            this.NameSpace = Environment.GetEnvironmentVariable("GENCS_NAMESPACE") ?? "gencs.models";
+            this.NameSpace = Environment.GetEnvironmentVariable("GENCS_NAMESPACE") ?? "Gencs";
             this.ClassName = Environment.GetEnvironmentVariable("GENCS_CLASS_NAME") ?? "Class1";
 
             this.Usings = new string[]
@@ -41,6 +44,9 @@ namespace gencs
             this.Output = Environment.GetEnvironmentVariable("GENCS_OUTPUT") ?? Directory.GetCurrentDirectory();
 
             this.DtoType = "dj";
+
+            this.ModelPrefix = "Mvvm";
+            this.ViewPrefix = "Mvvm";
 
         }
     }
