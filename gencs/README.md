@@ -25,3 +25,5 @@
 ### lanuchSettings.json
 - "commandLineArgs": "view-model UserViewModel -ns App.View.Model -p string+Name -p int?+Age"
 - "commandLineArgs": "json-node JsonNodeData -ns UnitTestProject.Sample -f C:\\devel\\GitHub\\mug\\butterfly\\controller.metadata\\metadata\\85_1_65\\RealtimeBuffer_85_1_65.json --output C:\\devel\\GitHub\\code-gen\\UnitTestProject\\Sample"
+- "commandLineArgs": "json-node GeoIntersection2 -ns UnitTestProject.Sample -f C:\\spm\\data\\backup\\GEO_2.json --output C:\\spm\\data\\backup"
+- "commandLineArgs": "mvvm-template -ns Tmdd.WPF -m TmddOwnerCenter -v TmddOwnerCenterTree --output \"C:\\src\\trafficware\\atms\\Tmdd.WPF\""
