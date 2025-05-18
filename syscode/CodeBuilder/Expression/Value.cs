@@ -107,9 +107,9 @@ namespace Sys.CodeBuilder
                     WriteDictionary(block, dict);
                     break;
 
-                case Dictionary<string, Value> list:
+                case Dictionary<string, Value> properties:
                     block.Append($"new {Type}");
-                    WriteList(block, list);
+                    WriteList(block, properties);
                     break;
 
                 default:
@@ -202,14 +202,14 @@ namespace Sys.CodeBuilder
             }
         }
 
-        private void WriteList(CodeBlock block, IDictionary<string, Value> list)
+        private void WriteList(CodeBlock block, IDictionary<string, Value> properties)
         {
 
             switch (Format)
             {
                 case ValueOutputFormat.SingleLine:
                     block.Append("{");
-                    list.ForEach(
+                    properties.ForEach(
                          kvp =>
                          {
                              string key = Primitive.ToPrimitive(kvp.Key);
@@ -225,7 +225,7 @@ namespace Sys.CodeBuilder
                 default:
                     block.Begin();
 
-                    list.ForEach(
+                    properties.ForEach(
                         kvp =>
                         {
                             block.AppendLine();
