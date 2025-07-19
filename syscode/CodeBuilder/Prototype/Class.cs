@@ -186,7 +186,7 @@ namespace Sys.CodeBuilder
 
             clss.AppendFormat("{0} class {1}", new ModifierString(Modifier), ClassName);
             if (Inherits.Length > 0)
-                clss.AppendFormat("\t: {0}", string.Join(", ", Inherits.Select(inherit => inherit.ToString())));
+                clss.AppendFormat("{0}: {1}", CodeLine.Tab(1), string.Join(", ", Inherits.Select(inherit => inherit.ToString())));
 
             var body = new CodeBlock();
 

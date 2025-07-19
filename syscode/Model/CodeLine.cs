@@ -28,14 +28,23 @@ namespace Sys.CodeBuilder
     {
         public static readonly CodeLine EmptyLine = new CodeLine();
 
-        private static readonly string[] TABS = new string[] { "", "\t", "\t\t", "\t\t\t", "\t\t\t\t", "\t\t\t\t\t" };
+        public static int TabSize { get; set; } = 4;
+        public static int IndentSize { get; set; } = 4;
+        public static bool InsertSpaces { get; set; }
 
         internal static string Tab(int n)
         {
-            if (n < TABS.Length)
-                return TABS[n];
+            char[] tabs;
+            if (InsertSpaces)
+            {
+                tabs = Enumerable.Repeat(' ', TabSize * n).ToArray();
+            }
+            else
+            {
+                tabs = Enumerable.Repeat('\t', n).ToArray();
+            }
 
-            return new string('\t', n);
+            return new string(tabs);
         }
 
 

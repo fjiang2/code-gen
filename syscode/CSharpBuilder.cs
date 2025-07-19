@@ -36,6 +36,14 @@ namespace Sys.CodeBuilder
         {
         }
 
+        /// <summary>
+        /// Tab style is either Keep tabs or Insert spaces
+        /// </summary>
+        public static bool InsertSpaces
+        {
+            get => CodeLine.InsertSpaces;
+            set => CodeLine.InsertSpaces = value;
+        }
 
         public CSharpBuilder AddUsing(string name)
         {
