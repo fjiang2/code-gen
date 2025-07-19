@@ -76,9 +76,18 @@ namespace Sys.CodeBuilder
 
         private string[] SortedUsings()
         {
+            List<string> _usings = new List<string>();
+
             var _systems = usings.Where(x => x == "System" || x.StartsWith("System.")).OrderBy(x => x);
+            _usings.AddRange(_systems);
+
             var _others = usings.Except(_systems).OrderBy(x => x);
-            var _usings = _systems.Union(_others);
+            if (_usings.Any())
+            {
+                _usings.Add(string.Empty);
+                _usings.AddRange(_others);
+            }
+
             return _usings.ToArray();
         }
 
@@ -87,7 +96,16 @@ namespace Sys.CodeBuilder
             var _usings = SortedUsings();
 
             foreach (var name in _usings)
-                block.AppendFormat("using {0};", name);
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    block.AppendLine();
+                }
+                else
+                {
+                    block.AppendFormat("using {0};", name);
+                }
+            }
 
             block.AppendLine();
 
