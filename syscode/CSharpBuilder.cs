@@ -17,10 +17,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Xml.Linq;
 
 namespace Sys.CodeBuilder
@@ -36,14 +36,13 @@ namespace Sys.CodeBuilder
         {
         }
 
-        /// <summary>
-        /// Tab style is either Keep tabs or Insert spaces
-        /// </summary>
-        public static bool InsertSpaces
+        public Option Option
         {
-            get => CodeLine.InsertSpaces;
-            set => CodeLine.InsertSpaces = value;
+            get => GetOption;
+            set => GetOption = value;
         }
+
+        internal static Option GetOption = new Option();
 
         public CSharpBuilder AddUsing(string name)
         {

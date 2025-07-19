@@ -28,16 +28,14 @@ namespace Sys.CodeBuilder
     {
         public static readonly CodeLine EmptyLine = new CodeLine();
 
-        public static int TabSize { get; set; } = 4;
-        public static int IndentSize { get; set; } = 4;
-        public static bool InsertSpaces { get; set; }
+        public static Option option => CSharpBuilder.GetOption;
 
         internal static string Tab(int n)
         {
             char[] tabs;
-            if (InsertSpaces)
+            if (option.TabType == TabType.InsertSpaces)
             {
-                tabs = Enumerable.Repeat(' ', TabSize * n).ToArray();
+                tabs = Enumerable.Repeat(' ', option.TabSize * n).ToArray();
             }
             else
             {
