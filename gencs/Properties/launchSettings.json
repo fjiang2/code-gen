@@ -2,7 +2,7 @@
   "profiles": {
     "gencs": {
       "commandName": "Project",
-      "commandLineArgs": "mvvm-template -ns Tmdd.WPF -m TmddOwnerCenter -v TmddOwnerCenterTree --output \"C:\\src\\trafficware\\atms\\Tmdd.WPF\""
+      "commandLineArgs": "view-model UserViewModel -ns App.View.Model -p string+Name -p int?+Age"
     }
   }
 }

@@ -28,10 +28,17 @@ namespace Sys.CodeBuilder
     {
         public static readonly CodeLine EmptyLine = new CodeLine();
 
-        public static Option option => CSharpBuilder.GetOption;
+        private static Option option => CSharpBuilder.GetOption;
+
+        public CodeLine()
+        {
+        }
 
         internal static string Tab(int n)
         {
+            if (n <= 0)
+                return string.Empty;
+
             char[] tabs;
             if (option.TabType == TabType.InsertSpaces)
             {
@@ -52,8 +59,8 @@ namespace Sys.CodeBuilder
 
         public override string ToString()
         {
-            var t = Tab(tab);
-            return $"{t}{Line}";
+            var tabs = Tab(tab);
+            return $"{tabs}{Line}";
         }
     }
 }

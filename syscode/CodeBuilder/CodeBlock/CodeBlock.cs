@@ -63,7 +63,9 @@ namespace Sys.CodeBuilder
         {
             foreach (var line in block.lines)
             {
-                line.tab += indent;
+                if (!string.IsNullOrEmpty(line.Line))
+                    line.tab += indent;
+                
                 lines.Add(line);
             }
         }
@@ -159,7 +161,7 @@ namespace Sys.CodeBuilder
 
         public CodeBlock AppendLine()
         {
-            lines.Add(new CodeLine { tab = curruent });
+            lines.Add(new CodeLine { tab = 0, Line = string.Empty });
 
             return this;
         }
