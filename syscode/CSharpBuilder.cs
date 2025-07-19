@@ -82,7 +82,7 @@ namespace Sys.CodeBuilder
             _usings.AddRange(_systems);
 
             var _others = usings.Except(_systems).OrderBy(x => x);
-            if (_usings.Any())
+            if (_others.Any())
             {
                 _usings.Add(string.Empty);
                 _usings.AddRange(_others);
@@ -91,7 +91,7 @@ namespace Sys.CodeBuilder
             return _usings.ToArray();
         }
 
-        protected override void BuildBlock(CodeBlock block)
+        private void AddUsings(CodeBlock block)
         {
             var _usings = SortedUsings();
 
@@ -106,6 +106,11 @@ namespace Sys.CodeBuilder
                     block.AppendFormat("using {0};", name);
                 }
             }
+        }
+
+        protected override void BuildBlock(CodeBlock block)
+        {
+            AddUsings(block);
 
             block.AppendLine();
 
@@ -119,7 +124,6 @@ namespace Sys.CodeBuilder
                 );
 
             block.AddWithBeginEnd(c);
-
         }
 
         public void Output(TextWriter writer)
@@ -161,11 +165,7 @@ namespace Sys.CodeBuilder
             foreach (Prototype clss in classes)
             {
                 CodeBlock block = new CodeBlock();
-                var _usings = SortedUsings();
-                foreach (var name in _usings)
-                {
-                    block.AppendLine($"using {name};");
-                }
+                AddUsings(block);
 
                 if (clss.Subusings.Count > 0)
                 {
