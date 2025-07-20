@@ -15,9 +15,9 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Sys.CodeBuilder
 {
@@ -25,11 +25,12 @@ namespace Sys.CodeBuilder
     {
         public string Namespace { get; set; } = "Sys.Unknown";
 
-        private readonly List<string> usings = new List<string>();
+        private readonly Lazy<Usings> lazyUsings;
         private readonly List<Prototype> classes = new List<Prototype>();
 
         public CSharpBuilder()
         {
+            lazyUsings = new Lazy<Usings>(() => new Usings(Option));
         }
 
         public Option Option
@@ -40,11 +41,11 @@ namespace Sys.CodeBuilder
 
         internal static Option TheOption = new Option();
 
+        private Usings Usings => lazyUsings.Value;
+
         public CSharpBuilder AddUsing(string name)
         {
-            if (usings.IndexOf(name) < 0)
-                this.usings.Add(name);
-
+            Usings.AddUsing(name);
             return this;
         }
 
@@ -70,84 +71,9 @@ namespace Sys.CodeBuilder
             return this;
         }
 
-        /// <summary>
-        /// Place 'System' directive first when sorting usings.
-        /// </summary>
-        /// <param name="usings"></param>
-        /// <returns></returns>
-        private static string[] SortedUsings(IEnumerable<string> usings, Option option)
-        {
-            List<string> _usings = new List<string>();
-
-            var sorted = usings
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
-                .OrderBy(x => x);
-
-            var groups = sorted.GroupBy(x => x.Split('.')[0]);
-
-            if (option.UsingSystemFirst)
-            {
-                foreach (var group in groups)
-                {
-                    if (group.Key == nameof(System))
-                    {
-                        _usings.InsertRange(0, group.ToList());
-                    }
-                    else
-                    {
-                        if (option.SeparateUsingGroups)
-                            _usings.Add(string.Empty);
-
-                        _usings.AddRange(group.ToList());
-                    }
-                }
-
-                // if there is no using System.xxxx;
-                if (_usings.Any() && _usings[0] == string.Empty)
-                {
-                    _usings.RemoveAt(0);
-                }
-            }
-            else
-            {
-                foreach (var group in groups)
-                {
-                    _usings.AddRange(group.ToList());
-
-                    if (option.SeparateUsingGroups)
-                        _usings.Add(string.Empty);
-                }
-
-                if (_usings.Any() && _usings.Last() == string.Empty)
-                {
-                    _usings.RemoveAt(_usings.Count - 1);
-                }
-            }
-
-            return _usings.ToArray();
-        }
-
-        private void AddUsings(CodeBlock block)
-        {
-            var _usings = SortedUsings(usings, Option);
-
-            foreach (var name in _usings)
-            {
-                if (string.IsNullOrEmpty(name))
-                {
-                    block.AppendLine();
-                }
-                else
-                {
-                    block.AppendFormat("using {0};", name);
-                }
-            }
-        }
-
         protected override void BuildBlock(CodeBlock block)
         {
-            AddUsings(block);
+            block.Add(Usings.GetBlock());
 
             block.AppendLine();
 
@@ -202,7 +128,7 @@ namespace Sys.CodeBuilder
             foreach (Prototype clss in classes)
             {
                 CodeBlock block = new CodeBlock();
-                AddUsings(block);
+                block.Add(Usings.GetBlock());
 
                 if (clss.Subusings.Count > 0)
                 {

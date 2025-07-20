@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Sys.CodeBuilder</RootNamespace>
+    <RootNamespace>Sys</RootNamespace>
     <Company>Datconn</Company>
     <Version>3.0.6</Version>
     <Description>C# code generator</Description>
