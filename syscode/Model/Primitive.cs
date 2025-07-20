@@ -15,10 +15,8 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
 
 namespace Sys.CodeBuilder
 {
@@ -39,12 +37,12 @@ namespace Sys.CodeBuilder
                     return $"new Guid(\"{value}\")";
 
                 case DateTime time:
-                    return $"new DateTime({time.Year}, {time.Month}, {time.Day}, {time.Hour}, {time.Minute}, {time.Second})";
+                    return $"new DateTime({time.Year}, {time.Month}, {time.Day}, {time.Hour}, {time.Minute}, {time.Second}, {time.Millisecond}, DateTimeKind.{time.Kind})";
 
                 case DateTimeOffset time:
                     return $"new DateTimeOffset({time.Year}, {time.Month}, {time.Day}, {time.Hour}, {time.Minute}, {time.Second}, {time.Offset})";
 
-                
+
                 case byte[] value:
                     {
                         var hex = value
@@ -53,6 +51,10 @@ namespace Sys.CodeBuilder
                         return "new byte[] {" + hex + "}";
                         //return "new byte[] {0x" + BitConverter.ToString((byte[])value).Replace("-", ",0x") + "}";
                     }
+
+                    //case Enum enumValue:
+                    //    Type type = obj.GetType();
+                    //    return enumValue.ToString().Split(',').Select(x => $"{type.Name}.{x.Trim()}").Aggregate((x, y) => $"{x} | {y}");
             }
 
             return ToCodeString(obj);
@@ -119,17 +121,24 @@ namespace Sys.CodeBuilder
                     return $"0x{b:X}";
 
                 default:
+                    if (obj == DBNull.Value)
+                    {
+                        o.Write("null");
+                        break;
+                    }
+
                     o.Write(obj);
                     break;
 
             }
+
             return o.ToString();
         }
 
         private static string EnumBitFlags(object host)
         {
             Type type = host.GetType();
-            string fullName = type.FullName;
+            string fullName = type.Name;        // type.FullName;
             if (Enum.IsDefined(type, host))
             {
                 return string.Format("{0}.{1}", fullName, host);

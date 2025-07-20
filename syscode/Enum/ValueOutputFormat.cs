@@ -22,6 +22,10 @@ namespace Sys.CodeBuilder
     {
         SingleLine,
         MultipleLine,
+
+        /// <summary>
+        /// add empty line every 10 lines in a long array
+        /// </summary>
         Wrap
     }
 

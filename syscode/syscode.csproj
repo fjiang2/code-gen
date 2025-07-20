@@ -2,9 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Sys</RootNamespace>
     <Company>Datconn</Company>
-    <Version>3.0.1</Version>
+    <Version>3.0.6</Version>
     <Description>C# code generator</Description>
     <Copyright></Copyright>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageOutputPath>$(LocalNugetPackages)</PackageOutputPath>
   </PropertyGroup>
 </Project>

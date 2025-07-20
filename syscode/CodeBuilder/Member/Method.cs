@@ -14,11 +14,6 @@
 //                                                                                                  //
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Sys.CodeBuilder
 {
     public class Method : Member, IBuildable
@@ -38,6 +33,8 @@ namespace Sys.CodeBuilder
         {
         }
 
+        private bool IsAbstract => Modifier.HasFlag(Modifier.Partial) || Modifier.HasFlag(Modifier.Abstract);
+
         protected override string signature
         {
             get
@@ -54,6 +51,12 @@ namespace Sys.CodeBuilder
         }
         protected override void BuildBlock(CodeBlock block)
         {
+            if (IsAbstract)
+            {
+                block.Append(signature).Append(";");
+                return;
+            }
+
             if (IsExpressionBodied)
             {
                 block.Append(signature);
@@ -62,7 +65,7 @@ namespace Sys.CodeBuilder
                 if (NextLine)
                     block.AppendLine();
 
-                block.Append($"=> {Body}");
+                block.Append($"=> {Statement}");
 
                 return;
             }

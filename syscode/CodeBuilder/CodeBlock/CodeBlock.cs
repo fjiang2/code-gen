@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Sys.CodeBuilder
 {
@@ -63,7 +62,9 @@ namespace Sys.CodeBuilder
         {
             foreach (var line in block.lines)
             {
-                line.tab += indent;
+                if (!string.IsNullOrEmpty(line.Line))
+                    line.tab += indent;
+
                 lines.Add(line);
             }
         }
@@ -159,7 +160,7 @@ namespace Sys.CodeBuilder
 
         public CodeBlock AppendLine()
         {
-            lines.Add(new CodeLine { tab = curruent });
+            lines.Add(new CodeLine { tab = 0, Line = string.Empty });
 
             return this;
         }
@@ -200,11 +201,5 @@ namespace Sys.CodeBuilder
         {
             return string.Join(Environment.NewLine, lines);
         }
-
-        public string ToString(int indent)
-        {
-            return string.Join(Environment.NewLine, lines.Select(line => CodeLine.Tab(indent) + line.ToString()));
-        }
-
     }
 }

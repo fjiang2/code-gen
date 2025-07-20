@@ -14,17 +14,11 @@
 //                                                                                                  //
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Sys.CodeBuilder
 {
     public abstract class Member : Declare
     {
-        public Statement Body { get; } = new Statement();
+        public Statement Statement { get; } = new Statement();
         public Parameters Params { get; set; } = new Parameters();
 
 
@@ -40,7 +34,7 @@ namespace Sys.CodeBuilder
             base.BuildBlock(block);
 
             block.AppendLine(signature);
-            block.AddWithBeginEnd(Body);
+            block.AddWithBeginEnd(Statement);
         }
     }
 }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "gencs": {
+      "commandName": "Project",
+      "commandLineArgs": "view-model UserViewModel -ns App.View.Model -p string+Name -p int?+Age"
+    }
+  }
+}

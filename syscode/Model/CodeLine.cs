@@ -15,12 +15,6 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Sys.CodeBuilder
 {
 
@@ -28,16 +22,11 @@ namespace Sys.CodeBuilder
     {
         public static readonly CodeLine EmptyLine = new CodeLine();
 
-        private static readonly string[] TABS = new string[] { "", "\t", "\t\t", "\t\t\t", "\t\t\t\t", "\t\t\t\t\t" };
-
-        internal static string Tab(int n)
+        public CodeLine()
         {
-            if (n < TABS.Length)
-                return TABS[n];
-
-            return new string('\t', n);
         }
 
+        internal static string Tab(int n) => CSharpBuilder.TheOption.Tab(n);
 
         public int tab { get; set; }
         public string Line { get; set; }
@@ -45,8 +34,8 @@ namespace Sys.CodeBuilder
 
         public override string ToString()
         {
-            var t = Tab(tab);
-            return $"{t}{Line}";
+            var tabs = Tab(tab);
+            return $"{tabs}{Line}";
         }
     }
 }

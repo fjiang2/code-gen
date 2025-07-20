@@ -1,0 +1,64 @@
+using System;
+using System.ComponentModel;
+
+namespace $NS.Models
+{
+	public partial class TemplateModel
+        : INotifyPropertyChanged
+	{
+		private int _Id;
+		
+		partial void OnIdChanging(int value);
+		
+		partial void OnIdChanged();
+		
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				this.OnIdChanging(value);
+				this._Id = value;
+				this.OnIdChanged();
+				this.OnPropertyChanged(nameof(Id));
+			}
+		}
+
+		private string _Name;
+		
+		partial void OnNameChanging(string value);
+		
+		partial void OnNameChanged();
+		
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				this.OnNameChanging(value);
+				this._Name = value;
+				this.OnNameChanged();
+				this.OnPropertyChanged(nameof(Name));
+			}
+		}
+
+		public TemplateModel()
+		{
+            _Id = 0;
+            _Name = "";
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void OnPropertyChanged(string property)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+		}
+	}
+}

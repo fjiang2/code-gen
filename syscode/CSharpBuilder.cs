@@ -17,9 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.IO;
 
 namespace Sys.CodeBuilder
@@ -28,19 +25,27 @@ namespace Sys.CodeBuilder
     {
         public string Namespace { get; set; } = "Sys.Unknown";
 
-        private readonly List<string> usings = new List<string>();
+        private readonly Lazy<Usings> lazyUsings;
         private readonly List<Prototype> classes = new List<Prototype>();
 
         public CSharpBuilder()
         {
+            lazyUsings = new Lazy<Usings>(() => new Usings(Option));
         }
 
+        public Option Option
+        {
+            get => TheOption;
+            set => TheOption = value;
+        }
+
+        internal static Option TheOption = new Option();
+
+        private Usings Usings => lazyUsings.Value;
 
         public CSharpBuilder AddUsing(string name)
         {
-            if (usings.IndexOf(name) < 0)
-                this.usings.Add(name);
-
+            Usings.AddUsing(name);
             return this;
         }
 
@@ -68,8 +73,7 @@ namespace Sys.CodeBuilder
 
         protected override void BuildBlock(CodeBlock block)
         {
-            foreach (var name in usings)
-                block.AppendFormat("using {0};", name);
+            block.Add(Usings.GetBlock());
 
             block.AppendLine();
 
@@ -83,7 +87,6 @@ namespace Sys.CodeBuilder
                 );
 
             block.AddWithBeginEnd(c);
-
         }
 
         public void Output(TextWriter writer)
@@ -91,7 +94,13 @@ namespace Sys.CodeBuilder
             writer.Write(this.ToString());
         }
 
-        public void Output(string directory, string cname)
+        /// <summary>
+        /// Create a file for all classes.
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public string Output(string directory, string fileName)
         {
             if (!Directory.Exists(directory))
             {
@@ -99,10 +108,16 @@ namespace Sys.CodeBuilder
             }
 
             string code = this.ToString();
-            string file = Path.ChangeExtension(Path.Combine(directory, cname), "cs");
+            string file = Path.ChangeExtension(Path.Combine(directory, fileName), "cs");
             File.WriteAllText(file, code);
+            return file;
         }
 
+
+        /// <summary>
+        /// Create class files in the directory. Each class has its own file.
+        /// </summary>
+        /// <param name="directory"></param>
         public void Output(string directory)
         {
             if (!Directory.Exists(directory))
@@ -113,11 +128,25 @@ namespace Sys.CodeBuilder
             foreach (Prototype clss in classes)
             {
                 CodeBlock block = new CodeBlock();
-                foreach (var name in usings)
-                    block.AppendFormat("using {0};", name);
+                block.Add(Usings.GetBlock());
+
+                if (clss.Subusings.Count > 0)
+                {
+                    foreach (var name in clss.Subusings)
+                    {
+                        block.AppendLine($"using {this.Namespace}.{name};");
+                    }
+                }
+
+                string ns = this.Namespace;
+                if (clss.Subnamespace.Count > 0)
+                {
+                    string subns = string.Join(".", clss.Subnamespace);
+                    ns = $"{ns}.{subns}";
+                }
 
                 block.AppendLine();
-                block.AppendFormat("namespace {0}", this.Namespace);
+                block.Append($"namespace {ns}");
 
                 var c = new CodeBlock();
                 c.Add(clss.GetBlock());

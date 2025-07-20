@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 
 namespace Sys.CodeBuilder
 {
+    /// <summary>
+    /// Create common methods from typeof(T)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class PartialClass<T>
         : PartialClass
     {
@@ -15,6 +17,10 @@ namespace Sys.CodeBuilder
         }
     }
 
+
+    /// <summary>
+    /// Create common methods from Type
+    /// </summary>
     public class PartialClass
     {
         private readonly Type type;
@@ -51,14 +57,14 @@ namespace Sys.CodeBuilder
         public ICommonMethod CommonMethod(bool isExtensionMethod = false)
         {
             cs.AddUsing("System.Collections.Generic");
-            return clss.CommonMethod(properties, isExtensionMethod);
+            return clss.CommonMethod(clss.ClassName, properties, isExtensionMethod);
         }
 
 
         public void Output(string fileName)
         {
             string directory = Path.GetDirectoryName(fileName);
-            cs.Output(directory, fileName);
+            cs.Output(directory, Path.GetFileName(fileName));
         }
 
         public override string ToString()

@@ -18,8 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sys.CodeBuilder
 {
@@ -46,6 +44,13 @@ namespace Sys.CodeBuilder
         public Parameters Add(string userType, string name)
         {
             var param = new Parameter(new TypeInfo { UserType = userType }, name);
+
+            parameters.Add(param);
+            return this;
+        }
+        public Parameters Add(TypeInfo userType, string name)
+        {
+            var param = new Parameter(userType, name);
 
             parameters.Add(param);
             return this;

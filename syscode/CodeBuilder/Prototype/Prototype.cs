@@ -15,11 +15,8 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace Sys.CodeBuilder
 {
@@ -30,11 +27,42 @@ namespace Sys.CodeBuilder
     public class Prototype : Declare
     {
         public string Prefix { get; set; }
-        public string Subdirectory { get; set; }
+
+        /// <summary>
+        /// Relative namespace segements.The root namespcae is defined on CSharpBuilder.Namespace
+        /// </summary>
+        public IList<string> Subnamespace { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Relative using directive
+        /// </summary>
+        internal IList<string> Subusings { get; } = new List<string>();
 
         public Prototype(string name)
             : base(name)
         {
+        }
+
+        /// <summary>
+        /// File directory structure matches namespace.
+        /// </summary>
+        public string Subdirectory => string.Join(Path.DirectorySeparatorChar.ToString(), Subnamespace);
+
+        /// <summary>
+        /// Add using segments.e.g. AddUsing("System","IO")
+        /// </summary>
+        /// <param name="subnamespace"></param>
+        public void AddSubusing(IEnumerable<string> subnamespace)
+        {
+            AddSubusing(string.Join(".", subnamespace));
+        }
+
+        public void AddSubusing(string name)
+        {
+            if (!string.IsNullOrWhiteSpace(name) && Subusings.IndexOf(name) == -1)
+            {
+                Subusings.Add(name);
+            }
         }
 
         public CSharpBuilder Builder => this.Parent as CSharpBuilder;

@@ -18,8 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sys.CodeBuilder
 {
@@ -28,6 +26,7 @@ namespace Sys.CodeBuilder
     {
         public TypeInfo Type { get; set; } = TypeInfo.Anonymous;
         public ValueOutputFormat Format { get; set; } = ValueOutputFormat.MultipleLine;
+        public int ArrayColumnNumber { get; set; } = 1;
 
         private readonly object value;
 
@@ -35,7 +34,7 @@ namespace Sys.CodeBuilder
         {
             this.value = value;
         }
-        
+
         public Value(New value)
         {
             this.value = value;
@@ -67,6 +66,19 @@ namespace Sys.CodeBuilder
             };
         }
 
+        private Dictionary<string, Value> objectValue => value as Dictionary<string, Value>;
+
+        public void AddProperty(string propertyName, Value value)
+        {
+            if (objectValue == null)
+                throw new Exception("object property is initialized, use new Value()");
+
+            if (objectValue.ContainsKey(propertyName))
+                throw new Exception($"duplicated property name:{propertyName}");
+
+            objectValue.Add(propertyName, value);
+        }
+
         protected override void BuildBlock(CodeBlock block)
         {
             base.BuildBlock(block);
@@ -85,12 +97,17 @@ namespace Sys.CodeBuilder
                     if (Type == TypeInfo.Anonymous)
                         Type = new TypeInfo { Type = A.GetType() };
                     block.Append($"new {Type}");
-                    WriteArrayValue(block, A, 10);
+                    WriteArrayValue(block, A, ArrayColumnNumber);
                     break;
 
                 case Dictionary<object, object> dict:
                     block.Append($"new {Type}");
                     WriteDictionary(block, dict);
+                    break;
+
+                case Dictionary<string, Value> properties:
+                    block.Append($"new {Type}");
+                    WriteList(block, properties);
                     break;
 
                 default:
@@ -159,9 +176,9 @@ namespace Sys.CodeBuilder
                     block.End();
                     break;
 
-                default:
+                default: //MultipleLine
                     block.Begin();
-
+                    block.AppendLine();
                     for (int i = 0; i < A.Length; i++)
                     {
                         if (i != 0 && i % columnNumber == 0)
@@ -183,6 +200,45 @@ namespace Sys.CodeBuilder
             }
         }
 
+        private void WriteList(CodeBlock block, IDictionary<string, Value> properties)
+        {
+
+            switch (Format)
+            {
+                case ValueOutputFormat.SingleLine:
+                    block.Append("{");
+                    properties.ForEach(
+                         kvp =>
+                         {
+                             string key = Primitive.ToPrimitive(kvp.Key);
+                             block.Append($"{key} = ");
+                             kvp.Value.BuildBlock(block);
+                         },
+                         _ => block.Append(",")
+                         );
+
+                    block.Append("}");
+                    break;
+
+                default:
+                    block.Begin();
+
+                    properties.ForEach(
+                        kvp =>
+                        {
+                            block.AppendLine();
+                            string key = kvp.Key;
+                            block.Append($"{key} = ");
+                            kvp.Value.BuildBlock(block);
+                        },
+                        _ => block.Append(",")
+                        );
+
+                    block.End();
+                    break;
+            }
+        }
+
         private void WriteDictionary(CodeBlock block, Dictionary<object, object> dict)
         {
 
@@ -193,7 +249,8 @@ namespace Sys.CodeBuilder
                     dict.ForEach(
                          kvp =>
                          {
-                             block.Append($"[{kvp.Key}] = ");
+                             string key = Primitive.ToPrimitive(kvp.Key);
+                             block.Append($"[{key}] = ");
                              NewValue(kvp.Value).BuildBlock(block);
                          },
                          _ => block.Append(",")
@@ -209,7 +266,8 @@ namespace Sys.CodeBuilder
                         kvp =>
                             {
                                 block.AppendLine();
-                                block.Append($"[{kvp.Key}] = ");
+                                string key = Primitive.ToPrimitive(kvp.Key);
+                                block.Append($"[{key}] = ");
                                 NewValue(kvp.Value).BuildBlock(block);
                             },
                         _ => block.Append(",")

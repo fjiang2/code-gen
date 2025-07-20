@@ -16,10 +16,6 @@
 //--------------------------------------------------------------------------------------------------//
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sys.CodeBuilder
 {
@@ -29,7 +25,7 @@ namespace Sys.CodeBuilder
 
         public Identifier(string name)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("identifier cannot be blank");
 
             this.name = name;
