@@ -8,6 +8,16 @@
 
         public TabType TabType { get; set; } = TabType.KeepTabs;
 
+        /// <summary>
+        /// Place 'System' directive first when sorting usings
+        /// </summary>
+        public bool UsingSystemFirst { get; set; } = true;
+
+        /// <summary>
+        /// Separate usings directive groups
+        /// </summary>
+        public bool SeparateUsingGroups { get; set; } = true;
+
         internal string Tab(int n)
         {
             if (n <= 0)

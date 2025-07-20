@@ -70,18 +70,59 @@ namespace Sys.CodeBuilder
             return this;
         }
 
-        private string[] SortedUsings()
+        /// <summary>
+        /// Place 'System' directive first when sorting usings.
+        /// </summary>
+        /// <param name="usings"></param>
+        /// <returns></returns>
+        private static string[] SortedUsings(IEnumerable<string> usings, Option option)
         {
             List<string> _usings = new List<string>();
 
-            var _systems = usings.Where(x => x == "System" || x.StartsWith("System.")).OrderBy(x => x);
-            _usings.AddRange(_systems);
+            var sorted = usings
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .OrderBy(x => x);
 
-            var _others = usings.Except(_systems).OrderBy(x => x);
-            if (_others.Any())
+            var groups = sorted.GroupBy(x => x.Split('.')[0]);
+
+            if (option.UsingSystemFirst)
             {
-                _usings.Add(string.Empty);
-                _usings.AddRange(_others);
+                foreach (var group in groups)
+                {
+                    if (group.Key == nameof(System))
+                    {
+                        _usings.InsertRange(0, group.ToList());
+                    }
+                    else
+                    {
+                        if (option.SeparateUsingGroups)
+                            _usings.Add(string.Empty);
+
+                        _usings.AddRange(group.ToList());
+                    }
+                }
+
+                // if there is no using System.xxxx;
+                if (_usings.Any() && _usings[0] == string.Empty)
+                {
+                    _usings.RemoveAt(0);
+                }
+            }
+            else
+            {
+                foreach (var group in groups)
+                {
+                    _usings.AddRange(group.ToList());
+
+                    if (option.SeparateUsingGroups)
+                        _usings.Add(string.Empty);
+                }
+
+                if (_usings.Any() && _usings.Last() == string.Empty)
+                {
+                    _usings.RemoveAt(_usings.Count - 1);
+                }
             }
 
             return _usings.ToArray();
@@ -89,7 +130,7 @@ namespace Sys.CodeBuilder
 
         private void AddUsings(CodeBlock block)
         {
-            var _usings = SortedUsings();
+            var _usings = SortedUsings(usings, Option);
 
             foreach (var name in _usings)
             {
