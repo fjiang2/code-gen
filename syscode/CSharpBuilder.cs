@@ -19,9 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Xml.Linq;
 
 namespace Sys.CodeBuilder
 {
@@ -38,11 +35,11 @@ namespace Sys.CodeBuilder
 
         public Option Option
         {
-            get => GetOption;
-            set => GetOption = value;
+            get => TheOption;
+            set => TheOption = value;
         }
 
-        internal static Option GetOption = new Option();
+        internal static Option TheOption = new Option();
 
         public CSharpBuilder AddUsing(string name)
         {

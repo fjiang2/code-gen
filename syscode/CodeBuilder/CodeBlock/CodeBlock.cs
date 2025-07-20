@@ -202,11 +202,5 @@ namespace Sys.CodeBuilder
         {
             return string.Join(Environment.NewLine, lines);
         }
-
-        public string ToString(int indent)
-        {
-            return string.Join(Environment.NewLine, lines.Select(line => CodeLine.Tab(indent) + line.ToString()));
-        }
-
     }
 }

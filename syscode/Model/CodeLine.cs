@@ -28,30 +28,11 @@ namespace Sys.CodeBuilder
     {
         public static readonly CodeLine EmptyLine = new CodeLine();
 
-        private static Option option => CSharpBuilder.GetOption;
-
         public CodeLine()
         {
         }
 
-        internal static string Tab(int n)
-        {
-            if (n <= 0)
-                return string.Empty;
-
-            char[] tabs;
-            if (option.TabType == TabType.InsertSpaces)
-            {
-                tabs = Enumerable.Repeat(' ', option.TabSize * n).ToArray();
-            }
-            else
-            {
-                tabs = Enumerable.Repeat('\t', n).ToArray();
-            }
-
-            return new string(tabs);
-        }
-
+        internal static string Tab(int n) => CSharpBuilder.TheOption.Tab(n);
 
         public int tab { get; set; }
         public string Line { get; set; }
