@@ -1,5 +1,5 @@
-﻿using System.CommandLine.Binding;
-using System.CommandLine;
+﻿using System.CommandLine;
+using System.CommandLine.Binding;
 
 namespace gencs.Models
 {

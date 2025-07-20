@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Data;
-using Sys.CodeBuilder;
+﻿using System.Text.Json.Nodes;
+
 using gencs.Models;
-using System.Text.Json.Nodes;
-using System.Xml.Linq;
+
+using Sys.CodeBuilder;
 
 namespace gencs.ClassBuilder
 {
@@ -66,7 +61,7 @@ namespace gencs.ClassBuilder
                     }
                     else
                     {
-                       // dict.Add(field.Key, null);
+                        // dict.Add(field.Key, null);
                     }
                 }
                 return new Value(dict) { Type = new TypeInfo(typeof(JsonObject)) };

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
+
 using gencs;
 using gencs.Models;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTestProject.ValueModel
@@ -318,7 +315,7 @@ namespace UnitTestProject.ValueModel
                 ClassName = "EntityObject",
                 NameSpace = "UnitTestProject.ValueModel",
             };
-            string code = Facade.CreateValueModel(classInfo, "entityObj" , entity);
+            string code = Facade.CreateValueModel(classInfo, "entityObj", entity);
             File.WriteAllText(@"../../../ValueModel/EntityObject.cs", code);
 
             string json1 = jsonNode.ToJsonString().Prettify();

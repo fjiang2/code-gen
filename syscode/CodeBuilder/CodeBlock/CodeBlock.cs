@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Sys.CodeBuilder
 {
@@ -65,7 +64,7 @@ namespace Sys.CodeBuilder
             {
                 if (!string.IsNullOrEmpty(line.Line))
                     line.tab += indent;
-                
+
                 lines.Add(line);
             }
         }

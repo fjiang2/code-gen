@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.CommandLine;
+
 using gencs.Models;
+
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 
 namespace gencs
 {
@@ -146,7 +142,7 @@ namespace gencs
             var cmd = new Command("mvvm-template", "Generate Mvvm classes.")
             {
                 usingsOption, nameSpaceOption,
-                modelNameOption, 
+                modelNameOption,
                 viewNameOption,
                 outputOption,
             };

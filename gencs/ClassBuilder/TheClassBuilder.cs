@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data;
-using System.IO;
-using Sys;
+﻿using gencs.Models;
+
 using Sys.CodeBuilder;
-using gencs.Models;
 
 namespace gencs.ClassBuilder
 {

@@ -15,12 +15,8 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
-using Sys;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Sys.CodeBuilder
 {
@@ -64,7 +60,7 @@ namespace Sys.CodeBuilder
             return builder;
         }
 
- 
+
         private IEnumerable<Constructor> constructors
         {
             get
@@ -117,7 +113,7 @@ namespace Sys.CodeBuilder
             }
 
             clss.AppendFormat("{0} struct {1}", new ModifierString(Modifier), base.Name);
-       
+
             var body = new CodeBlock();
 
             if (Sorted)

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Sys.CodeBuilder;
+﻿using System.Collections;
+
 using gencs.Models;
+
+using Sys.CodeBuilder;
 
 namespace gencs.ClassBuilder
 {
@@ -60,7 +58,7 @@ namespace gencs.ClassBuilder
                 return new Value(entity);
             }
 
-            if(entity is IDictionary)
+            if (entity is IDictionary)
             {
 
             }

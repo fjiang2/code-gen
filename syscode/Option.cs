@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Sys.CodeBuilder
+﻿namespace Sys.CodeBuilder
 {
     public class Option
     {

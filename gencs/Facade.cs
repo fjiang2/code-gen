@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using gencs.ClassBuilder;
+﻿using gencs.ClassBuilder;
 using gencs.Models;
+
 using Sys.CodeBuilder;
 
 namespace gencs
@@ -29,7 +25,7 @@ namespace gencs
 
         public static string CreateViewModel(ClassInfo classInfo, IEnumerable<string> properties)
         {
-            var fields=  Shell.CreateFields(properties);
+            var fields = Shell.CreateFields(properties);
             var cs = new ViewModelClassBuilder(classInfo, fields);
             return cs.GetCode();
         }
@@ -44,7 +40,7 @@ namespace gencs
 
         public static string CreateValueModel(ClassInfo classInfo, string fieldName, object obj)
         {
-            var cs = new ValueModelClassBuilder(classInfo, obj) 
+            var cs = new ValueModelClassBuilder(classInfo, obj)
             {
                 FieldName = fieldName,
             };

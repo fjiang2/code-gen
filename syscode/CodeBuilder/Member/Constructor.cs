@@ -15,20 +15,15 @@
 //                                                                                                  //
 //--------------------------------------------------------------------------------------------------//
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Sys.CodeBuilder
 {
     public class Constructor : Member, IBuildable
     {
-   
+
         public Arguments BaseArgs { get; set; }
 
-        public Constructor(string constructorName )
-            :base(constructorName)
+        public Constructor(string constructorName)
+            : base(constructorName)
         {
             base.Modifier = Modifier.Public;
             base.Type = null;
