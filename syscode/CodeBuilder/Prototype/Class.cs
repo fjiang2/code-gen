@@ -197,7 +197,7 @@ namespace Sys.CodeBuilder
                 foreach (Constructor constructor in constructors)
                 {
                     body.Add(constructor);
-                    body.AppendLine();
+                    body.AppendEmptyLine();
                 }
 
                 foreach (Property property in properties)
@@ -205,19 +205,19 @@ namespace Sys.CodeBuilder
                     body.Add(property);
 
                     if (property.GetBlock().Count > 1)
-                        body.AppendLine();
+                        body.AppendEmptyLine();
                 }
 
                 foreach (Method method in methods)
                 {
                     body.Add(method);
-                    body.AppendLine();
+                    body.AppendEmptyLine();
                 }
 
                 flds = fields.Where(fld => (fld.Modifier & Modifier.Const) == Modifier.Const);
                 if (flds.Count() > 0)
                 {
-                    body.AppendLine();
+                    body.AppendEmptyLine();
                     foreach (Field field in flds)
                     {
                         body.Add(field);
@@ -227,7 +227,7 @@ namespace Sys.CodeBuilder
                 foreach (Class _class in classes)
                 {
                     body.Add(_class);
-                    body.AppendLine();
+                    body.AppendEmptyLine();
                 }
             }
             else
@@ -242,7 +242,7 @@ namespace Sys.CodeBuilder
                             //if (item.Count == 1 && (item is Member))
                             //    return;
 
-                            body.AppendLine();
+                            body.AppendEmptyLine();
                         }
                     );
             }

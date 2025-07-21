@@ -158,9 +158,24 @@ namespace Sys.CodeBuilder
             lines.Insert(index, line);
         }
 
-        public CodeBlock AppendLine()
+        /// <summary>
+        /// Append empty line. A line has no letter
+        /// </summary>
+        /// <returns></returns>
+        public CodeBlock AppendEmptyLine()
         {
             lines.Add(new CodeLine { tab = 0, Line = string.Empty });
+
+            return this;
+        }
+
+        /// <summary>
+        /// Start a line with indent
+        /// </summary>
+        /// <returns></returns>
+        public CodeBlock AppendLine()
+        {
+            lines.Add(new CodeLine { tab = curruent, Line = string.Empty });
 
             return this;
         }

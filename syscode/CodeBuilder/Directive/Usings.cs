@@ -81,7 +81,7 @@ namespace Sys.CodeBuilder
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    block.AppendLine();
+                    block.AppendEmptyLine();
                 }
                 else
                 {

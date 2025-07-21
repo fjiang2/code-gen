@@ -75,7 +75,7 @@ namespace Sys.CodeBuilder
         {
             block.Add(Usings.GetBlock());
 
-            block.AppendLine();
+            block.AppendEmptyLine();
 
             block.AppendFormat("namespace {0}", this.Namespace);
 
@@ -83,7 +83,7 @@ namespace Sys.CodeBuilder
 
             classes.ForEach(
                     clss => c.Add(clss.GetBlock()),
-                    clss => c.AppendLine()
+                    clss => c.AppendEmptyLine()
                 );
 
             block.AddWithBeginEnd(c);
@@ -145,7 +145,7 @@ namespace Sys.CodeBuilder
                     ns = $"{ns}.{subns}";
                 }
 
-                block.AppendLine();
+                block.AppendEmptyLine();
                 block.Append($"namespace {ns}");
 
                 var c = new CodeBlock();
